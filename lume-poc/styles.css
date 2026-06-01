@@ -1396,11 +1396,23 @@ main[data-pagefind-body]
   text-decoration-color: currentColor;
 }
 
-/* highlight.js github theme is light-only. In dark mode (Nextra adds .dark
-   on <html>), null out the hljs background so it sits on the panel surface
-   rather than punching a bright-white hole, and pull the text colour up. */
-html.dark .ecma-spec pre code.hljs {
+/* Zero out the GitHub theme's chrome on <pre><code class="hljs">: the
+   theme sets `padding: 1em` on the outer code (so the syntax colours
+   sit inside a white-or-tinted block) but the surrounding <pre> already
+   provides the framing in our layout. tc39.es uses the same trick
+   (ecmarkup.css: `pre code.hljs { background: 0 0; margin: 0; padding: 0 }`)
+   so the highlighter just contributes colours, not a separate surface. */
+.ecma-spec pre code.hljs {
   background: transparent;
+  padding: 0;
+  margin: 0;
+}
+/* Dark mode token colours — the GitHub theme is a light-only design,
+   so its keyword red / string blue / built-in orange wash out (and the
+   default text colour goes near-invisible) against a dark page. Pull
+   them onto a One Dark-ish palette while leaving the rest of the
+   theme's token colours intact for tokens we haven't overridden. */
+html.dark .ecma-spec pre code.hljs {
   color: inherit;
 }
 html.dark .ecma-spec .hljs-keyword,

@@ -20,6 +20,12 @@ site.ignore("README.md");
 // Static assets that ship as-is into _site/.
 site.copy("styles.css");
 site.copy("search.js");
+// Vendored highlight.js GitHub theme — same file the Nextra build picks
+// up via `import "highlight.js/styles/github.css"` in spec-layout.jsx.
+// styles.css below loads after this in page.tsx and zeroes out the
+// theme's white .hljs background so it sits on the page bg (tc39.es
+// uses the same trick in ecmarkup.css `pre code.hljs { background: 0 0 }`).
+site.copy("hljs-github.css");
 
 // Build the per-page right-rail TOC after rendering. Lume parses each .html
 // page's content into a Document on demand (`page.document`); we walk the

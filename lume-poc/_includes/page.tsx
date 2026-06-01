@@ -46,6 +46,15 @@ export default function Page(
               `(function(){var p=localStorage.getItem("theme");var d=p==="dark"||(p===null&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.classList.add("dark");})();`,
           }}
         />
+        {
+          /* highlight.js GitHub theme — colours the <span class="hljs-*">
+            tokens that build-chapters.mjs / ecmarkup emit inside spec
+            <pre><code> blocks. Loaded BEFORE styles.css so the rules
+            in styles.css can zero out the theme's white .hljs background
+            (tc39.es parity, ecmarkup.css `pre code.hljs { background:
+            0 0 }`) without specificity gymnastics. */
+        }
+        <link rel="stylesheet" href={`${basePath}/hljs-github.css`} />
         <link rel="stylesheet" href={`${basePath}/styles.css`} />
         {
           /* Custom search module — uses Pagefind core (pagefind.js) and
