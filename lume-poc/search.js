@@ -34,6 +34,24 @@ function loadPagefind(basePath) {
 
 const instances = [];
 
+// Copy the source instance's input value, panel contents, and .open
+// class to every other instance, so resizing past the mobile breakpoint
+// hands the user the same query, results, and open state on the other
+// side. Nextra parity: there both MobileNav and the navbar render the
+// same React Search component sharing state for free — we have two
+// independent DOM instances, so mirror by hand.
+function syncFrom(source) {
+  for (const inst of instances) {
+    if (inst.input === source.input) continue;
+    inst.input.value = source.input.value;
+    inst.panel.innerHTML = source.panel.innerHTML;
+    inst.panel.classList.toggle(
+      "open",
+      source.panel.classList.contains("open"),
+    );
+  }
+}
+
 function setupInstance(root) {
   const input = root.querySelector(".search-input");
   const panel = root.querySelector(".search-panel");
@@ -92,9 +110,15 @@ function setupInstance(root) {
     activeIdx = -1;
   }
 
-  input.addEventListener("input", (e) => doSearch(e.target.value));
+  input.addEventListener("input", async (e) => {
+    await doSearch(e.target.value);
+    syncFrom({ input, panel });
+  });
   input.addEventListener("focus", () => {
-    if (input.value.trim() && panel.innerHTML) setOpen(true);
+    if (input.value.trim() && panel.innerHTML) {
+      setOpen(true);
+      syncFrom({ input, panel });
+    }
   });
 
   instances.push({
@@ -187,6 +211,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     inst.setOpen(false);
     inst.input.blur();
+    syncFrom(inst);
     return;
   }
   const items = inst.panel.querySelectorAll(".search-result");
@@ -196,11 +221,13 @@ document.addEventListener("keydown", (e) => {
     const next = (inst.getActiveIdx() + 1) % items.length;
     inst.setActiveIdx(next);
     setActive(items, next);
+    syncFrom(inst);
   } else if (e.key === "ArrowUp") {
     e.preventDefault();
     const prev = (inst.getActiveIdx() - 1 + items.length) % items.length;
     inst.setActiveIdx(prev);
     setActive(items, prev);
+    syncFrom(inst);
   } else if (e.key === "Enter" && inst.getActiveIdx() >= 0) {
     e.preventDefault();
     items[inst.getActiveIdx()].click();
