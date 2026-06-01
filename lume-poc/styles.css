@@ -33,6 +33,48 @@
   --toc-w: 256px; /* matches Nextra's x:w-64 */
   --content-max-w: 90rem; /* matches Nextra's --nextra-content-width (1440px) */
   --header-h: 4rem; /* matches Nextra's --nextra-navbar-height: 64px */
+
+  /* Body / spec typography — system-font approximations of the three
+     IBM Plex families tc39.es ships:
+       - Plex Serif (body) ≈ Charter (macOS) / Cambria (Windows) /
+         Georgia. Both Charter and Cambria are humanist screen-reading
+         serifs with similar low contrast and x-height.
+       - Plex Sans (emu-const / emu-gprose / figcaption) ≈ Segoe UI
+         (Windows) / -apple-system (= SF Pro on macOS), both humanist
+         sans in the same family Plex Sans belongs to.
+       - Plex Mono (emu-t / emu-opt / emu-params / inline code) ≈
+         ui-monospace (resolves to SF Mono on macOS, Cascadia Mono on
+         recent Windows) — both humanist monos like Plex Mono.
+     Used only inside the spec body so the page chrome (header,
+     sidebar, footer) keeps its Nextra-matching sans stack. */
+  --font-serif:
+    Charter,
+    "Bitstream Charter",
+    Cambria,
+    "Iowan Old Style",
+    Georgia,
+    ui-serif,
+    serif;
+  --font-sans:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Segoe UI Variable",
+    Cantarell,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  --font-mono:
+    ui-monospace,
+    "SF Mono",
+    Menlo,
+    "Cascadia Mono",
+    "Cascadia Code",
+    Consolas,
+    "DejaVu Sans Mono",
+    "Liberation Mono",
+    monospace;
+
   color-scheme: light;
 }
 html.dark {
@@ -1271,6 +1313,10 @@ main[data-pagefind-body] {
   --ecma-measure: 45rem;
   font-size: 1.0625rem;
   line-height: 1.65;
+  /* Serif body text mirrors tc39.es's `body { font-family: 'IBM Plex
+     Serif', serif }` (ecmarkup.css). Scoped to the main reading zone
+     so the chrome (header / sidebar / footer) keeps its sans stack. */
+  font-family: var(--font-serif);
 }
 /* Headings stay aligned to the prose measure; only tables/figures break out. */
 main[data-pagefind-body] > :is(h1, h2, h3, h4, h5, h6) {
@@ -1366,15 +1412,24 @@ html.dark .ecma-spec .hljs-string {
 }
 
 /* Inline code (anything <code> not inside a <pre>) renders as a chip. The
-   box-decoration-break: clone makes the chip wrap cleanly across lines. */
+   box-decoration-break: clone makes the chip wrap cleanly across lines.
+   font-family + font-weight match tc39.es's `code { font-weight: 700;
+   font-family:'IBM Plex Mono', monospace }` rule (ecmarkup.css). */
 .ecma-spec :not(pre) > code {
   background: var(--ecma-panel-bg);
   border: 1px solid var(--ecma-panel-border);
   border-radius: 4px;
   padding: 0.1em 0.35em;
   font-size: 0.9em;
+  font-family: var(--font-mono);
+  font-weight: 700;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+}
+/* tc39.es captions are bold (ecmarkup.css `figure figcaption {
+   font-weight: 700 }`). */
+.ecma-spec figcaption {
+  font-weight: 700;
 }
 
 /* Block-form grammar (a numbered/named production definition) uses the same
@@ -1413,6 +1468,10 @@ html.dark .ecma-spec .hljs-string {
 .ecma-spec emu-oneof {
   font-style: italic;
   opacity: 0.7;
+  /* tc39.es renders `one of` bold (ecmarkup.css `emu-oneof { font-weight:
+     700 }`); keep lume-poc's italic + opacity treatment for visual
+     softening on top of the weight bump. */
+  font-weight: 700;
 }
 
 /* Notes get a "Note" label and the shared panel surface. The label and
@@ -1450,11 +1509,18 @@ html.dark .ecma-spec .hljs-string {
 }
 .ecma-spec emu-const {
   font-variant: small-caps;
+  /* tc39.es renders emu-const in IBM Plex Sans + uppercase + small-caps
+     (ecmarkup.css `emu-const { font-family:'IBM Plex Sans',sans-serif;
+     font-variant:small-caps; text-transform:uppercase }`). Sans pulls
+     it away from the surrounding serif body so well-known-constant
+     names stand out. */
+  font-family: var(--font-sans);
 }
 /* Spec values (true/false/null/undefined/error names from `*foo*`) — bold,
-   matches the typographic weight ecmarkup gives <emu-val>. */
+   matches the typographic weight ecmarkup gives <emu-val>. tc39.es uses
+   font-weight: 700. */
 .ecma-spec emu-val {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ecma-text-strong);
 }
 /* Record / Property Descriptor field accesses (`[[Value]]`, `[[Foo]]`).
@@ -1493,44 +1559,40 @@ html.dark .ecma-spec .hljs-string {
 
 /* Grammar tokens, emitted by build-chapters.mjs's tokenizeGrammarLine as
    <emu-nt|emu-t|emu-geq|emu-mods|emu-params|emu-opt|emu-gprose|emu-oneof>
-   inside <emu-grammar>. Uses opacity (not fixed colors) so it works in light
-   AND dark Nextra themes. emu-nt is already italicised by the inline rule
-   higher in the file; here we just add the LHS bolding. */
-/* LHS bolding via position rather than class: an <emu-nt> that's a direct
-   child of <emu-production> is the LHS (RHS NTs sit inside <emu-rhs>). */
-.ecma-spec emu-grammar emu-production > emu-nt {
-  font-weight: 600;
-}
+   inside <emu-grammar>. emu-nt is already italicised by the inline rule
+   higher in the file; we no longer add bold to LHS nonterminals — tc39.es
+   leaves them at normal weight and relies on the layout (LHS at start
+   of line, RHS indented) for the hierarchy. */
 .ecma-spec emu-grammar emu-t {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  /* tc39.es: `emu-t { font-family:'IBM Plex Mono',monospace;
+     font-weight: 700 }`. */
+  font-weight: 700;
 }
 .ecma-spec emu-grammar emu-geq {
   opacity: 0.55;
   padding: 0 0.15em;
+  /* tc39.es: `emu-geq { font-weight: 700 }`. */
+  font-weight: 700;
 }
 .ecma-spec emu-grammar emu-params,
 .ecma-spec emu-grammar emu-constraints,
 .ecma-spec emu-grammar emu-gann,
 .ecma-spec emu-grammar emu-gmod {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+  font-family: var(--font-mono);
   font-size: 0.85em;
   opacity: 0.75;
 }
 .ecma-spec emu-grammar emu-opt {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+  font-family: var(--font-mono);
   vertical-align: super;
   font-size: 0.75em;
 }
 .ecma-spec emu-grammar emu-gprose {
   font-style: italic;
   opacity: 0.8;
+  /* tc39.es: `emu-gprose { font-family:'IBM Plex Sans',sans-serif }`. */
+  font-family: var(--font-sans);
 }
 .ecma-spec emu-grammar .cm {
   opacity: 0.5;
