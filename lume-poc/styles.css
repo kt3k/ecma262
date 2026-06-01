@@ -1423,20 +1423,24 @@ html.dark .ecma-spec .hljs-string {
   color: #98c379;
 }
 
-/* Inline code (anything <code> not inside a <pre>) renders as a chip. The
-   box-decoration-break: clone makes the chip wrap cleanly across lines.
-   font-family + font-weight match tc39.es's `code { font-weight: 700;
-   font-family:'IBM Plex Mono', monospace }` rule (ecmarkup.css). */
+/* Inline code matches tc39.es's `code { font-weight: 700;
+   font-family:'IBM Plex Mono', monospace; white-space: pre }`
+   (ecmarkup.css). No chip background / border / padding /
+   shrunken size — tc39.es renders inline <code> as plain bold-mono
+   tokens (single-character operators like <code>+</code> would look
+   strange wrapped in a chip wider than the glyph). `white-space: pre`
+   preserves the spaces tc39 emits inside identifiers like
+   `<code>StringToNumber( )</code>` and prevents wrap mid-token. */
 .ecma-spec :not(pre) > code {
-  background: var(--ecma-panel-bg);
-  border: 1px solid var(--ecma-panel-border);
-  border-radius: 4px;
-  padding: 0.1em 0.35em;
-  font-size: 0.9em;
   font-family: var(--font-mono);
   font-weight: 700;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  white-space: pre;
+}
+/* tc39 itself walks back the `white-space: pre` inside regular tables
+   so long identifiers don't blow the cell wide (ecmarkup.css
+   `emu-table:not(.code) td code { white-space: normal }`). */
+.ecma-spec emu-table:not(.code) td code {
+  white-space: normal;
 }
 /* tc39.es captions are bold (ecmarkup.css `figure figcaption {
    font-weight: 700 }`). */
