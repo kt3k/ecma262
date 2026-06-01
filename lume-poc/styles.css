@@ -1012,6 +1012,14 @@ body.menu-open .menu-toggle svg > g:nth-of-type(2) > path {
   .sidebar-collapse-btn {
     display: none;
   }
+  /* The footer is already at the viewport bottom via the aside.sidebar
+     grid (auto 1fr auto), but on iOS the home indicator overlays the
+     bottom edge and steals tap area from the theme toggle. Reserve
+     env(safe-area-inset-bottom) the same way Nextra's site footer
+     does (x:pb-[env(safe-area-inset-bottom)] in footer/index.js:53). */
+  aside.sidebar > .sidebar-footer {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
 }
 
 /* Print: drop the chrome so the spec body owns the whole page. Mirrors

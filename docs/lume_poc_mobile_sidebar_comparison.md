@@ -56,13 +56,16 @@ DOM)。lume-poc は同じ要素なので保持される。
   `<LocaleSwitch className="x:grow x:justify-end"/>` を `x:mt-auto`
   で下端固定。collapse トグルは出さない。
 - **lume-poc**: フッター (テーマトグル + collapse) は DOM に残るが、collapse は
-  `.sidebar-collapse-btn { display:none }` (`styles.css:953`)
-  で消える。`.sidebar-footer` は `<aside>` の grid `auto 1fr auto` 3
-  行目に残るが、**全画面の下端まで見えない**
-  のでテーマトグルは実質非可視。Locale switch は元から無い。
+  `.sidebar-collapse-btn { display:none }` (`styles.css:953`) で消える。
+  `.sidebar-footer` は aside.sidebar の grid `auto 1fr auto` 3
+  行目にあり、`position: fixed; inset: 0` + `padding-top: var(--header-h)`
+  と組み合わせてビューポート下端に張り付く (=
+  章リストをスクロールしてもテーマトグルは見える)。Locale switch は元から無い。
 
-**挙動差**: モバイルでは Nextra ならテーマと言語が切り替えられる。lume-poc
-では事実上不可能。
+**挙動差**: 言語切替は lume-poc 側に無い。テーマトグルは下端に出ているが iOS
+ホームインジケーター領域に被ると押しづらいので、`env(safe-area-inset-bottom)`
+分の padding を確保する必要あり (Nextra footer の
+`x:pb-[env(safe-area-inset-bottom)]` 相当)。
 
 ## 5. アクティブ章を中央へスクロール
 
@@ -146,9 +149,12 @@ lume-poc のほうが仕様準拠。
 
 1. **検索入力が画面幅切り替えで失われる** (lume-poc) — `search.js`
    を改修してインスタンス間で値を同期させれば解消。
-2. **モバイルでテーマトグルにアクセス不可** (lume-poc) —
-   フッターの位置が下端のため。`.sidebar-footer` を
-   `position: sticky; bottom: 0` でモバイル時のみ常時可視にすれば解決。
+2. ~~**モバイルでテーマトグルにアクセス不可**~~ — 当初の評価は誤り。grid
+   `auto 1fr auto` + `position: fixed; inset: 0`
+   で下端には張り付いていた。残る本物の問題は iOS
+   ホームインジケーター被りで、`env(safe-area-inset-bottom)` 分の padding
+   を確保すれば解決 (Nextra footer の `x:pb-[env(safe-area-inset-bottom)]`
+   相当)。
 3. **同章内アンカークリックでメニューが閉じない** (lume-poc) —
    現在は同章リンクが基本ないので顕在化していないが、`#content`
    内のアンカークリックや prev/next ボタンなどに `setMenu(false)`
@@ -265,5 +271,7 @@ lume-poc のほうが仕様準拠。
 ### 既出 (上の「実害が出る差」より)
 
 - [ ] **#9** 検索入力が画面幅切り替えで失われる
-- [ ] **#10** モバイルでテーマトグルにアクセス不可
+- [x] **#10** モバイルでテーマトグル下端の iOS safe-area 確保
+      (元の「アクセス不可」は誤り — grid
+      配置で下端には張り付いていた。残る問題はホームインジケーター被り)
 - [ ] **#11** 同章内アンカークリックでメニューが閉じない (#3 と類似)
