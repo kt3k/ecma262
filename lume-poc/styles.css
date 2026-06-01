@@ -510,7 +510,12 @@ aside.sidebar .sidebar-list a {
   color: var(--muted);
   text-decoration: none;
   font-size: 0.875rem;
-  line-height: 1.35;
+  /* `calc(1.25 / 0.875)` mirrors Tailwind v4's text-sm line-height
+     (style.css `--x-text-sm--line-height`) Nextra applies on its
+     sidebar links. With unitless 1.35 the lines were ~6% tighter
+     than Nextra and long wrapping chapter titles (e.g. "Annex E
+     (informative) Corrections and Clarifications…") felt cramped. */
+  line-height: calc(1.25 / 0.875);
   word-break: break-word;
   transition: background 0.15s, color 0.15s;
 }
@@ -554,7 +559,10 @@ aside.sidebar .sidebar-toc a {
   text-decoration: none;
   font-size: 0.8125rem;
   font-weight: 400;
-  line-height: 1.35;
+  /* Match Nextra's text-sm line-height ratio (~1.428) for parity with
+     the chapter list above; unitless so it scales with the slightly
+     smaller font-size used here. */
+  line-height: calc(1.25 / 0.875);
   word-break: break-word;
   background: transparent;
   transition: background 0.15s, color 0.15s;
@@ -810,7 +818,10 @@ aside.toc a {
   display: block;
   color: var(--muted);
   text-decoration: none;
-  line-height: 1.35;
+  /* Match Nextra's text-sm line-height ratio (~1.428) — the toc itself
+     inherits font-size 0.875rem from aside.toc so this gives the same
+     ~1.25rem line box Nextra uses on TOC anchors. */
+  line-height: calc(1.25 / 0.875);
   word-break: break-word;
   transition: color 0.15s;
 }
