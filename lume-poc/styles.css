@@ -418,22 +418,20 @@ aside.sidebar {
   align-self: start;
   height: calc(100vh - var(--header-h));
   height: calc(100dvh - var(--header-h));
-  /* Inner grid (3 rows):
-       1: mobile-only .sidebar-search (auto; collapses to 0 on desktop
-          where the element is display:none)
-       2: .sidebar-list (1fr, scrolls)
-       3: .sidebar-footer (auto, pinned to bottom)
-     Explicit grid-row on each child locks the order regardless of how
-     many rows are populated. */
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  /* Vertical stack: search (only mobile), scrolling list, footer pinned
+     to the bottom. Nextra renders the same three pieces with
+     `x:flex x:flex-col` + `x:mt-auto` on the footer (sidebar.js:392, 417);
+     `auto 1fr auto` grid was structurally equivalent but flex matches
+     Nextra's behaviour byte-for-byte and avoids edge cases where the
+     1fr track sized differently from the flex remainder. */
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   /* Width changes smoothly when toggling between full and narrow. The grid
      column track on body animates the same way (see body transition below). */
   transition: width 0.2s ease-in-out;
 }
 aside.sidebar > .sidebar-search {
-  grid-row: 1;
   /* In-sidebar search box — hidden on desktop (the navbar copy is
      visible there) and shown only ≤767px to stand in for the navbar
      search that's hidden at mobile widths. Mirrors Nextra's MobileNav,
@@ -465,10 +463,17 @@ aside.sidebar > .sidebar-search {
   max-height: 50vh;
 }
 aside.sidebar > .sidebar-list {
-  grid-row: 2;
+  /* Chapter list grows to fill the space between the search row and the
+     footer. With overflow-y:auto + min-height:0 it shrinks rather than
+     forcing the sidebar to overflow when the chapter list is taller
+     than the viewport. */
+  flex: 1 1 0;
 }
 aside.sidebar > .sidebar-footer {
-  grid-row: 3;
+  /* margin-top: auto absorbs any leftover slack so the footer always sits
+     at the bottom of the sidebar even when the chapter list is short
+     (Nextra parity: sidebar.js:417 footer carries x:mt-auto). */
+  margin-top: auto;
 }
 /* Chapter list — Nextra's <ul class="x:grid x:gap-1 x:p-4">: uniform 16px
    padding, items separated by a 4px grid gap rather than per-item margin.
@@ -1027,21 +1032,25 @@ body.menu-open .menu-toggle svg > g:nth-of-type(2) > path {
     display: none;
   }
   /* Fullscreen mobile nav — matches Nextra's
-     <aside class="nextra-mobile-nav x:fixed x:inset-0
+     <aside class="nextra-mobile-nav x:flex x:flex-col x:fixed x:inset-0
                    x:pt-(--nextra-navbar-height) x:z-20 x:bg-nextra-bg
                    x:[transform:translate3d(0,-100%,0)] (or 0,0,0)">.
-     Inset:0 covers the entire viewport; padding-top reserves space so
-     the navbar (z-30) stays visible above. Transform toggles between
-     fully-off (translateY -100%) and on (translateY 0); NO transition
-     so the panel snaps in/out — same as Nextra (no x:transition*
-     utility on the class string). */
+     The base aside.sidebar rule is already display:flex flex-col, so we
+     just pin the fixed positioning and the navbar offset here.
+     Use an explicit `height: 100dvh` instead of `inset: 0`'s implicit
+     layout-viewport height — on iOS Safari with the URL bar visible,
+     `inset:0` sizes to the larger layout viewport so the footer ends
+     up below the visible bottom edge. dvh tracks the current visible
+     viewport. */
   aside.sidebar {
-    display: grid;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh; /* fallback */
+    height: 100dvh;
     padding-top: var(--header-h);
     width: auto;
-    height: auto;
     z-index: 20;
     transform: translate3d(0, -100%, 0);
     background: var(--bg);
