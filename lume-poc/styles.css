@@ -497,6 +497,43 @@ html.dark aside.sidebar li.current > a {
   background: hsl(204 100% 76% / 0.1);
   color: hsl(204 100% 65%);
 }
+/* Inline TOC under the active chapter — mirrors Nextra's <File> rendering
+   h2 anchors as a child list of the active item (sidebar.js:249-258).
+   Populated post-render by _config.ts. Visible at ≤1100px where
+   aside.toc itself is display:none; hidden above so we don't duplicate
+   the right-rail TOC. */
+aside.sidebar .sidebar-toc {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.125rem;
+}
+aside.sidebar .sidebar-toc li {
+  margin: 0;
+}
+aside.sidebar .sidebar-toc a {
+  display: block;
+  padding: 0.25rem 0.5rem 0.25rem 1rem;
+  border-radius: 4px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.35;
+  word-break: break-word;
+  background: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+aside.sidebar .sidebar-toc a:hover {
+  background: rgba(127, 127, 127, 0.12);
+  color: var(--fg);
+}
+@media (min-width: 1101px) {
+  aside.sidebar .sidebar-toc {
+    display: none;
+  }
+}
 /* Section break: thin top border + extra space above the first item of each
    `group` (annex, back). Matches the implicit Annex / Bibliography break that
    the Nextra sidebar conveys by virtue of the title prefixes alone. */

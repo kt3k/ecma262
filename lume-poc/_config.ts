@@ -31,9 +31,23 @@ site.process([".html"], (pages) => {
   for (const page of pages) {
     const document = page.document;
     if (!document) continue;
-    const ol = document.querySelector("aside.toc > ol");
+    const tocOl = document.querySelector("aside.toc > ol");
     const main = document.querySelector("main");
-    if (!ol || !main) continue;
+    if (!tocOl || !main) continue;
+
+    // Sidebar inline TOC: clone the top-level entries into a nested <ol>
+    // under the current chapter's <li>. Mirrors Nextra's <File> rendering
+    // h2 anchors as a <ul> child of the active item (sidebar.js:249-258).
+    // Mobile users have no other way to reach in-page anchors, since
+    // aside.toc is display:none below 1100px; CSS hides this inline copy
+    // again above 1100px so we don't duplicate the right-rail TOC.
+    const sidebarCurrent = document.querySelector(".sidebar-list li.current");
+    let sidebarToc: Element | null = null;
+    if (sidebarCurrent) {
+      sidebarToc = document.createElement("ol");
+      sidebarToc.setAttribute("class", "sidebar-toc");
+      sidebarCurrent.appendChild(sidebarToc);
+    }
 
     const clauses = main.querySelectorAll("emu-clause[id]");
     for (const clause of clauses) {
@@ -66,7 +80,25 @@ site.process([".html"], (pages) => {
       a.setAttribute("href", `#${clause.id}`);
       a.textContent = text;
       li.appendChild(a);
-      ol.appendChild(li);
+      tocOl.appendChild(li);
+
+      // Only top-level sections of the active chapter go into the sidebar
+      // inline TOC — matches Nextra's h2-only rendering and keeps the
+      // mobile menu uncluttered.
+      if (sidebarToc && depth === 1) {
+        const sli = document.createElement("li");
+        const sa = document.createElement("a");
+        sa.setAttribute("href", `#${clause.id}`);
+        sa.textContent = text;
+        sli.appendChild(sa);
+        sidebarToc.appendChild(sli);
+      }
+    }
+
+    // Drop the empty <ol> on pages with no top-level sections (e.g. the
+    // introduction stub) so we don't leave a hollow container behind.
+    if (sidebarToc && !sidebarToc.firstChild) {
+      sidebarToc.remove();
     }
   }
 });

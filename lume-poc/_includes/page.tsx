@@ -166,6 +166,15 @@ export default function Page(
               document.addEventListener("keydown",function(e){
                 if(e.key==="Escape")setMenu(false);
               });
+              // Same-page anchor clicks from the inline TOC inside the
+              // mobile menu need to close the menu themselves — otherwise
+              // the html.menu-open overflow-hidden rule blocks the native
+              // anchor scroll, and the panel stays over the target.
+              // Nextra parity: handleClick (sidebar.js:183) on the inline
+              // TOC <a> calls setMenu(false).
+              document.querySelectorAll(".sidebar-toc a").forEach(function(a){
+                a.addEventListener("click",function(){setMenu(false);});
+              });
               // Sidebar collapse (desktop): single button in the sidebar
               // footer toggles between full (256px) and narrow (60px). When
               // narrow the menu list is hidden and the footer reflows so
