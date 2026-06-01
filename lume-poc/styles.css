@@ -144,12 +144,17 @@ body {
   /* margin-inline-end: auto mirrors Nextra's logo wrapper class
      (x:flex x:items-center x:me-auto); combined with the parent's
      justify-end it pulls the title cluster to the left and pushes the
-     remaining items (search, theme) to the right edge. */
+     remaining items (search, theme) to the right edge.
+     No white-space: nowrap — Nextra leaves the title wrappable
+     (navbar/index.js:34, spec-layout.jsx logo span) so the flex item's
+     min-content is just the longest unbreakable token (~"ES2027"), not
+     the full 290px-wide unwrapped title. On narrow phones the title
+     wraps to two lines instead of pushing the page into horizontal
+     scroll. */
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
   margin-inline-end: auto;
-  white-space: nowrap;
   font-size: 0.95rem;
 }
 .site-header .site-title {
