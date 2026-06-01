@@ -91,7 +91,11 @@ body {
    <div class="x:mx-auto x:flex x:max-w-(--nextra-content-width)">. */
 .layout-wrapper {
   display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr var(--toc-w);
+  /* `minmax(0, 1fr)` instead of bare `1fr` for the main column: the
+     implicit `auto` min would otherwise force the track to expand to
+     fit the largest item's min-content (long emu-nt names, pre block
+     lines), pushing the grid container wider than the viewport. */
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--toc-w);
   /* Cap the sidebar/main/TOC trio at --content-max-w (1440px) and centre
      it, matching Nextra's <div class="x:mx-auto x:flex x:max-w-(--nextra-content-width)">.
      On viewports wider than 1440px the trio sits in the middle with even
@@ -617,7 +621,7 @@ aside.sidebar .sidebar-footer .theme-toggle {
   --sidebar-w-narrow: 80px;
 }
 body.sidebar-collapsed .layout-wrapper {
-  grid-template-columns: var(--sidebar-w-narrow) 1fr var(--toc-w);
+  grid-template-columns: var(--sidebar-w-narrow) minmax(0, 1fr) var(--toc-w);
 }
 /* Hide the scrollable chapter list — only the footer's icon-only buttons
    remain visible while collapsed. */
@@ -666,15 +670,21 @@ body.sidebar-collapsed .sidebar-collapse-btn .collapse-arrow {
 }
 @media (max-width: 1100px) {
   body.sidebar-collapsed .layout-wrapper {
-    grid-template-columns: var(--sidebar-w-narrow) 1fr;
+    grid-template-columns: var(--sidebar-w-narrow) minmax(0, 1fr);
   }
 }
 
 main {
   /* Match Nextra's article: x:pt-4 x:pb-8 x:px-4 x:md:px-12 — 16px top,
-     32px bottom, 16px sides on mobile, 48px sides on md+. */
+     32px bottom, 16px sides on mobile, 48px sides on md+. The
+     overflow-wrap rule mirrors Nextra's x:break-words on the
+     <article> wrapper (catch-all-route.jsx); without it long
+     unbreakable tokens (e.g. `InputElementRegExpOrTemplateTail`
+     inside <emu-nt>, or unbroken URLs) push past the column edge
+     and the page picks up a horizontal scrollbar on narrow phones. */
   padding: 1rem 1rem 2rem;
   min-width: 0;
+  overflow-wrap: break-word;
 }
 @media (min-width: 768px) {
   main {
@@ -965,7 +975,7 @@ body.menu-open .menu-toggle svg > g:nth-of-type(2) > path {
 
 @media (max-width: 1100px) {
   .layout-wrapper {
-    grid-template-columns: var(--sidebar-w) 1fr;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
   }
   aside.toc {
     display: none;
@@ -977,7 +987,7 @@ body.menu-open .menu-toggle svg > g:nth-of-type(2) > path {
      search element) and shows the hamburger (Nextra's x:md:hidden on
      the Button); the sidebar becomes a fullscreen overlay. */
   .layout-wrapper {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .menu-toggle {
     display: inline-flex;
@@ -1056,7 +1066,7 @@ body.menu-open .menu-toggle svg > g:nth-of-type(2) > path {
     display: none;
   }
   .layout-wrapper {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   footer.site-footer {
     background: transparent;
