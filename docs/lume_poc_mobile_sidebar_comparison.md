@@ -252,7 +252,7 @@ lume-poc のほうが仕様準拠。
       相当を発火
 - [x] **#4** D: Esc ハンドラの 2 重発火 — `search.js` 側で `e.stopPropagation()`
       するか、`page.tsx` 側で `openInstance()` がある場合は早期 return
-- [ ] **#5** E: 印刷スタイル無し —
+- [x] **#5** E: 印刷スタイル無し —
       `@media print { aside.sidebar, .site-header, aside.toc { display:none } }`
 - [ ] **#6** H: aria-expanded がリサイズで残る —
       `matchMedia("(max-width:767px)")` の `change` リスナーで mobile を抜けたら

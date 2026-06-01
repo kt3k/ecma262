@@ -1006,6 +1006,29 @@ body.menu-open .menu-toggle svg > g:nth-of-type(2) > path {
   }
 }
 
+/* Print: drop the chrome so the spec body owns the whole page. Mirrors
+   Nextra's x:print:hidden on the navbar, sidebar, TOC, and pagination
+   (navbar/index.js:36, sidebar.js:519, wrapper.client.js:25,
+   pagination.js:34); footer stays visible but its tinted background
+   goes transparent (footer/index.js:53 x:print:bg-transparent). The
+   layout-wrapper grid collapses to a single column so the article
+   spans the full printable width. */
+@media print {
+  .site-header,
+  aside.sidebar,
+  aside.toc,
+  .prev-next,
+  .skip-nav {
+    display: none;
+  }
+  .layout-wrapper {
+    grid-template-columns: 1fr;
+  }
+  footer.site-footer {
+    background: transparent;
+  }
+}
+
 /* ── End of page chrome ──────────────────────────────────────────────── */
 
 /* Nextra's per-page breadcrumb only contains a single item — the current
