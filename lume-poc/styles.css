@@ -64,7 +64,12 @@ body {
   color: var(--fg);
   display: flex;
   flex-direction: column;
+  /* Track the dynamic viewport so the footer sits at the current bottom
+     edge on iOS even as the URL bar grows/shrinks; the vh line is the
+     fallback for browsers without dvh. Same pattern Nextra uses
+     (style.css:3031-3032). */
   min-height: 100vh;
+  min-height: 100dvh;
 }
 /* Sidebar + main + TOC live in this flex wrapper; footer sits as a
    sibling of the wrapper. Sticky elements inside cannot exceed the
@@ -292,6 +297,7 @@ html.dark .site-search .search-input {
   right: 0;
   width: min(36rem, calc(100vw - 2rem));
   max-height: min(calc(100vh - 5rem), 400px);
+  max-height: min(calc(100dvh - 5rem), 400px);
   overflow-y: auto;
   background: rgb(var(--bg-rgb) / 0.7);
   backdrop-filter: blur(12px);
@@ -389,6 +395,7 @@ aside.sidebar {
      whitespace alone. */
   align-self: start;
   height: calc(100vh - var(--header-h));
+  height: calc(100dvh - var(--header-h));
   /* Inner grid (3 rows):
        1: mobile-only .sidebar-search (auto; collapses to 0 on desktop
           where the element is display:none)
@@ -717,6 +724,7 @@ aside.toc {
   top: var(--header-h);
   align-self: start;
   height: calc(100vh - var(--header-h));
+  height: calc(100dvh - var(--header-h));
   display: grid;
   grid-template-rows: min-content 1fr min-content;
   font-size: 0.875rem; /* x:text-sm */

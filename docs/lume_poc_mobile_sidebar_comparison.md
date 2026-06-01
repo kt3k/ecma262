@@ -257,7 +257,7 @@ lume-poc のほうが仕様準拠。
 - [x] **#6** H: aria-expanded がリサイズで残る —
       `matchMedia("(max-width:767px)")` の `change` リスナーで mobile を抜けたら
       `setMenu(false)` 相当
-- [ ] **#7** F: dvh 未使用 — `100vh` → `100dvh` (フォールバック付き)
+- [x] **#7** F: dvh 未使用 — `100vh` → `100dvh` (フォールバック付き)
 - [ ] **#8** I: バナー対応 — 該当機能が出来てから対応
 
 前回ドキュメントに無かった項目: **A・B・D・E・H**。
