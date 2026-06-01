@@ -138,9 +138,15 @@ export default function Page(
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              document.getElementById("theme-toggle").addEventListener("click",function(){
-                var d=document.documentElement.classList.toggle("dark");
-                localStorage.setItem("theme",d?"dark":"light");
+              // Two .theme-toggle buttons live in the DOM: one in the
+              // sidebar footer (sidebar.tsx) and one in the Switchers row
+              // above the site footer (footer.tsx, Nextra parity). Wire
+              // both to the same click handler.
+              document.querySelectorAll(".theme-toggle").forEach(function(btn){
+                btn.addEventListener("click",function(){
+                  var d=document.documentElement.classList.toggle("dark");
+                  localStorage.setItem("theme",d?"dark":"light");
+                });
               });
               var menuBtn=document.getElementById("menu-toggle");
               function setMenu(open){
