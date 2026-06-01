@@ -164,7 +164,15 @@ export default function Page(
                 setMenu(!document.body.classList.contains("menu-open"));
               });
               document.addEventListener("keydown",function(e){
-                if(e.key==="Escape")setMenu(false);
+                if(e.key!=="Escape")return;
+                // When a search panel is open inside the menu, let
+                // search.js's Esc handler close just the panel — closing
+                // both at once is jarring. This inline script runs before
+                // the deferred search.js module, so bailing here lets
+                // search.js still receive the keydown and close the
+                // panel (search.js:187-191).
+                if(document.querySelector(".search-panel.open"))return;
+                setMenu(false);
               });
               // Same-page anchor clicks from the inline TOC inside the
               // mobile menu need to close the menu themselves — otherwise

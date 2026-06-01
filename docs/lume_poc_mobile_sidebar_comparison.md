@@ -250,7 +250,7 @@ lume-poc のほうが仕様準拠。
 - [x] **#3** C: 検索の同一ページハッシュでメニューが閉じない — `search.js`
       の結果 `<a>` クリックで `document.body.classList.remove("menu-open")`
       相当を発火
-- [ ] **#4** D: Esc ハンドラの 2 重発火 — `search.js` 側で `e.stopPropagation()`
+- [x] **#4** D: Esc ハンドラの 2 重発火 — `search.js` 側で `e.stopPropagation()`
       するか、`page.tsx` 側で `openInstance()` がある場合は早期 return
 - [ ] **#5** E: 印刷スタイル無し —
       `@media print { aside.sidebar, .site-header, aside.toc { display:none } }`
