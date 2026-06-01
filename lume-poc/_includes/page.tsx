@@ -175,6 +175,32 @@ export default function Page(
               document.querySelectorAll(".sidebar-toc a").forEach(function(a){
                 a.addEventListener("click",function(){setMenu(false);});
               });
+              // Scrollspy: highlight whichever <emu-clause id=…> is
+              // currently near the top of the viewport in both the
+              // right-rail aside.toc and the inline .sidebar-toc under
+              // the current chapter. Mirrors Nextra's
+              // heading-anchor.client.js (IntersectionObserver with a
+              // top-biased rootMargin: -navbar 0% -80% 0%) feeding the
+              // useActiveAnchor store, which <File> reads to apply the
+              // active class (sidebar.js:248-258).
+              (function(){
+                var header=document.querySelector(".site-header");
+                var navH=header?header.getBoundingClientRect().height:64;
+                var io=new IntersectionObserver(function(entries){
+                  var hit=entries.find(function(e){return e.isIntersecting;});
+                  if(!hit)return;
+                  var id=hit.target.id;
+                  document.querySelectorAll(".sidebar-toc a.active, aside.toc a.active").forEach(function(a){
+                    a.classList.remove("active");
+                  });
+                  document.querySelectorAll(".sidebar-toc a[href='#"+id+"'], aside.toc a[href='#"+id+"']").forEach(function(a){
+                    a.classList.add("active");
+                  });
+                },{rootMargin:"-"+navH+"px 0px -80% 0px"});
+                document.querySelectorAll("#content emu-clause[id]").forEach(function(el){
+                  io.observe(el);
+                });
+              })();
               // Sidebar collapse (desktop): single button in the sidebar
               // footer toggles between full (256px) and narrow (60px). When
               // narrow the menu list is hidden and the footer reflows so

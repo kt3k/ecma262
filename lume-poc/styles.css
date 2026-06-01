@@ -781,6 +781,20 @@ aside.toc li[data-level="1"] > a {
 aside.toc a:hover {
   color: var(--fg);
 }
+/* Scrollspy: the IntersectionObserver in page.tsx tags whichever
+   <emu-clause id=…> currently sits near the top of the viewport, and
+   flips `.active` on the matching <a> in both the right-rail TOC and
+   the inline TOC under the current chapter. Matches Nextra's
+   `classes.active` (sidebar.js:18) — same primary token, semibold. */
+aside.toc a.active,
+aside.sidebar .sidebar-toc a.active {
+  color: hsl(212 100% 35%);
+  font-weight: 600;
+}
+html.dark aside.toc a.active,
+html.dark aside.sidebar .sidebar-toc a.active {
+  color: hsl(204 100% 65%);
+}
 /* Footer row under the TOC list: thin top border, x:py-4 x:mx-4 inset,
    x:gap-2. Holds the "Question? Give us feedback" external link (and a
    stub scroll-to-top button later if we want it). */
