@@ -1231,14 +1231,19 @@ emu-annex {
 /* The section number prefix in headings (`<span class="secnum">5.1.2</span>`).
    A tabular monospace gives the digits a steady column even across
    variable-width headings, with a touch of opacity so the title text leads. */
-.secnum {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
-  font-feature-settings: "tnum";
-  opacity: 0.65;
-  padding-inline-end: 0.4em;
-  font-weight: inherit;
+/* tc39.es ecmarkup.css does just two things with .secnum:
+     h1 .secnum         { text-decoration: none; margin-right: 5px; }
+     h1 .secnum:empty   { margin: 0; padding: 0; }
+   No font / opacity / tabular-numeral tweaks — the section number
+   inherits the same serif and weight as the rest of the heading and
+   sits 5px to the left of the title text. Match that. */
+h1 .secnum {
+  text-decoration: none;
+  margin-right: 5px;
+}
+h1 .secnum:empty {
+  margin: 0;
+  padding: 0;
 }
 
 /* One panel surface — semi-transparent neutral bg + 1px border + radius —
