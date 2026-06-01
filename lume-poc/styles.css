@@ -1370,21 +1370,21 @@ main[data-pagefind-body] :is(h1, h2, h3, h4) {
   letter-spacing: -0.011em;
 }
 
-/* Asymmetric heading rhythm: big lead-in before each section's H1, tight
-   lead-out to the following paragraph. Makes section boundaries pop without
-   inflating intra-section spacing. Sizes are em (relative to the 17px body)
-   so the scale tracks the reading size. Headings are <h1> at every depth —
-   the visual hierarchy is restored by counting <emu-clause> ancestors, the
-   same scheme tc39.es/ecma262 uses. */
+/* Heading sizes — em-relative so they scale with the body reading size.
+   Margins are NOT set here on purpose: tc39.es puts the section break
+   margin on the <emu-clause>/<emu-intro>/<emu-annex> container itself
+   (rules below), not on the heading, so the headings only need their
+   font scale + a margin-bottom of 0 to mirror tc39.es's general
+   `h1 { margin-bottom: 0 }` (ecmarkup.css). The * + * rule further
+   down already supplies the gap from heading to the first paragraph. */
+.ecma-spec :is(emu-clause, emu-intro, emu-annex) > h1 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
 .ecma-spec emu-clause > h1,
 .ecma-spec emu-intro > h1,
 .ecma-spec emu-annex > h1 {
   font-size: 2.1em;
-  /* Nextra's heading.js puts mt-2 (= 0.5rem) on every <h1>; nested h1s
-     get overridden below by their own larger margin-top, so this only
-     ends up applying to the page-top L1 heading — matches Nextra. */
-  margin-top: 0.5rem;
-  margin-bottom: 0.4em;
 }
 .ecma-spec emu-clause emu-clause > h1,
 .ecma-spec emu-clause emu-intro > h1,
@@ -1392,23 +1392,66 @@ main[data-pagefind-body] :is(h1, h2, h3, h4) {
 .ecma-spec emu-intro emu-clause > h1,
 .ecma-spec emu-annex emu-clause > h1 {
   font-size: 1.75em;
-  margin-top: 3.5em;
-  margin-bottom: 0.4em;
 }
 .ecma-spec emu-clause emu-clause emu-clause > h1,
 .ecma-spec emu-clause emu-clause emu-annex > h1,
 .ecma-spec emu-clause emu-annex emu-clause > h1,
 .ecma-spec emu-annex emu-clause emu-clause > h1 {
   font-size: 1.4em;
-  margin-top: 2.5em;
-  margin-bottom: 0.4em;
 }
 .ecma-spec emu-clause emu-clause emu-clause emu-clause > h1,
 .ecma-spec emu-clause emu-clause emu-clause emu-annex > h1,
 .ecma-spec emu-clause emu-clause emu-annex emu-clause > h1 {
   font-size: 1.18em;
+}
+
+/* Section break spacing lives on the clause container, not the heading
+   — mirrors tc39.es's ecmarkup.css emu-clause/intro/annex margin-top
+   scale that shrinks by depth: 4em → 3.12em → 2.5em → 2.22em → 2em
+   → 1.8em. The first clause at the top of the page suppresses its
+   own margin so the article doesn't start with a 4em gap. With our
+   grid layout these clause margins don't collapse with the heading
+   inside, which is why the heading margins above were zeroed out. */
+.ecma-spec :is(emu-clause, emu-intro, emu-annex) {
+  margin-top: 4em;
+}
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex) {
+  margin-top: 3.12em;
+}
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex) {
+  margin-top: 2.5em;
+}
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex) {
+  margin-top: 2.22em;
+}
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex) {
   margin-top: 2em;
-  margin-bottom: 0.4em;
+}
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex) {
+  margin-top: 1.8em;
+}
+.ecma-spec > :is(emu-clause, emu-intro, emu-annex):first-of-type {
+  margin-top: 0;
 }
 
 /* Literal headings inside the clause body (e.g. the spec source's
