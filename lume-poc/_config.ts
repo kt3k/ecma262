@@ -26,6 +26,11 @@ site.copy("search.js");
 // theme's white .hljs background so it sits on the page bg (tc39.es
 // uses the same trick in ecmarkup.css `pre code.hljs { background: 0 0 }`).
 site.copy("hljs-github.css");
+// IBM Plex Mono WOFF2 files (4 weights, slashed-zero variant) — same
+// files tc39.es itself ships at /ecma262/assets/fonts/. Used by the
+// @font-face declarations at the top of styles.css so spec inline
+// <code> renders in Plex Mono like tc39.es rather than a system mono.
+site.copy("fonts");
 
 // Build the per-page right-rail TOC after rendering. Lume parses each .html
 // page's content into a Document on demand (`page.document`); we walk the

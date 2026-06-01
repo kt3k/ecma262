@@ -1,6 +1,41 @@
 /* Styles for spec content rendered via lib/spec/<chapter>.jsx (Sec component
    wraps everything in <div class="ecma-spec">). */
 
+/* IBM Plex Mono — same WOFF2 files tc39.es ships at
+   /ecma262/assets/fonts/, vendored under lume-poc/fonts/. font-display:
+   swap lets system mono render first and the Plex glyphs swap in as
+   soon as they load (no FOIT flash). Four weights cover regular / bold
+   / italic / bold-italic; ecmarkup uses bold-mono for inline <code>
+   and regular-mono inside <pre><code>. */
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-Regular-SlashedZero.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-Bold-SlashedZero.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-Italic-SlashedZero.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-BoldItalic-SlashedZero.woff2") format("woff2");
+}
+
 /* Universal border-box reset — matches Nextra's Tailwind preflight
    (node_modules/nextra-theme-docs/dist/style.css:133-139), which sets
    `*, ::after, ::before, ::backdrop, ::file-selector-button {
@@ -64,7 +99,10 @@
     "Helvetica Neue",
     Arial,
     sans-serif;
+  /* Plex Mono first — declared via @font-face above; falls back to the
+     OS mono stack while it loads and on machines that block webfonts. */
   --font-mono:
+    "IBM Plex Mono",
     ui-monospace,
     "SF Mono",
     Menlo,
