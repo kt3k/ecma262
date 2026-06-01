@@ -157,3 +157,113 @@ lume-poc のほうが仕様準拠。
 それ以外
 (パネル構造・スライドイン・スクロールロック・アクティブ章スクロール・ハンバーガーアニメ)
 は実装方式が違うだけで挙動はほぼ同等。
+
+## 追加調査で見つかった差分
+
+### A. モバイルメニュー内にページ内 TOC が出るかどうか
+
+- **Nextra**: `MobileNav` の `<Menu>` は `directories` (章) と `anchors` (h2
+  配列) の両方を受け取り (`sidebar.js:408`)、アクティブな `File` の下に `<ul>`
+  でインライン展開 (`sidebar.js:249-258`)。`useActiveAnchor()`
+  で現在見出しがハイライトされ、選択すると `handleClick` (`sidebar.js:183`) が
+  `setMenu(false)` を呼んで閉じる。
+- **lume-poc**: モバイル時に `<aside class="toc">` は `display:none`
+  (`styles.css:894` の `@media (max-width:1100px)`)。サイドバー内にも h2
+  アンカーは入っていない。**モバイルでページ内ジャンプする手段が一切ない。**
+
+### B. アクティブ見出しのハイライト (scrollspy)
+
+- **Nextra**: `mdx-components/heading-anchor.client.js:13` で
+  `IntersectionObserver` を作って各見出しを observe → `setActiveSlug(slug)`。
+  Zustand store 経由で `useActiveAnchor()` を購読する MobileNav の `<a>` が
+  `classes.active` を付け替える。
+- **lume-poc**: IntersectionObserver なし。TOC は `_config.ts`
+  のポスト処理で静的にビルドされるだけ。
+
+### C. 検索結果クリック時のメニュー自動クローズ
+
+- **Nextra** (`nextra/dist/client/components/search.js:222-235`):
+  - 同一ページ → `location.href = "#hash"` → `useHash()` 更新 → MobileNav の
+    `useEffect([pathname, hash])` (`sidebar.js:343, 603`) が `setMenu(false)`
+  - 別ページ → `router.push()` → 同じく pathname watcher が閉じる
+- **lume-poc**: 検索結果は素の `<a href="…">` (`search.js:115-119`)。
+  - 別ページ → フル HTML 遷移でメニューごと吹き飛ぶ (OK)
+  - **同一ページの `#hash` → メニューが開いたまま**
+
+### D. Esc キー処理の衝突
+
+- **Nextra**: モバイルメニュー側に Esc ハンドラなし。検索 Combobox (Headless UI)
+  が Esc を自分で食って閉じる。
+- **lume-poc**: `document` レベルに 2 つの keydown リスナーが並存:
+  - `search.js:187-191` — 検索パネルを閉じる
+  - `page.tsx:166-168` — モバイルメニューを閉じる
+  - 検索パネルがメニュー内で開いた状態で Esc → **両方同時に閉じる**
+
+### E. プリントスタイル
+
+- **Nextra**: navbar / sidebar に `x:print:hidden` (`sidebar.js:519`,
+  `navbar/index.js:36`)。
+- **lume-poc**: `@media print` ルールがゼロ。**印刷時に紙面にヘッダーと
+  サイドバーが出る。**
+
+### F. dvh vs vh
+
+- **Nextra デスクトップサイドバー**: `100dvh - navbar` (`style.css:516-517`)。
+- **lume-poc**: `100vh - --header-h` (`styles.css:391`)。
+- モバイル全画面パネルは両者 `inset:0` 系で影響なし。リサイズ過渡や iOS Safari
+  URL バー伸縮で僅差。
+
+### G. role / aria-modal
+
+両者ともモバイルメニューを `<aside>` でレンダー、`role="dialog"` や
+`aria-modal="true"` は付けない。フォーカストラップなし。同等。
+
+### H. リサイズ時の挙動
+
+- **Nextra**: メニューストアはリサイズに反応しない。デスクトップ幅にすると
+  `x:md:hidden` で見えなくなるが store の `hasMenu` は `true` のまま。
+- **lume-poc**: `body.menu-open` も保持される。**ハンバーガーの
+  `aria-expanded="true"` がリサイズ後も残る** (`page.tsx:154`) — a11y
+  ツリーで「開いている」扱いの不整合。
+
+### I. バナー対応
+
+- **Nextra**: `.nextra-banner ~ &` セレクタで MobileNav の `padding-top` を
+  `banner + navbar` 高に拡張 (`sidebar.js:392`)。
+- **lume-poc**: バナー機能なし。将来追加時に padding 調整が必要。
+
+### J. アクティブ章スクロールの境界制御
+
+- **Nextra**: `scroll-into-view-if-needed` で `boundary: sidebar.parentNode`
+  指定 (`sidebar.js:373`)。
+- **lume-poc**: ネイティブ `Element.scrollIntoView()`。boundary なし。
+
+## TODO
+
+実害ベースで降順:
+
+- [ ] **#1** A: モバイル時にページ内 TOC が出ない (主要ナビ機能の欠落) —
+      `_config.ts` で `.current` `<li>` の下に anchor 一覧を
+      inject、`styles.css` で `@media (max-width:1100px)` のとき表示
+- [ ] **#2** B: scrollspy なし — `IntersectionObserver` で active anchor を
+      追跡し、サイドバー TOC とアサイド TOC 両方の `<a>` に `.active` を付与
+- [ ] **#3** C: 検索の同一ページハッシュでメニューが閉じない — `search.js`
+      の結果 `<a>` クリックで `document.body.classList.remove("menu-open")`
+      相当を発火
+- [ ] **#4** D: Esc ハンドラの 2 重発火 — `search.js` 側で `e.stopPropagation()`
+      するか、`page.tsx` 側で `openInstance()` がある場合は早期 return
+- [ ] **#5** E: 印刷スタイル無し —
+      `@media print { aside.sidebar, .site-header, aside.toc { display:none } }`
+- [ ] **#6** H: aria-expanded がリサイズで残る —
+      `matchMedia("(max-width:767px)")` の `change` リスナーで mobile を抜けたら
+      `setMenu(false)` 相当
+- [ ] **#7** F: dvh 未使用 — `100vh` → `100dvh` (フォールバック付き)
+- [ ] **#8** I: バナー対応 — 該当機能が出来てから対応
+
+前回ドキュメントに無かった項目: **A・B・D・E・H**。
+
+### 既出 (上の「実害が出る差」より)
+
+- [ ] **#9** 検索入力が画面幅切り替えで失われる
+- [ ] **#10** モバイルでテーマトグルにアクセス不可
+- [ ] **#11** 同章内アンカークリックでメニューが閉じない (#3 と類似)
