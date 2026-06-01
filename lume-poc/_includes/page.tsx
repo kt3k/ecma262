@@ -163,6 +163,17 @@ export default function Page(
               menuBtn.addEventListener("click",function(){
                 setMenu(!document.body.classList.contains("menu-open"));
               });
+              // Crossing past the mobile breakpoint with the menu still
+              // marked open leaves body.menu-open, html.menu-open and
+              // aria-expanded="true" stale — CSS already hides the panel,
+              // but the a11y tree still reports it as open. Reset state
+              // when we leave mobile width. Nextra doesn't do this
+              // explicitly, but its Tailwind x:md:hidden + Zustand store
+              // mean the visible/state mismatch only surfaces in the
+              // hamburger's aria-pressed; mirror that cleanup ourselves.
+              matchMedia("(max-width: 767px)").addEventListener("change",function(e){
+                if(!e.matches)setMenu(false);
+              });
               document.addEventListener("keydown",function(e){
                 if(e.key!=="Escape")return;
                 // When a search panel is open inside the menu, let

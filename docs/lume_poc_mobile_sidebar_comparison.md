@@ -254,7 +254,7 @@ lume-poc のほうが仕様準拠。
       するか、`page.tsx` 側で `openInstance()` がある場合は早期 return
 - [x] **#5** E: 印刷スタイル無し —
       `@media print { aside.sidebar, .site-header, aside.toc { display:none } }`
-- [ ] **#6** H: aria-expanded がリサイズで残る —
+- [x] **#6** H: aria-expanded がリサイズで残る —
       `matchMedia("(max-width:767px)")` の `change` リスナーで mobile を抜けたら
       `setMenu(false)` 相当
 - [ ] **#7** F: dvh 未使用 — `100vh` → `100dvh` (フォールバック付き)
