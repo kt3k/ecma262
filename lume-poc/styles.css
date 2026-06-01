@@ -1,6 +1,19 @@
 /* Styles for spec content rendered via lib/spec/<chapter>.jsx (Sec component
    wraps everything in <div class="ecma-spec">). */
 
+/* Universal border-box reset — matches Nextra's Tailwind preflight
+   (node_modules/nextra-theme-docs/dist/style.css:133-139), which sets
+   `*, ::after, ::before, ::backdrop, ::file-selector-button {
+   box-sizing: border-box }`. Without this the page inherits the CSS
+   default content-box, so `width: 100%` + horizontal padding silently
+   overflows the parent (the mobile sidebar search input was leaking
+   ~8px past the viewport for exactly that reason). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* ── Page chrome (Lume PoC) ──────────────────────────────────────────────
    Body is a vertical flex stack of header / .layout-wrapper / footer.
    The wrapper itself is a 3-column grid for sidebar / main / TOC; the
