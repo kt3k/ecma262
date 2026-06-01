@@ -220,3 +220,19 @@ document.addEventListener("mousedown", (e) => {
     instances.forEach((inst) => inst.setOpen(false));
   }
 });
+
+// Clicking a search result inside the mobile sidebar must close the
+// menu — otherwise html.menu-open's overflow:hidden blocks the native
+// hash scroll and the panel keeps covering the target. Nextra parity:
+// handleSelect (nextra/dist/client/components/search.js:222-235) sets
+// location.href = "#hash" which fires pathname/hash watchers in
+// MobileNav (sidebar.js:343, 603) and calls setMenu(false). On
+// cross-page results, the full page reload will land on a fresh DOM
+// without the menu-open class, so the same handler is a no-op there.
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search-result")) return;
+  document.body.classList.remove("menu-open");
+  document.documentElement.classList.remove("menu-open");
+  const btn = document.getElementById("menu-toggle");
+  if (btn) btn.setAttribute("aria-expanded", "false");
+});

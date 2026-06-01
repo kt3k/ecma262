@@ -242,12 +242,12 @@ lume-poc のほうが仕様準拠。
 
 実害ベースで降順:
 
-- [ ] **#1** A: モバイル時にページ内 TOC が出ない (主要ナビ機能の欠落) —
+- [x] **#1** A: モバイル時にページ内 TOC が出ない (主要ナビ機能の欠落) —
       `_config.ts` で `.current` `<li>` の下に anchor 一覧を
       inject、`styles.css` で `@media (max-width:1100px)` のとき表示
-- [ ] **#2** B: scrollspy なし — `IntersectionObserver` で active anchor を
+- [x] **#2** B: scrollspy なし — `IntersectionObserver` で active anchor を
       追跡し、サイドバー TOC とアサイド TOC 両方の `<a>` に `.active` を付与
-- [ ] **#3** C: 検索の同一ページハッシュでメニューが閉じない — `search.js`
+- [x] **#3** C: 検索の同一ページハッシュでメニューが閉じない — `search.js`
       の結果 `<a>` クリックで `document.body.classList.remove("menu-open")`
       相当を発火
 - [ ] **#4** D: Esc ハンドラの 2 重発火 — `search.js` 側で `e.stopPropagation()`
