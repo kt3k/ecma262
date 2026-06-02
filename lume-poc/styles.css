@@ -1721,16 +1721,25 @@ html.dark .ecma-spec .hljs-string {
 .ecma-spec emu-nt {
   font-style: italic;
 }
-/* Nonterminal links (<emu-nt> grammar-symbol references) use tc39.es's
-   muted nt-link colour at rest, then turn the standard link-blue on hover.
-   tc39 does this via a specificity quirk: `emu-nt a{color:var(--nt-link-foreground-color)}`
+/* Nonterminal links (<emu-nt> grammar-symbol references) use a muted nt-link
+   colour at rest, then turn the standard link-blue on hover. tc39.es does the
+   hover via a specificity quirk: `emu-nt a{color:var(--nt-link-foreground-color)}`
    (0,0,2) sets the rest colour, but the generic `a:hover{color:var(--link-hover-foreground-color)}`
    (0,1,1) wins on hover — so the muted symbol becomes a prominent blue link
-   under the cursor. We reproduce both states explicitly (rest #333/#d0d0d0,
-   hover #239dee/#80cafb), no underline at rest, underline on hover. */
+   under the cursor. We reproduce both states explicitly, no underline at rest,
+   underline on hover.
+
+   The REST colour is NOT tc39's #333/#d0d0d0. We keep a different body text
+   colour from tc39 (--fg #111827/#e5e7eb vs tc39 #111/#fcfcfc), so reusing
+   tc39's nt-link greys would give a different body↔emu-nt contrast — noticeably
+   flatter in dark mode (1.25:1 vs tc39's 1.50:1). Instead the greys are tuned
+   to reproduce tc39's body↔emu-nt contrast against OUR body: #373737 → 1.49:1
+   on #111827 (tc39 1.49), #bebebe → 1.50:1 on #e5e7eb (tc39 1.50). See
+   docs/lume_poc_tc39_deviations.md §2. Hover blue (#239dee/#80cafb) is
+   unchanged and matches tc39. */
 .ecma-spec emu-nt a,
 .ecma-spec emu-nt a:visited {
-  color: #333;
+  color: #373737;
   text-decoration: none;
 }
 .ecma-spec emu-nt a:hover {
@@ -1740,7 +1749,7 @@ html.dark .ecma-spec .hljs-string {
 }
 html.dark .ecma-spec emu-nt a,
 html.dark .ecma-spec emu-nt a:visited {
-  color: #d0d0d0;
+  color: #bebebe;
 }
 html.dark .ecma-spec emu-nt a:hover {
   color: #80cafb;
