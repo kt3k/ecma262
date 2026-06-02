@@ -1675,23 +1675,28 @@ html.dark .ecma-spec .hljs-string {
   font-style: italic;
 }
 /* Nonterminal links (<emu-nt> grammar-symbol references) use tc39.es's
-   muted nt-link colour rather than the blue cross-reference colour: a
-   near-body grey so the symbol reads as part of the prose, not as a
-   prominent link. No underline at rest, underline on hover (tc39
-   ecmarkup.css `emu-nt a,emu-nt a:visited{color:var(--nt-link-foreground-color)}`
-   over the generic `a`/`a:hover` rules; light #333, dark #d0d0d0). */
+   muted nt-link colour at rest, then turn the standard link-blue on hover.
+   tc39 does this via a specificity quirk: `emu-nt a{color:var(--nt-link-foreground-color)}`
+   (0,0,2) sets the rest colour, but the generic `a:hover{color:var(--link-hover-foreground-color)}`
+   (0,1,1) wins on hover — so the muted symbol becomes a prominent blue link
+   under the cursor. We reproduce both states explicitly (rest #333/#d0d0d0,
+   hover #239dee/#80cafb), no underline at rest, underline on hover. */
 .ecma-spec emu-nt a,
 .ecma-spec emu-nt a:visited {
   color: #333;
   text-decoration: none;
 }
 .ecma-spec emu-nt a:hover {
+  color: #239dee;
   text-decoration: underline;
   text-decoration-color: currentColor;
 }
 html.dark .ecma-spec emu-nt a,
 html.dark .ecma-spec emu-nt a:visited {
   color: #d0d0d0;
+}
+html.dark .ecma-spec emu-nt a:hover {
+  color: #80cafb;
 }
 .ecma-spec emu-const {
   font-variant: small-caps;
