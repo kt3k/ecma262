@@ -1674,6 +1674,25 @@ html.dark .ecma-spec .hljs-string {
 .ecma-spec emu-nt {
   font-style: italic;
 }
+/* Nonterminal links (<emu-nt> grammar-symbol references) use tc39.es's
+   muted nt-link colour rather than the blue cross-reference colour: a
+   near-body grey so the symbol reads as part of the prose, not as a
+   prominent link. No underline at rest, underline on hover (tc39
+   ecmarkup.css `emu-nt a,emu-nt a:visited{color:var(--nt-link-foreground-color)}`
+   over the generic `a`/`a:hover` rules; light #333, dark #d0d0d0). */
+.ecma-spec emu-nt a,
+.ecma-spec emu-nt a:visited {
+  color: #333;
+  text-decoration: none;
+}
+.ecma-spec emu-nt a:hover {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+html.dark .ecma-spec emu-nt a,
+html.dark .ecma-spec emu-nt a:visited {
+  color: #d0d0d0;
+}
 .ecma-spec emu-const {
   font-variant: small-caps;
   /* tc39.es renders emu-const in IBM Plex Sans + uppercase + small-caps
