@@ -1380,6 +1380,12 @@ main[data-pagefind-body] :is(h1, h2, h3, h4) {
 .ecma-spec :is(emu-clause, emu-intro, emu-annex) > h1 {
   margin-top: 0;
   margin-bottom: 0;
+  /* tc39.es applies `line-height: 1em` to every h1 via its generic
+     `h1` rule (ecmarkup.css). Without this our headings inherit
+     main[data-pagefind-body]'s 1.65 ratio so each heading gets a
+     line box ~65% taller than the glyph — tc39's compact 1em ratio
+     keeps the heading flush to its baseline. */
+  line-height: 1em;
 }
 .ecma-spec emu-clause > h1,
 .ecma-spec emu-intro > h1,
