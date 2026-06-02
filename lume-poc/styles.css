@@ -1405,6 +1405,11 @@ main[data-pagefind-body] {
      Serif', serif }` (ecmarkup.css). Scoped to the main reading zone
      so the chrome (header / sidebar / footer) keeps its sans stack. */
   font-family: var(--font-serif);
+  /* tc39.es sets `font-variant-numeric: slashed-zero` on <body>. The Plex
+     SlashedZero subsets we ship already default to a slashed zero, but the
+     property keeps the distinction for any fallback face (and matches tc39
+     explicitly). Scoped here so it rides with the serif reading zone. */
+  font-variant-numeric: slashed-zero;
 }
 /* Headings stay aligned to the prose measure; only tables/figures break out. */
 main[data-pagefind-body] > :is(h1, h2, h3, h4, h5, h6) {
