@@ -595,6 +595,65 @@ const figureNum = new Map();
   }
 }
 
+// Defined terms (<dfn>) → autolink target. Mirrors tc39.es/ecma262's
+// auto-linking: every prose occurrence of a defined term (or one of its
+// `variants`) becomes an <emu-xref><a>…</a></emu-xref> pointing at the term's
+// anchor. A <dfn id="x"> links to #x (the dfn keeps that id, so the element is
+// the target); an id-less <dfn> links to its nearest enclosing clause — which
+// is exactly what ecmarkup does, since it mints no per-term anchor there.
+// Built by scanning the source while tracking the clause-nesting stack, so a
+// dfn's offset resolves both its enclosing clause id and (via the chapter
+// range) its page slug. Keys are lowercased surface forms; matching is
+// case-insensitive (see applyDfnLinkSubst).
+const dfnTargets = new Map();
+{
+  const re =
+    /<(emu-clause|emu-intro|emu-annex)\b([^>]*)>|<\/(?:emu-clause|emu-intro|emu-annex)>|<dfn\b([^>]*)>([\s\S]*?)<\/dfn>/gi;
+  const stack = []; // enclosing clause ids (null when a clause carries none)
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    if (m[1]) {
+      const idm = m[2].match(/\bid="([^"]+)"/);
+      stack.push(idm ? idm[1] : null);
+      continue;
+    }
+    if (m[0].startsWith("</")) {
+      stack.pop();
+      continue;
+    }
+    // <dfn …>…</dfn>
+    const attrs = m[3];
+    const term = decodeEntities(m[4].replace(/<[^>]+>/g, ""))
+      .replace(/\s+/g, " ").trim();
+    if (!term) continue;
+    const idm = attrs.match(/\bid="([^"]+)"/);
+    let id = idm ? idm[1] : null;
+    if (!id) {
+      for (let i = stack.length - 1; i >= 0; i--) {
+        if (stack[i]) {
+          id = stack[i];
+          break;
+        }
+      }
+    }
+    if (!id) continue;
+    const chap = chapters.find(
+      (c) => c.offset <= m.index && m.index < c.endOffset,
+    );
+    if (!chap) continue;
+    const b = built.find((x) => x.id === chap.id);
+    if (!b) continue;
+    const variants = (attrs.match(/\bvariants="([^"]*)"/)?.[1] ?? "")
+      .split(",").map((s) => s.trim()).filter(Boolean);
+    for (const surf of [term, ...variants]) {
+      if (surf.length < 2) continue;
+      const key = surf.toLowerCase();
+      // First definition wins when two dfns share a surface form.
+      if (!dfnTargets.has(key)) dfnTargets.set(key, { slug: b.pageSlug, id });
+    }
+  }
+}
+
 // Add data-num="N" to <emu-table>/<emu-figure> so the caption CSS can render
 // "Table N: <caption>" / "Figure N: <caption>".
 function applyFloatNum(html) {
@@ -1387,6 +1446,83 @@ function applyInlineMarkup(html) {
   return out;
 }
 
+// Auto-link defined terms (see dfnTargets above). Runs LAST in the per-section
+// pipeline — after applyInlineMarkup, so existing links/markup are present and
+// can be skipped — and never inside these tags: existing anchors/xrefs, the
+// defining <dfn>, headings, code/grammar, and the inline-markup elements where
+// the text is already a styled token rather than plain prose.
+const dfnLinkSkipTags = new Set([
+  "a",
+  "dfn",
+  "emu-xref",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "code",
+  "pre",
+  "emu-grammar",
+  "emu-prodref",
+  "emu-nt",
+  "emu-t",
+  "emu-const",
+  "emu-val",
+  "emu-intrinsic",
+  "emu-eqn",
+  "var",
+  "emu-not-ref",
+  "script",
+  "style",
+]);
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// One alternation of every surface form, longest first so multi-word terms win
+// over any shorter term nested inside them. Case-insensitive; \b keeps matches
+// to whole words. Built once (null when there are no defined terms).
+const dfnLinkRe = dfnTargets.size
+  ? new RegExp(
+    `\\b(?:${
+      [...dfnTargets.keys()].sort((a, b) => b.length - a.length).map(escapeRe)
+        .join("|")
+    })\\b`,
+    "gi",
+  )
+  : null;
+function linkDefinedTerms(text) {
+  if (!dfnLinkRe) return text;
+  return text.replace(dfnLinkRe, (match) => {
+    const t = dfnTargets.get(match.toLowerCase());
+    if (!t) return match;
+    const href = `${pathFor(t.slug)}#${t.id}`;
+    return `<emu-xref href="${href}"><a href="${href}">${match}</a></emu-xref>`;
+  });
+}
+function applyDfnLinkSubst(html) {
+  if (!dfnLinkRe) return html;
+  const tagRe = /<\/?([a-zA-Z][a-zA-Z0-9-]*)\b[^>]*>|<!--[\s\S]*?-->/g;
+  let out = "";
+  let last = 0;
+  let skipDepth = 0;
+  let m;
+  while ((m = tagRe.exec(html)) !== null) {
+    const text = html.slice(last, m.index);
+    out += skipDepth === 0 ? linkDefinedTerms(text) : text;
+    out += m[0];
+    if (m[1]) {
+      const tag = m[1].toLowerCase();
+      if (dfnLinkSkipTags.has(tag)) {
+        if (m[0].startsWith("</")) skipDepth = Math.max(0, skipDepth - 1);
+        else if (!m[0].endsWith("/>")) skipDepth++;
+      }
+    }
+    last = tagRe.lastIndex;
+  }
+  const tail = html.slice(last);
+  out += skipDepth === 0 ? linkDefinedTerms(tail) : tail;
+  return out;
+}
+
 fs.rmSync(CONTENT_DIR, { recursive: true, force: true });
 fs.rmSync(LIB_DIR, { recursive: true, force: true });
 fs.mkdirSync(CONTENT_DIR, { recursive: true });
@@ -1398,13 +1534,15 @@ built.forEach((c) => {
   const { slug, pageSlug, chapterNum, tree } = c;
   const sections = flattenTree(tree).map(([k, v]) => [
     k,
-    applyInlineMarkup(
-      applyXrefSubst(
-        applyProdrefSubst(
-          applyEqnInlineSubst(
-            applyGrammarSubst(
-              applyAlgSubst(
-                applyHljsSubst(applyFloatNum(applyNoteNum(v))),
+    applyDfnLinkSubst(
+      applyInlineMarkup(
+        applyXrefSubst(
+          applyProdrefSubst(
+            applyEqnInlineSubst(
+              applyGrammarSubst(
+                applyAlgSubst(
+                  applyHljsSubst(applyFloatNum(applyNoteNum(v))),
+                ),
               ),
             ),
           ),
