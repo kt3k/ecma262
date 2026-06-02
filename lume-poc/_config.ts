@@ -23,14 +23,15 @@ site.use(jsx());
 // Lume's MDX uses rehype). The visual hierarchy comes back from the
 // <emu-clause> nesting depth, the same scheme tc39.es/ecma262 uses.
 //
-// deno-lint-ignore no-explicit-any
 function rehypeFlattenHeadings() {
+  // deno-lint-ignore no-explicit-any
   return (tree: any) => {
+    // deno-lint-ignore no-explicit-any
     const walk = (node: any) => {
       if (node.type === "element" && /^h[2-6]$/.test(node.tagName)) {
         node.tagName = "h1";
       }
-      if (node.children) for (const c of node.children) walk(c);
+      if (node.children) { for (const c of node.children) walk(c); }
     };
     walk(tree);
   };
@@ -57,6 +58,9 @@ site.copy("hljs-github.css");
 // @font-face declarations at the top of styles.css so spec inline
 // <code> renders in Plex Mono like tc39.es rather than a system mono.
 site.copy("fonts");
+// Lume logo, shipped as the site favicon (see the <link rel="icon"> in
+// _includes/page.tsx). Downloaded from lume.land/favicon.svg.
+site.copy("favicon.svg");
 
 // Build the per-page right-rail TOC after rendering. Lume parses each .html
 // page's content into a Document on demand (`page.document`); we walk the

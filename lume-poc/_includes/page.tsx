@@ -35,6 +35,16 @@ export default function Page(
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title ?? "ECMA-262"}</title>
         {
+          /* Lume logo as the favicon (PoC marker). SVG adapts its mark to
+            light/dark via prefers-color-scheme. basePath-prefixed so it
+            resolves under a sub-path deploy too. */
+        }
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href={`${basePath}/favicon.svg`}
+        />
+        {
           /* Set the theme class before any styles apply so returning visitors
             don't see a light-mode flash. Reads localStorage with a
             prefers-color-scheme fallback. The matching click handler is
