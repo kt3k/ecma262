@@ -1395,29 +1395,54 @@ main[data-pagefind-body] :is(h1, h2, h3, h4) {
      line box ~65% taller than the glyph — tc39's compact 1em ratio
      keeps the heading flush to its baseline. */
   line-height: 1em;
+  /* Section-heading scale ported straight from tc39.es ecmarkup.css
+     (emu-clause/intro/annex h1 by depth: 2 / 1.56 / 1.25 / 1.11 / 1 / .9em),
+     rescaled ×18/17 so the rendered px match tc39's 18px body base while our
+     17px reading base stays unchanged. Depth = emu-clause/intro/annex
+     ancestor count; the deeper rule wins by specificity (more :is()
+     compounds), the same mechanism as the section-margin scale below.
+     This rule is depth-1; depths 2–6 override it below. */
+  font-size: calc(2em * 18 / 17);
 }
-.ecma-spec emu-clause > h1,
-.ecma-spec emu-intro > h1,
-.ecma-spec emu-annex > h1 {
-  font-size: 2.1em;
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  > h1 {
+  font-size: calc(1.56em * 18 / 17);
 }
-.ecma-spec emu-clause emu-clause > h1,
-.ecma-spec emu-clause emu-intro > h1,
-.ecma-spec emu-clause emu-annex > h1,
-.ecma-spec emu-intro emu-clause > h1,
-.ecma-spec emu-annex emu-clause > h1 {
-  font-size: 1.75em;
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  > h1 {
+  font-size: calc(1.25em * 18 / 17);
 }
-.ecma-spec emu-clause emu-clause emu-clause > h1,
-.ecma-spec emu-clause emu-clause emu-annex > h1,
-.ecma-spec emu-clause emu-annex emu-clause > h1,
-.ecma-spec emu-annex emu-clause emu-clause > h1 {
-  font-size: 1.4em;
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  > h1 {
+  font-size: calc(1.11em * 18 / 17);
 }
-.ecma-spec emu-clause emu-clause emu-clause emu-clause > h1,
-.ecma-spec emu-clause emu-clause emu-clause emu-annex > h1,
-.ecma-spec emu-clause emu-clause emu-annex emu-clause > h1 {
-  font-size: 1.18em;
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  > h1 {
+  font-size: calc(1em * 18 / 17);
+}
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  > h1 {
+  font-size: calc(0.9em * 18 / 17);
 }
 
 /* Section break spacing lives on the clause container, not the heading
@@ -1565,8 +1590,9 @@ html.dark .ecma-spec .hljs-string {
   padding: 0.75em 1em;
   margin-block: 1em;
   overflow-x: auto;
+  /* tc39.es puts no font-size on emu-grammar[type=definition], so the
+     production text renders at the body size (1em). */
   font-family: inherit;
-  font-size: 0.9em;
   line-height: 1.5;
 }
 /* Inline grammar (mid-paragraph) — flat, no panel chrome. */
@@ -1628,9 +1654,11 @@ html.dark .ecma-spec .hljs-string {
   font-variant: small-caps;
   /* tc39.es renders emu-const in IBM Plex Sans + uppercase + small-caps
      (ecmarkup.css `emu-const { font-family:'IBM Plex Sans',sans-serif;
-     font-variant:small-caps; text-transform:uppercase }`). Sans pulls
-     it away from the surrounding serif body so well-known-constant
-     names stand out. */
+     font-variant:small-caps; text-transform:uppercase }`). We keep our
+     system-sans token (--font-sans) rather than loading IBM Plex Sans,
+     but match tc39's uppercase + small-caps so well-known-constant names
+     stand out from the surrounding serif body. */
+  text-transform: uppercase;
   font-family: var(--font-sans);
 }
 /* Spec values (true/false/null/undefined/error names from `*foo*`) — bold,
@@ -1693,22 +1721,40 @@ html.dark .ecma-spec .hljs-string {
   font-weight: 700;
 }
 .ecma-spec emu-grammar emu-params,
-.ecma-spec emu-grammar emu-constraints,
 .ecma-spec emu-grammar emu-gann,
 .ecma-spec emu-grammar emu-gmod {
   font-family: var(--font-mono);
   font-size: 0.85em;
   opacity: 0.75;
 }
+/* tc39.es: `emu-constraints { font-size: .75em }` with NO font-family
+   override, so it stays in the serif body font — unlike the mono grammar
+   annotations above. */
+.ecma-spec emu-grammar emu-constraints {
+  font-size: 0.75em;
+  opacity: 0.75;
+}
+/* tc39.es: `emu-opt { font-family:'IBM Plex Mono',monospace }` with no
+   font-size or vertical-align — rendered inline at full size, not as a
+   sub/superscript. */
 .ecma-spec emu-grammar emu-opt {
   font-family: var(--font-mono);
-  vertical-align: super;
-  font-size: 0.75em;
+}
+/* tc39.es: `emu-mods { font-size:.85em; vertical-align:sub;
+   font-style:normal; font-weight:400 }` (the `?`/`*`/`+` style modifiers). */
+.ecma-spec emu-grammar emu-mods {
+  font-size: 0.85em;
+  vertical-align: sub;
+  font-style: normal;
+  font-weight: 400;
 }
 .ecma-spec emu-grammar emu-gprose {
   font-style: italic;
   opacity: 0.8;
-  /* tc39.es: `emu-gprose { font-family:'IBM Plex Sans',sans-serif }`. */
+  /* tc39.es: `emu-gprose { font-size:.9em; font-family:'IBM Plex Sans',
+     sans-serif }`. We keep our system-sans token (--font-sans) rather than
+     loading IBM Plex Sans, but match the .9em size. */
+  font-size: 0.9em;
   font-family: var(--font-sans);
 }
 .ecma-spec emu-grammar .cm {
