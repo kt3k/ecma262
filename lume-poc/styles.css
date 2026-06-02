@@ -6,34 +6,40 @@
    swap lets system mono render first and the Plex glyphs swap in as
    soon as they load (no FOIT flash). Four weights cover regular / bold
    / italic / bold-italic; ecmarkup uses bold-mono for inline <code>
-   and regular-mono inside <pre><code>. */
+   and regular-mono inside <pre><code>.
+
+   NOTE: keep the src url() RELATIVE ("fonts/…", no leading slash). url()
+   resolves against this stylesheet's own location, so a relative path
+   works whether the site is served from the origin root (local PoC) or a
+   sub-path (GitHub Pages /ecma262/…). A leading-slash "/fonts/…" would
+   resolve to the origin root and 404 under any base path. */
 @font-face {
   font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/IBMPlexMono-Regular-SlashedZero.woff2") format("woff2");
+  src: url("fonts/IBMPlexMono-Regular-SlashedZero.woff2") format("woff2");
 }
 @font-face {
   font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("/fonts/IBMPlexMono-Bold-SlashedZero.woff2") format("woff2");
+  src: url("fonts/IBMPlexMono-Bold-SlashedZero.woff2") format("woff2");
 }
 @font-face {
   font-family: "IBM Plex Mono";
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/IBMPlexMono-Italic-SlashedZero.woff2") format("woff2");
+  src: url("fonts/IBMPlexMono-Italic-SlashedZero.woff2") format("woff2");
 }
 @font-face {
   font-family: "IBM Plex Mono";
   font-style: italic;
   font-weight: 700;
   font-display: swap;
-  src: url("/fonts/IBMPlexMono-BoldItalic-SlashedZero.woff2") format("woff2");
+  src: url("fonts/IBMPlexMono-BoldItalic-SlashedZero.woff2") format("woff2");
 }
 
 /* IBM Plex Serif — the body typeface tc39.es/ecma262 ships (ecmarkup.css
@@ -46,28 +52,28 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/IBMPlexSerif-Regular-SlashedZero.woff2") format("woff2");
+  src: url("fonts/IBMPlexSerif-Regular-SlashedZero.woff2") format("woff2");
 }
 @font-face {
   font-family: "IBM Plex Serif";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("/fonts/IBMPlexSerif-Bold-SlashedZero.woff2") format("woff2");
+  src: url("fonts/IBMPlexSerif-Bold-SlashedZero.woff2") format("woff2");
 }
 @font-face {
   font-family: "IBM Plex Serif";
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/IBMPlexSerif-Italic-SlashedZero.woff2") format("woff2");
+  src: url("fonts/IBMPlexSerif-Italic-SlashedZero.woff2") format("woff2");
 }
 @font-face {
   font-family: "IBM Plex Serif";
   font-style: italic;
   font-weight: 700;
   font-display: swap;
-  src: url("/fonts/IBMPlexSerif-BoldItalic-SlashedZero.woff2") format("woff2");
+  src: url("fonts/IBMPlexSerif-BoldItalic-SlashedZero.woff2") format("woff2");
 }
 
 /* Universal border-box reset — matches Nextra's Tailwind preflight
