@@ -1522,6 +1522,30 @@ main[data-pagefind-body]
   text-decoration-color: currentColor;
 }
 
+/* Cross-reference links (<emu-xref>) follow tc39.es's anchor treatment
+   rather than the faint-underline body-link style above: a blue link with
+   no underline at rest, gaining an underline + brighter blue on hover.
+   tc39 ecmarkup.css: `a{text-decoration:none;color:#206ca7}` /
+   `a:hover{text-decoration:underline;color:#239dee}` (dark: #439de2 /
+   #80cafb). Scoped to emu-xref so prose links keep the body-link style. */
+.ecma-spec emu-xref a,
+.ecma-spec emu-xref a:visited {
+  color: #206ca7;
+  text-decoration: none;
+}
+.ecma-spec emu-xref a:hover {
+  color: #239dee;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+html.dark .ecma-spec emu-xref a,
+html.dark .ecma-spec emu-xref a:visited {
+  color: #439de2;
+}
+html.dark .ecma-spec emu-xref a:hover {
+  color: #80cafb;
+}
+
 /* Zero out the GitHub theme's chrome on <pre><code class="hljs">: the
    theme sets `padding: 1em` on the outer code (so the syntax colours
    sit inside a white-or-tinted block) but the surrounding <pre> already
