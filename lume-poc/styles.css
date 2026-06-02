@@ -879,6 +879,15 @@ aside.toc ol {
 aside.toc li {
   margin: 0.5rem 0; /* x:my-2 */
 }
+/* nextra renders the TOC section number (.secnum) in monospace, whose taller
+   glyph box lifts each TOC line box by ~0.5px on 2x displays; lume keeps the
+   number in the sans body font (by design), so each line sits 0.5px shorter.
+   Add that 0.5px back to the gap between rows so the overall TOC rhythm tracks
+   nextra. li margins collapse, so nudging only li+li's top margin (max(8, 8.5)
+   = 8.5px gap) keeps the first/last row flush at 8px like nextra. */
+aside.toc li + li {
+  margin-top: calc(0.5rem + 0.5px);
+}
 /* Depth-based indent matches Nextra's x:ms-3 (12px) / x:ms-6 (24px) /
    x:ms-9 (36px) on nested headings. Depth comes from _config.ts based
    on how many <emu-clause> ancestors a section has. */
