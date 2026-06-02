@@ -36,6 +36,40 @@
   src: url("/fonts/IBMPlexMono-BoldItalic-SlashedZero.woff2") format("woff2");
 }
 
+/* IBM Plex Serif — the body typeface tc39.es/ecma262 ships (ecmarkup.css
+   `body { font-family: 'IBM Plex Serif', serif }`). Same SlashedZero subset
+   tc39 serves from /assets/fonts, so digits read with a slashed zero. Four
+   faces (regular/bold/italic/bold-italic) cover the spec's prose, <emu-val>
+   bold, and italic emphasis. */
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/IBMPlexSerif-Regular-SlashedZero.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/IBMPlexSerif-Bold-SlashedZero.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/IBMPlexSerif-Italic-SlashedZero.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/IBMPlexSerif-BoldItalic-SlashedZero.woff2") format("woff2");
+}
+
 /* Universal border-box reset — matches Nextra's Tailwind preflight
    (node_modules/nextra-theme-docs/dist/style.css:133-139), which sets
    `*, ::after, ::before, ::backdrop, ::file-selector-button {
@@ -69,20 +103,19 @@
   --content-max-w: 90rem; /* matches Nextra's --nextra-content-width (1440px) */
   --header-h: 4rem; /* matches Nextra's --nextra-navbar-height: 64px */
 
-  /* Body / spec typography — system-font approximations of the three
-     IBM Plex families tc39.es ships:
-       - Plex Serif (body) ≈ Charter (macOS) / Cambria (Windows) /
-         Georgia. Both Charter and Cambria are humanist screen-reading
-         serifs with similar low contrast and x-height.
+  /* Body / spec typography — the IBM Plex families tc39.es ships:
+       - Plex Serif (body) — loaded via @font-face above, so the reading
+         zone matches tc39 exactly; Charter / Cambria / Georgia remain as
+         fallbacks for the brief swap window or a failed font load.
        - Plex Sans (emu-const / emu-gprose / figcaption) ≈ Segoe UI
          (Windows) / -apple-system (= SF Pro on macOS), both humanist
          sans in the same family Plex Sans belongs to.
-       - Plex Mono (emu-t / emu-opt / emu-params / inline code) ≈
-         ui-monospace (resolves to SF Mono on macOS, Cascadia Mono on
-         recent Windows) — both humanist monos like Plex Mono.
+       - Plex Mono (emu-t / emu-opt / emu-params / inline code) — loaded
+         via @font-face above (leads the --font-mono stack below).
      Used only inside the spec body so the page chrome (header,
      sidebar, footer) keeps its Nextra-matching sans stack. */
   --font-serif:
+    "IBM Plex Serif",
     Charter,
     "Bitstream Charter",
     Cambria,
@@ -1363,7 +1396,10 @@ h1 .secnum:empty {
    scale so headings track the body size. */
 main[data-pagefind-body] {
   --ecma-measure: 45rem;
-  font-size: 1.0625rem;
+  /* 18px, matching tc39.es's `body { font-size: 18px }` (ecmarkup.css).
+     line-height ratio stays 1.65 (tc39 uses 1.5 — we keep the slightly
+     airier measure deliberately). */
+  font-size: 1.125rem;
   line-height: 1.65;
   /* Serif body text mirrors tc39.es's `body { font-family: 'IBM Plex
      Serif', serif }` (ecmarkup.css). Scoped to the main reading zone
@@ -1396,43 +1432,34 @@ main[data-pagefind-body] :is(h1, h2, h3, h4) {
      keeps the heading flush to its baseline. */
   line-height: 1em;
   /* Section-heading scale ported straight from tc39.es ecmarkup.css
-     (emu-clause/intro/annex h1 by depth: 2 / 1.56 / 1.25 / 1.11 / 1 / .9em),
-     rescaled ×18/17 so the rendered px match tc39's 18px body base while our
-     17px reading base stays unchanged. Depth = emu-clause/intro/annex
+     (emu-clause/intro/annex h1 by depth: 2 / 1.56 / 1.25 / 1.11 / 1 / .9em).
+     Now that the reading base is tc39's 18px (above), these em values land
+     on tc39's exact px with no rescaling. Depth = emu-clause/intro/annex
      ancestor count; the deeper rule wins by specificity (more :is()
      compounds), the same mechanism as the section-margin scale below.
      This rule is depth-1; depths 2–6 override it below. */
-  font-size: calc(2em * 18 / 17);
+  font-size: 2em;
 }
 .ecma-spec
   :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
   > h1 {
-  font-size: calc(1.56em * 18 / 17);
+  font-size: 1.56em;
 }
 .ecma-spec
   :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
   > h1 {
-  font-size: calc(1.25em * 18 / 17);
-}
-.ecma-spec
-  :is(emu-clause, emu-intro, emu-annex)
-  :is(emu-clause, emu-intro, emu-annex)
-  :is(emu-clause, emu-intro, emu-annex)
-  :is(emu-clause, emu-intro, emu-annex)
-  > h1 {
-  font-size: calc(1.11em * 18 / 17);
+  font-size: 1.25em;
 }
 .ecma-spec
   :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
-  :is(emu-clause, emu-intro, emu-annex)
   > h1 {
-  font-size: calc(1em * 18 / 17);
+  font-size: 1.11em;
 }
 .ecma-spec
   :is(emu-clause, emu-intro, emu-annex)
@@ -1440,9 +1467,18 @@ main[data-pagefind-body] :is(h1, h2, h3, h4) {
   :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
+  > h1 {
+  font-size: 1em;
+}
+.ecma-spec
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
+  :is(emu-clause, emu-intro, emu-annex)
   :is(emu-clause, emu-intro, emu-annex)
   > h1 {
-  font-size: calc(0.9em * 18 / 17);
+  font-size: 0.9em;
 }
 
 /* Section break spacing lives on the clause container, not the heading
