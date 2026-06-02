@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import process from "node:process";
 import { parseArgs } from "node:util";
 import hljs from "highlight.js";
 
@@ -685,7 +686,7 @@ function numberNotes(html) {
   // accordingly (and add data-num=N when there are several in this clause).
   let i = 0;
   const noteRe = /<emu-note\b([^>]*)>([\s\S]*?)<\/emu-note>/g;
-  const out = html.replace(noteRe, (full, attrs, inner) => {
+  const out = html.replace(noteRe, (_full, attrs, inner) => {
     i++;
     const idm = attrs.match(/\bid="([^"]+)"/);
     if (multi && idm) found.push({ id: idm[1], label: `Note ${i}` });
@@ -1074,9 +1075,9 @@ function applyAlgSubst(html) {
   );
 }
 
-// Tokenize one grammar source line into wrapped HTML elements. `isLhs` flags
-// the first non-blank line of a production so its leading nonterminal gets the
-// ".lhs" class for bolding.
+// Tokenize one grammar source line into wrapped HTML elements. (The LHS
+// nonterminal needs no special marking: it's distinguished positionally as the
+// <emu-nt> that's a direct child of <emu-production>, matching tc39.es.)
 //   • // ...           → <span class="cm">…</span>           (ecmarkup pragma)
 //   • &gt; rest of line → <emu-gprose>…</emu-gprose>          (prose description)
 //   • `foo`            → <emu-t>foo</emu-t>                  (terminal)
@@ -1089,7 +1090,7 @@ function applyAlgSubst(html) {
 // Trailing modifiers ([params] and ?/*/+) that sit flush against an <emu-nt>
 // (no intervening whitespace) get nested inside it as <emu-mods> children,
 // matching tc39.es/ecma262's serialization.
-function tokenizeGrammarLine(line, isLhs) {
+function tokenizeGrammarLine(line) {
   if (!line.trim()) return line;
   if (/^\s*\/\//.test(line)) return `<span class="cm">${line}</span>`;
   const descM = line.match(/^([ \t]*)(&gt;\s.*)$/);
@@ -1097,7 +1098,6 @@ function tokenizeGrammarLine(line, isLhs) {
 
   let out = "";
   let i = 0;
-  let lhsClaimed = !isLhs;
   while (i < line.length) {
     const ch = line[i];
     if (ch === " " || ch === "\t") {
@@ -1137,7 +1137,7 @@ function tokenizeGrammarLine(line, isLhs) {
         : "emu-constraints";
       const inner = tag === "emu-constraints"
         ? content
-        : tokenizeGrammarLine(content, false);
+        : tokenizeGrammarLine(content);
       out += `<${tag}>[${inner}]</${tag}>`;
       i = end + 1;
       continue;
@@ -1182,7 +1182,6 @@ function tokenizeGrammarLine(line, isLhs) {
       // it out via the positional selector `emu-production > emu-nt` rather
       // than a class — we follow suit and drop the .lhs class.
       out += `<emu-nt>${inner}</emu-nt>`;
-      lhsClaimed = true;
       i = j;
       continue;
     }
@@ -1225,7 +1224,7 @@ function tokenizeGrammarProduction(chunk) {
       continue;
     }
     if (isFirst) {
-      const tokenized = tokenizeGrammarLine(line, true);
+      const tokenized = tokenizeGrammarLine(line);
       // Split the tokenized first line at the </emu-geq> closing tag so
       // anything after it can be wrapped in <emu-rhs> (or stand alone if it's
       // an <emu-oneof>).
@@ -1264,7 +1263,7 @@ function tokenizeGrammarProduction(chunk) {
       const leadingWs = line.match(/^\s*/)[0];
       const rest = line.slice(leadingWs.length);
       body += leadingWs +
-        `<emu-rhs>${tokenizeGrammarLine(rest, false)}</emu-rhs>`;
+        `<emu-rhs>${tokenizeGrammarLine(rest)}</emu-rhs>`;
     }
   }
   const prodAttrs = lhs ? ` id="prod-${lhs}" name="${lhs}"` : "";
@@ -1293,7 +1292,7 @@ function tokenizeGrammarBlock(text) {
 // mid-paragraph, e.g. "MV of <emu-grammar>DecimalDigit :: `0`</emu-grammar>").
 // No <emu-production>/<emu-rhs> wrapping — tc39's inline form is flat.
 function tokenizeGrammarInline(text) {
-  return tokenizeGrammarLine(text, true);
+  return tokenizeGrammarLine(text);
 }
 
 // Render <emu-grammar> blocks with token-aware tokenization so non-terminals,
@@ -1306,7 +1305,7 @@ function tokenizeGrammarInline(text) {
 function applyGrammarSubst(html) {
   return html.replace(
     /<emu-grammar([^>]*?)>([\s\S]*?)<\/emu-grammar>/g,
-    (full, _attrs, inner, offset, source) => {
+    (_full, _attrs, inner, offset, source) => {
       const lineStart = source.lastIndexOf("\n", offset - 1) + 1;
       const isBlock = source.slice(lineStart, offset).trim() === "";
       const trimmed = inner.replace(/^\s*\n/, "").replace(/\n\s*$/, "");
@@ -1416,7 +1415,10 @@ function transformInlineText(text) {
     /\[\[([A-Z][A-Za-z0-9_]*)\]\]/g,
     '<var class="field">[[$1]]</var>',
   );
+  // The \x00 placeholder sentinel (set above) marks pulled-out backtick runs;
+  // it never occurs in real spec text, so matching it directly is safe.
   return out.replace(
+    // deno-lint-ignore no-control-regex
     /\x00(\d+)\x00/g,
     (_, i) => `<code>${code[Number(i)]}</code>`,
   );
