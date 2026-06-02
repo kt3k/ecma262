@@ -379,30 +379,135 @@ grid layout なので heading と clause の margin は collapse せず加算
    `.ecma-spec :is(emu-clause, emu-intro, emu-annex) > * + * { margin-top: 1.5em }`
    rhythm rule が引き続き供給するので、heading の lead-out は変わらない。
 
+## 7. h1 の line-height (commit `87c6144`)
+
+### 比較
+
+tc39.es は generic h1 rule で `line-height: 1em` を当てている (=
+フォントサイズと 同じ高さ、行 box が glyph に張り付く):
+
+```css
+h1 {
+  font-size: 2.67em;
+  margin-bottom: 0;
+  line-height: 1em;
+}
+```
+
+font-size はマルチページ版だと `emu-clause h1 { font-size: 2em }`
+がチャプタートップに 当たって 36px、lume-poc も 2.1em × 17px = 35.7px とほぼ一致
+(~1% 差) なので font-size は据え置き。
+
+lume-poc (旧) は h1 に line-height 指定無し → `main[data-pagefind-body]` の
+`1.65` が 継承され、行 box が glyph の ~1.65 倍。tc39.es より上下に約 65%
+の余白が入る。
+
+### 対応 (`87c6144`)
+
+既存の zero-margin ブロックに `line-height: 1em` を追加:
+
+```css
+.ecma-spec :is(emu-clause, emu-intro, emu-annex) > h1 {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1em; /* 追加 */
+}
+```
+
+font-size scale (2.1em / 1.75em / 1.4em / 1.18em) は手付かず。
+
+## 8. h2-h6 → h1 flatten (commit `13fa2a9`)
+
+### 経緯
+
+ここまでの heading 関連 CSS (font-size scale、`line-height: 1em`、margin 撤去)
+は すべて `.ecma-spec emu-clause emu-clause > h1` のような **h1
+ターゲットのセレクタ** で書かれていた。しかし lume-poc の MDX は
+`##`/`###`/`####` を素直に `<h2>`/`<h3>`/`<h4>` に変換してて、CSS ルールが **L2
+以下にマッチしない** ことが 判明。
+
+- ビルド済み HTML: `1 <h1>, 3 <h2>, 13 <h3>, 14 <h4>` (notational-conventions
+  ページ)
+- L2 以下は **CSS ルールではなくブラウザのデフォルト** (h2 ~1.5em / h3 ~1.17em /
+  h4 ~1em + 本文の line-height 1.65 継承) で描画されていた
+- 直前の `line-height: 1em` も L1 にしか効いていなかった
+
+`git log -S "markdown-derived" -- lume-poc/` で確認したところ、最初の lume-poc
+移行 プラン commit `819e78d` に既に書かれていた:
+
+> "Heading levels remain markdown-derived (h1-h4 by depth) instead of the all-h1
+> trick; a rehype plugin could flatten if exact parity is wanted."
+
+つまり最初から保留扱い。Nextra 版
+(`packages/site-draft-nextra/mdx-components.jsx`) は React MDX components の
+`h2: h1AsH1, h3: h1AsH1, ...` で同等のことをしているが、Lume の MDX は別系統
+なので別途必要。
+
+### 対応 (`13fa2a9`)
+
+`_config.ts` に小さな rehype プラグインを書いて `mdx({ rehypePlugins: [...] })`
+に 渡す:
+
+```ts
+// deno-lint-ignore no-explicit-any
+function rehypeFlattenHeadings() {
+  return (tree: any) => {
+    const walk = (node: any) => {
+      if (node.type === "element" && /^h[2-6]$/.test(node.tagName)) {
+        node.tagName = "h1";
+      }
+      if (node.children) { for (const c of node.children) walk(c); }
+    };
+    walk(tree);
+  };
+}
+
+site.use(mdx({
+  rehypePlugins: [rehypeFlattenHeadings],
+}));
+```
+
+### 効果
+
+ビルド結果の heading 内訳: `30 <h1>, 1 <h2>`。残った 1 個の `<h2>` は右ペイン
+TOC の "On this page" ラベル (`aside.toc h2`、`page.tsx` で UI として描画)。spec
+本文の heading は全部 `<h1>` に flatten された。
+
+これでようやく以下の既存 CSS が **全 heading にマッチ** するようになる:
+
+- `.ecma-spec :is(emu-clause, emu-intro, emu-annex) > h1 { line-height: 1em; margin: 0 }`
+- `.ecma-spec emu-clause emu-clause > h1 { font-size: 1.75em }` (L2
+  用、これまで素通り)
+- 同 L3 / L4 用ルール
+
+(L1 だけは emu-clause 直下の h1 = MDX 元の `#` も rehype 後の `<h1>` も同じ)
+
 ## 残課題 / 今後の候補
 
-- font-size scale: tc39.es は 2.67em / 2em / 1.56em / 1.25em / 1.11em / 1em /
-  0.9em のスケール、lume-poc は 2.1em / 1.75em / 1.4em / 1.18em 止まり。tc39.es
-  に合わせる場合は深い階層 (L5, L6, L7+) の rule も 追加が必要。
-- line-height: tc39.es body は 1.5、lume-poc は 1.65 で緩め。h1 は tc39.es
-  `1em`、lume-poc は body 値継承。
+- font-size scale の深い階層: tc39.es は 2.67em / 2em / 1.56em / 1.25em / 1.11em
+  / 1em / 0.9em の 7 段階。lume-poc は 2.1em / 1.75em / 1.4em / 1.18em の 4 段階
+  止まり。L5 以下は本文サイズと同じ。深い階層が出てくるページでは追加要。
+- body line-height: tc39.es は 1.5、lume-poc は 1.65 で緩め。h1 は 7. で揃えたが
+  本文段落側は未調整。
 - IBM Plex Sans を webfont として同梱する選択肢 (今は system sans stack:
   `-apple-system` / Segoe UI / Cantarell でフォールバック)。
 - IBM Plex Serif の webfont 化 (同上)。tc39.es は本文も Plex Serif で vendoring
-  済み。system fallback Charter / Cambria / Georgia の見た目
-  に違和感が出るなら検討。
-- 内部 `<a>` のスタイル: tc39.es は下線なし (色のみ)、lume-poc は薄い 下線あり。
+  済み。system fallback Charter / Cambria / Georgia
+  の見た目に違和感が出るなら検討。
+- 内部 `<a>` のスタイル: tc39.es は下線なし (色のみ)、lume-poc は薄い下線あり。
 - `<emu-mods>` の sub-script スタイル (tc39.es:
   `font-size: 0.85em;
   vertical-align: sub`)。
 
 ## 関連 commit リスト
 
-| commit    | 内容                                                               |
-| --------- | ------------------------------------------------------------------ |
-| `4ca4be6` | 本文 font-family / font-weight を tc39.es 寄せ                     |
-| `a7a20f6` | highlight.js github テーマを vendored + chrome ゼロアウト          |
-| `703413d` | inline `<code>` の chip を撤去、bold mono のみに                   |
-| `0357d8d` | IBM Plex Mono WOFF2 4 weight vendoring                             |
-| `763bd15` | `.secnum` を tc39.es ルールに統合 (mono / opacity / tnum 削除)     |
-| `879bf48` | heading の margin を撤去し emu-clause depth 別 `margin-top` に移動 |
+| commit    | 内容                                                                             |
+| --------- | -------------------------------------------------------------------------------- |
+| `4ca4be6` | 本文 font-family / font-weight を tc39.es 寄せ                                   |
+| `a7a20f6` | highlight.js github テーマを vendored + chrome ゼロアウト                        |
+| `703413d` | inline `<code>` の chip を撤去、bold mono のみに                                 |
+| `0357d8d` | IBM Plex Mono WOFF2 4 weight vendoring                                           |
+| `763bd15` | `.secnum` を tc39.es ルールに統合 (mono / opacity / tnum 削除)                   |
+| `879bf48` | heading の margin を撤去し emu-clause depth 別 `margin-top` に移動               |
+| `87c6144` | spec h1 に `line-height: 1em` を追加 (tc39.es generic h1 rule 相当)              |
+| `13fa2a9` | rehype プラグインで MDX h2-h6 を h1 に flatten、depth 別 CSS が全 heading に有効 |
