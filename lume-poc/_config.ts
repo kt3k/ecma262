@@ -12,7 +12,33 @@ const site = lume({
 });
 
 site.use(jsx());
-site.use(mdx());
+
+// Flatten <h2>..<h6> down to <h1> at the HAST level so the depth-based
+// CSS rules in styles.css (`.ecma-spec emu-clause emu-clause > h1`,
+// `... > h1 { line-height: 1em }`, etc.) actually match every spec
+// heading — without this they only catch the page-top h1 and the
+// nested ones render at browser-default h2/h3/h4 sizes. Mirrors what
+// packages/site-draft-nextra/mdx-components.jsx does at the MDX
+// components layer (the Next.js MDX has React component substitution;
+// Lume's MDX uses rehype). The visual hierarchy comes back from the
+// <emu-clause> nesting depth, the same scheme tc39.es/ecma262 uses.
+//
+// deno-lint-ignore no-explicit-any
+function rehypeFlattenHeadings() {
+  return (tree: any) => {
+    const walk = (node: any) => {
+      if (node.type === "element" && /^h[2-6]$/.test(node.tagName)) {
+        node.tagName = "h1";
+      }
+      if (node.children) for (const c of node.children) walk(c);
+    };
+    walk(tree);
+  };
+}
+
+site.use(mdx({
+  rehypePlugins: [rehypeFlattenHeadings],
+}));
 
 // README.md is dev documentation, not a page to ship.
 site.ignore("README.md");
