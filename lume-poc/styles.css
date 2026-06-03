@@ -1676,26 +1676,16 @@ html.dark .ecma-spec .hljs-string {
   font-weight: 700;
 }
 
-/* Block-form grammar (a numbered/named production definition) uses the same
-   panel surface as notes + inline code. It inherits the body (prop) font so
-   non-terminal names, `::`, "one of", "but not" etc. read as prose like
-   tc39.es/ecma262 — only the bits that tc39 renders monospace (terminals,
-   `?`/`*`/`+` modifiers, `[Yield]`-style parameter lists) are switched back
-   to mono below via emu-t/emu-opt/emu-params. The structural elements
-   (emu-production, emu-rhs) supply line-breaks via display:block so we don't
-   need white-space: pre here. */
+/* Block-form grammar (a numbered/named production definition). Like tc39.es it
+   has NO panel chrome — it sits directly on the page; the spacing and indent
+   come from the emu-production margins below. It inherits the body (prop) font
+   so non-terminal names, `::`, "one of", "but not" etc. read as prose, with
+   only the bits tc39 renders monospace (terminals, `?`/`*`/`+` modifiers,
+   `[Yield]`-style parameter lists) switched back to mono via emu-t/opt/params.
+   The structural elements (emu-production, emu-rhs) supply the line-breaks via
+   display:block. */
 .ecma-spec emu-grammar[type="definition"] {
   display: block;
-  background: var(--ecma-panel-bg);
-  border: 1px solid var(--ecma-panel-border);
-  border-radius: var(--ecma-panel-radius);
-  padding: 0.75em 1em;
-  margin-block: 1em;
-  overflow-x: auto;
-  /* tc39.es puts no font-size on emu-grammar[type=definition], so the
-     production text renders at the body size (1em). */
-  font-family: inherit;
-  line-height: 1.5;
 }
 /* Inline grammar (mid-paragraph) — flat, no panel chrome. */
 .ecma-spec emu-grammar:not([type="definition"]) {
@@ -1730,13 +1720,11 @@ html.dark .ecma-spec .hljs-string {
   border-color: var(--production-rhs-border-color);
   background-color: var(--production-rhs-background-color);
 }
+/* tc39.es: `emu-oneof { font-weight: 700; margin-left: .5ex }` — bold "one of",
+   no italic or opacity. */
 .ecma-spec emu-oneof {
-  font-style: italic;
-  opacity: 0.7;
-  /* tc39.es renders `one of` bold (ecmarkup.css `emu-oneof { font-weight:
-     700 }`); keep lume-poc's italic + opacity treatment for visual
-     softening on top of the weight bump. */
   font-weight: 700;
+  margin-left: 0.5ex;
 }
 
 /* Notes get a "Note" label and the shared panel surface. The label and
@@ -1934,13 +1922,15 @@ html.dark .ecma-spec var {
 .ecma-spec emu-gann emu-t:last-child {
   margin-right: 0;
 }
+/* tc39.es: `emu-geq { margin-left: .5ex; font-weight: 700 }` — the `:`/`::`
+   production separator is bold, not dimmed. */
 .ecma-spec emu-grammar emu-geq {
-  opacity: 0.55;
-  padding: 0 0.15em;
-  /* tc39.es: `emu-geq { font-weight: 700 }`. */
   font-weight: 700;
+  margin-left: 0.5ex;
 }
-.ecma-spec emu-grammar emu-gann,
+/* tc39.es gives <emu-gann> no font treatment (it's a bare container for
+   annotations like `[no LineTerminator here]`); only emu-gmod keeps the dimmed
+   mono look, which tc39 leaves unstyled but reads fine here. */
 .ecma-spec emu-grammar emu-gmod {
   font-family: var(--font-mono);
   font-size: 0.85em;
@@ -1978,12 +1968,11 @@ html.dark .ecma-spec var {
   font-style: normal;
   font-weight: 400;
 }
+/* tc39.es: `emu-gprose { font-size:.9em; font-family:'IBM Plex Sans',
+   sans-serif }` — grammar prose ("but not", "no LineTerminator here") in plain
+   sans, no italic or opacity. We keep our system-sans token (--font-sans)
+   rather than loading IBM Plex Sans, but match the .9em size. */
 .ecma-spec emu-grammar emu-gprose {
-  font-style: italic;
-  opacity: 0.8;
-  /* tc39.es: `emu-gprose { font-size:.9em; font-family:'IBM Plex Sans',
-     sans-serif }`. We keep our system-sans token (--font-sans) rather than
-     loading IBM Plex Sans, but match the .9em size. */
   font-size: 0.9em;
   font-family: var(--font-sans);
 }
