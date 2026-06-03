@@ -659,9 +659,16 @@ const dfnTargets = new Map();
     for (const surf of [term, ...variants]) {
       if (surf.length < 2) continue;
       const key = surf.toLowerCase();
-      // First definition wins when two dfns share a surface form.
+      // First definition wins when two dfns share a surface form. `surface`
+      // keeps the dfn's original casing so matching can stay case-sensitive
+      // (see dfnAlt below); the key is lowercased only for lookup.
       if (!dfnTargets.has(key)) {
-        dfnTargets.set(key, { slug: b.pageSlug, id, clause: clauseId });
+        dfnTargets.set(key, {
+          slug: b.pageSlug,
+          id,
+          clause: clauseId,
+          surface: surf,
+        });
       }
     }
   }
@@ -1491,16 +1498,31 @@ const dfnLinkSkipTags = new Set([
   "style",
 ]);
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Build one surface-form alternative. Matching is case-SENSITIVE except the
+// first character, which may be either case — exactly ecmarkup's rule: it links
+// a sentence-start capitalisation of a lowercase term (and vice versa) but does
+// NOT match a differently-cased interior. So "early error" / "Early error" link
+// to the term "early error", while "Early Error" (both words capitalised) is
+// left plain, and a lowercase "early error rule" matches the term "early error"
+// rather than the capitalised term "Early Error Rule".
+function dfnAlt(surface) {
+  const first = surface[0];
+  const lo = first.toLowerCase();
+  const up = first.toUpperCase();
+  return lo === up
+    ? escapeRe(surface)
+    : `[${lo}${up}]${escapeRe(surface.slice(1))}`;
+}
 // One alternation of every surface form, longest first so multi-word terms win
-// over any shorter term nested inside them. Case-insensitive; \b keeps matches
-// to whole words. Built once (null when there are no defined terms).
+// over any shorter term nested inside them. \b keeps matches to whole words.
+// Built once (null when there are no defined terms).
 const dfnLinkRe = dfnTargets.size
   ? new RegExp(
     `\\b(?:${
-      [...dfnTargets.keys()].sort((a, b) => b.length - a.length).map(escapeRe)
-        .join("|")
+      [...dfnTargets.values()].map((t) => t.surface)
+        .sort((a, b) => b.length - a.length).map(dfnAlt).join("|")
     })\\b`,
-    "gi",
+    "g",
   )
   : null;
 // `ownClause` is the id of the clause directly containing the current section.
