@@ -15,9 +15,11 @@ for the `notational-conventions` chapter of the ECMA-262 draft.
 - `notational-conventions.mdx` — the same MDX `packages/site-draft/content/`
   uses, with the `Sec` import path adjusted to
   `./lib/notational-conventions.jsx`.
-- `lib/notational-conventions.jsx` — copy of the `<Sec>` component that
-  `build-chapters.mjs` generates, untouched (uses `dangerouslySetInnerHTML`,
-  which works in Lume's ssx renderer the same way it does in React).
+- `lib/notational-conventions.jsx` — the `<Sec>` component that
+  `build-chapters.mjs` generates from `ecma262/draft/spec.html` (the live
+  ECMA-262 draft), copied in untouched (uses `dangerouslySetInnerHTML`, which
+  works in Lume's ssx renderer the same way it does in React). Regenerate it
+  with the command under "Running" whenever the draft changes.
 - `styles.css` — copy of `packages/shared/templates/ecma-spec.css`, unedited.
   Most rules carry over verbatim; a few that key on `main[data-pagefind-body]`
   or `html.dark` are dead in this PoC but harmless.
@@ -25,8 +27,25 @@ for the `notational-conventions` chapter of the ECMA-262 draft.
 ## Running
 
 ```
+# 1. (re)generate the chapter component from the draft spec. build-chapters.mjs
+#    emits every chapter + wipes its output dirs, so run it into a scratch dir
+#    and copy in just the one chapter this PoC ships.
+node ../packages/shared/scripts/build-chapters.mjs \
+  --input ../ecma262/draft/spec.html \
+  --lib-dir /tmp/lume-build/lib \
+  --content-dir /tmp/lume-build/content \
+  --public-img-dir /tmp/lume-build/img \
+  --base-path ""
+cp /tmp/lume-build/lib/notational-conventions.jsx ./lib/
+
+# 2. build the site.
 deno task build       # writes _site/notational-conventions/index.html
 ```
+
+The base spec is `ecma262/draft/spec.html`. Building from a pinned edition (e.g.
+`ecma262/es2026/spec.html`) instead is the only thing that changes the rendered
+prose — e.g. the draft lowercased the Parse Node variables, so it shows `_p_`
+must cover an `_n_` where es2026 still had `_P_`/`_N_`.
 
 ## Result vs tc39.es
 
