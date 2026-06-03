@@ -1720,6 +1720,21 @@ html.dark .ecma-spec .hljs-string {
   border-color: var(--production-rhs-border-color);
   background-color: var(--production-rhs-background-color);
 }
+/* Collapsed (single-line) productions keep the RHS inline right after the `::`
+   rather than dropping to its own indented line — no production indent/margin,
+   no hanging indent, no hover border. tc39 ecmarkup.css:
+   `emu-production[collapsed] emu-rhs { display:inline; padding-left:.5ex;
+   margin-left:0 }` and `emu-production[collapsed] { margin:0 }`. The
+   `:not([collapsed])` hover rule above already exempts these. */
+.ecma-spec emu-grammar[type="definition"] emu-production[collapsed] {
+  margin: 0;
+}
+.ecma-spec emu-production[collapsed] > emu-rhs {
+  display: inline;
+  padding-left: 0.5ex;
+  text-indent: 0;
+  margin-left: 0;
+}
 /* tc39.es: `emu-oneof { font-weight: 700; margin-left: .5ex }` — bold "one of",
    no italic or opacity. */
 .ecma-spec emu-oneof {

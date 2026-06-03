@@ -1235,6 +1235,11 @@ function tokenizeGrammarProduction(chunk) {
   const firstNonEmpty = lines.find((l) => l.trim() !== "") || "";
   const lhsMatch = firstNonEmpty.match(/^\s*([A-Za-z][A-Za-z0-9_]*)/);
   const lhs = lhsMatch ? lhsMatch[1] : null;
+  // A production written on a single source line (LHS, `::`, and its one RHS
+  // all together) is rendered "collapsed" — the RHS stays inline right after
+  // the geq instead of dropping to its own indented line. ecmarkup marks these
+  // with the `collapsed` attribute; the CSS keys off it (see ecma-spec.css).
+  const collapsed = lines.filter((l) => l.trim() !== "").length === 1;
   let body = "";
   let isFirst = true;
   for (const line of lines) {
@@ -1285,7 +1290,8 @@ function tokenizeGrammarProduction(chunk) {
         `<emu-rhs>${tokenizeGrammarLine(rest)}</emu-rhs>`;
     }
   }
-  const prodAttrs = lhs ? ` id="prod-${lhs}" name="${lhs}"` : "";
+  const prodAttrs = (lhs ? ` id="prod-${lhs}" name="${lhs}"` : "") +
+    (collapsed ? ` collapsed=""` : "");
   return `<emu-production${prodAttrs}>${body}</emu-production>`;
 }
 
