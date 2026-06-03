@@ -289,6 +289,50 @@ export default function Page(
               if(/Mac|iPhone|iPad/.test(navigator.platform)){
                 document.body.classList.add("is-mac");
               }
+              // Variable highlighting: clicking a <var> highlights every
+              // same-named <var> within its enclosing clause, cycling 7
+              // colours so different variables get different tints; clicking
+              // a highlighted var clears them. Direct port of ecmarkup.js's
+              // toggleFindLocalReferences (CLAUSE_NODES = clause containers,
+              // REFERENCED_CLASSES = referenced0..6).
+              (function(){
+                var CLAUSE=["EMU-CLAUSE","EMU-INTRO","EMU-ANNEX"];
+                var CLASSES=["referenced0","referenced1","referenced2","referenced3","referenced4","referenced5","referenced6"];
+                function container(el){
+                  var n=el.parentNode;
+                  while(n&&CLAUSE.indexOf(n.nodeName)===-1)n=n.parentNode;
+                  return n;
+                }
+                function locals(c,html){
+                  var vs=c.querySelectorAll("var"),out=[];
+                  for(var i=0;i<vs.length;i++)if(vs[i].innerHTML===html)out.push(vs[i]);
+                  return out;
+                }
+                function chooseIndex(c){
+                  var best=0,min=Infinity;
+                  for(var i=0;i<CLASSES.length;i++){
+                    var n=c.getElementsByClassName(CLASSES[i]).length;
+                    if(n<min){min=n;best=i;}
+                  }
+                  return best;
+                }
+                document.addEventListener("click",function(e){
+                  var v=e.target;
+                  if(!v||v.nodeName!=="VAR")return;
+                  var c=container(v);
+                  if(!c)return;
+                  var refs=locals(c,v.innerHTML);
+                  if(v.classList.contains("referenced")){
+                    refs.forEach(function(el){
+                      el.classList.remove("referenced");
+                      CLASSES.forEach(function(cl){el.classList.remove(cl);});
+                    });
+                  }else{
+                    var idx=chooseIndex(c);
+                    refs.forEach(function(el){el.classList.add("referenced","referenced"+idx);});
+                  }
+                });
+              })();
             `,
           }}
         />

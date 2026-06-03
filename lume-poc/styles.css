@@ -152,6 +152,17 @@
     "Liberation Mono",
     monospace;
 
+  /* Spec <var> styling + the 7 cycling highlight backgrounds ecmarkup applies
+     when a variable is clicked (tc39 parity, ecmarkup.css). */
+  --var-foreground-color: #218379;
+  --referenced0-background-color: #ffff6c;
+  --referenced1-background-color: #ffa4a8;
+  --referenced2-background-color: #96e885;
+  --referenced3-background-color: #3eeed2;
+  --referenced4-background-color: #eacfb6;
+  --referenced5-background-color: #82ddff;
+  --referenced6-background-color: #ffbcf2;
+
   color-scheme: light;
 }
 html.dark {
@@ -163,6 +174,14 @@ html.dark {
   --chrome-bg: #161922;
   --accent: #60a5fa;
   --accent-rgb: 96 165 250;
+  --var-foreground-color: #4fb6ab;
+  --referenced0-background-color: #6d6d1e;
+  --referenced1-background-color: #7e171c;
+  --referenced2-background-color: #1f6211;
+  --referenced3-background-color: #1a7a6b;
+  --referenced4-background-color: #7b4719;
+  --referenced5-background-color: #185870;
+  --referenced6-background-color: #731761;
   color-scheme: dark;
 }
 
@@ -1771,6 +1790,52 @@ html.dark .ecma-spec emu-nt a:hover {
 .ecma-spec emu-val {
   font-weight: 700;
   color: var(--ecma-text-strong);
+}
+/* Spec variables (`_x_` → <var>x</var>): tc39's teal var colour + a chip-ish
+   hit area (padding/negative-margin so the box doesn't shift layout) and a
+   pointer cursor, because clicking a var highlights every same-named var in
+   the clause (see the var-highlight script in page.tsx). mix-blend-mode lets
+   the click-highlight background tint the glyphs rather than sit behind them;
+   tc39 turns it off in dark mode. Mirrors ecmarkup.css `var { … }`. */
+.ecma-spec var {
+  color: var(--var-foreground-color);
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 0 4px;
+  margin: 0 -4px;
+  transition: 0.25s ease-out;
+  mix-blend-mode: multiply;
+}
+html.dark .ecma-spec var {
+  mix-blend-mode: normal;
+}
+/* Click-highlight: ecmarkup adds `referenced` + `referenced0…6` to every var
+   sharing the clicked var's name within the clause, cycling 7 background tints
+   so distinct variables get distinct colours. `referenced` restores the text
+   colour so it stays legible on the tint. */
+.ecma-spec var.referenced {
+  color: inherit;
+}
+.ecma-spec var.referenced0 {
+  background-color: var(--referenced0-background-color);
+}
+.ecma-spec var.referenced1 {
+  background-color: var(--referenced1-background-color);
+}
+.ecma-spec var.referenced2 {
+  background-color: var(--referenced2-background-color);
+}
+.ecma-spec var.referenced3 {
+  background-color: var(--referenced3-background-color);
+}
+.ecma-spec var.referenced4 {
+  background-color: var(--referenced4-background-color);
+}
+.ecma-spec var.referenced5 {
+  background-color: var(--referenced5-background-color);
+}
+.ecma-spec var.referenced6 {
+  background-color: var(--referenced6-background-color);
 }
 /* Record / Property Descriptor field accesses (`[[Value]]`, `[[Foo]]`).
    tc39 nullifies <var>'s default italic+colour so the brackets read as
