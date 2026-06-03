@@ -1991,6 +1991,12 @@ html.dark .ecma-spec var {
   font-size: 0.9em;
   font-family: var(--font-sans);
 }
+/* tc39.es: `emu-production emu-gprose { margin-right: 1ex }` — a gap after
+   grammar prose ("but not", "but only if …") when it sits inside a production,
+   so the following symbol doesn't run flush against the prose text. */
+.ecma-spec emu-production emu-gprose {
+  margin-right: 1ex;
+}
 .ecma-spec emu-grammar .cm {
   opacity: 0.5;
   font-style: italic;
