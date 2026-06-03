@@ -432,12 +432,17 @@ function parseTree(html) {
   return { pre, children };
 }
 
-// Walk the tree and collect [secPath, html] entries.
-function flattenTree(tree, prefix = "") {
-  const sections = [[prefix, tree.pre]];
+// Walk the tree and collect [secPath, html, clauseId] entries. clauseId is the
+// id of the clause that DIRECTLY contains this section's prose (its own
+// immediate clause, not its ancestors) — used by applyDfnLinkSubst to suppress
+// auto-linking a defined term within the exact clause that defines it. tc39
+// only suppresses the term in that one clause's own body; sub-clauses still
+// link it, so we track the immediate clause rather than the ancestor chain.
+function flattenTree(tree, prefix = "", clauseId = "") {
+  const sections = [[prefix, tree.pre, clauseId]];
   tree.children.forEach((child, idx) => {
     const newPrefix = prefix === "" ? String(idx + 1) : `${prefix}.${idx + 1}`;
-    sections.push(...flattenTree(child.tree, newPrefix));
+    sections.push(...flattenTree(child.tree, newPrefix, child.id));
   });
   return sections;
 }
@@ -627,16 +632,21 @@ const dfnTargets = new Map();
     const term = decodeEntities(m[4].replace(/<[^>]+>/g, ""))
       .replace(/\s+/g, " ").trim();
     if (!term) continue;
-    const idm = attrs.match(/\bid="([^"]+)"/);
-    let id = idm ? idm[1] : null;
-    if (!id) {
-      for (let i = stack.length - 1; i >= 0; i--) {
-        if (stack[i]) {
-          id = stack[i];
-          break;
-        }
+    // Nearest enclosing clause with an id = the term's DEFINING clause. Used
+    // both as the link target for an id-less dfn AND (for every dfn) as the
+    // clause inside which the term must NOT be auto-linked: tc39 leaves a term
+    // plain within the exact clause that defines it (its own body only — a
+    // sub-clause still links it), since a link back to the very section you're
+    // reading is just noise.
+    let clauseId = null;
+    for (let i = stack.length - 1; i >= 0; i--) {
+      if (stack[i]) {
+        clauseId = stack[i];
+        break;
       }
     }
+    const idm = attrs.match(/\bid="([^"]+)"/);
+    const id = idm ? idm[1] : clauseId;
     if (!id) continue;
     const chap = chapters.find(
       (c) => c.offset <= m.index && m.index < c.endOffset,
@@ -650,7 +660,9 @@ const dfnTargets = new Map();
       if (surf.length < 2) continue;
       const key = surf.toLowerCase();
       // First definition wins when two dfns share a surface form.
-      if (!dfnTargets.has(key)) dfnTargets.set(key, { slug: b.pageSlug, id });
+      if (!dfnTargets.has(key)) {
+        dfnTargets.set(key, { slug: b.pageSlug, id, clause: clauseId });
+      }
     }
   }
 }
@@ -1491,16 +1503,21 @@ const dfnLinkRe = dfnTargets.size
     "gi",
   )
   : null;
-function linkDefinedTerms(text) {
+// `ownClause` is the id of the clause directly containing the current section.
+// A term whose defining clause IS that clause is left plain — tc39 doesn't link
+// a term within the exact clause that defines it (a sub-clause still links it).
+// Other terms link as normal.
+function linkDefinedTerms(text, ownClause) {
   if (!dfnLinkRe) return text;
   return text.replace(dfnLinkRe, (match) => {
     const t = dfnTargets.get(match.toLowerCase());
     if (!t) return match;
+    if (t.clause && t.clause === ownClause) return match;
     const href = `${pathFor(t.slug)}#${t.id}`;
     return `<emu-xref href="${href}"><a href="${href}">${match}</a></emu-xref>`;
   });
 }
-function applyDfnLinkSubst(html) {
+function applyDfnLinkSubst(html, ownClause = "") {
   if (!dfnLinkRe) return html;
   const tagRe = /<\/?([a-zA-Z][a-zA-Z0-9-]*)\b[^>]*>|<!--[\s\S]*?-->/g;
   let out = "";
@@ -1509,7 +1526,7 @@ function applyDfnLinkSubst(html) {
   let m;
   while ((m = tagRe.exec(html)) !== null) {
     const text = html.slice(last, m.index);
-    out += skipDepth === 0 ? linkDefinedTerms(text) : text;
+    out += skipDepth === 0 ? linkDefinedTerms(text, ownClause) : text;
     out += m[0];
     if (m[1]) {
       const tag = m[1].toLowerCase();
@@ -1521,7 +1538,7 @@ function applyDfnLinkSubst(html) {
     last = tagRe.lastIndex;
   }
   const tail = html.slice(last);
-  out += skipDepth === 0 ? linkDefinedTerms(tail) : tail;
+  out += skipDepth === 0 ? linkDefinedTerms(tail, ownClause) : tail;
   return out;
 }
 
@@ -1534,7 +1551,9 @@ const meta = {};
 let totalBytes = 0;
 built.forEach((c) => {
   const { slug, pageSlug, chapterNum, tree } = c;
-  const sections = flattenTree(tree).map(([k, v]) => [
+  // Seed with the chapter's own id so the chapter-prelude section reports the
+  // chapter clause as its immediate clause; nested sections report their own.
+  const sections = flattenTree(tree, "", c.id).map(([k, v, clauseId]) => [
     k,
     applyDfnLinkSubst(
       applyInlineMarkup(
@@ -1550,6 +1569,7 @@ built.forEach((c) => {
           ),
         ),
       ),
+      clauseId,
     ),
   ]);
   const sectionsObj = Object.fromEntries(sections);
