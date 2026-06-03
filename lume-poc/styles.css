@@ -163,6 +163,14 @@
   --referenced5-background-color: #82ddff;
   --referenced6-background-color: #ffbcf2;
 
+  /* Grammar annotation colours (tc39 parity, ecmarkup.css): parameter lists
+     (`[Yield]`) and constraints (`[+In]`) in teal, optional markers (`?`) in
+     gold, and the RHS hover highlight (dashed → solid border + tint). */
+  --params-foreground-color: #2aa198;
+  --opt-foreground-color: #b58900;
+  --production-rhs-background-color: #f0f0f0;
+  --production-rhs-border-color: #888;
+
   color-scheme: light;
 }
 html.dark {
@@ -182,6 +190,10 @@ html.dark {
   --referenced4-background-color: #7b4719;
   --referenced5-background-color: #185870;
   --referenced6-background-color: #731761;
+  --params-foreground-color: #57d0c7;
+  --opt-foreground-color: #d8b750;
+  --production-rhs-background-color: #4d4d4d;
+  --production-rhs-border-color: #888;
   color-scheme: dark;
 }
 
@@ -1689,14 +1701,34 @@ html.dark .ecma-spec .hljs-string {
 .ecma-spec emu-grammar:not([type="definition"]) {
   font-family: inherit;
 }
-/* Production layout: LHS, geq, and each RHS on their own line. emu-rhs gets
-   a hanging indent so alternatives sit visually under the production head. */
+/* Production layout: LHS, geq, and each RHS on their own line. Productions in
+   a definition/example block are indented and vertically spaced like tc39
+   (ecmarkup.css `emu-grammar[type=definition] emu-production { margin: 1em 0;
+   margin-left: 5ex }`). */
 .ecma-spec emu-production {
   display: block;
 }
+.ecma-spec emu-grammar[type="definition"] emu-production,
+.ecma-spec emu-grammar[type="example"] emu-production {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 5ex;
+}
+/* Each RHS alternative on its own line with tc39's hanging indent (wrapped
+   lines clear the production head) and the dashed-border-on-hover highlight
+   that lets you isolate one alternative (ecmarkup.css `emu-rhs` +
+   `emu-production:not([collapsed]) emu-rhs(:hover)`). */
 .ecma-spec emu-production > emu-rhs {
   display: block;
-  padding-inline-start: 2em;
+  padding-left: 75px;
+  text-indent: -25px;
+}
+.ecma-spec emu-production:not([collapsed]) emu-rhs {
+  border: 0.2ex dashed transparent;
+}
+.ecma-spec emu-production:not([collapsed]) emu-rhs:hover {
+  border-color: var(--production-rhs-border-color);
+  background-color: var(--production-rhs-background-color);
 }
 .ecma-spec emu-oneof {
   font-style: italic;
@@ -1879,9 +1911,28 @@ html.dark .ecma-spec var {
    of line, RHS indented) for the hierarchy. */
 .ecma-spec emu-grammar emu-t {
   font-family: var(--font-mono);
-  /* tc39.es: `emu-t { font-family:'IBM Plex Mono',monospace;
-     font-weight: 700 }`. */
+  /* tc39.es: `emu-t { font-family:'IBM Plex Mono',monospace; font-weight:700;
+     display:inline-block; white-space:nowrap; text-indent:0 }`. inline-block +
+     nowrap keep a multi-glyph terminal from wrapping or inheriting the RHS
+     hanging text-indent. */
   font-weight: 700;
+  display: inline-block;
+  white-space: nowrap;
+  text-indent: 0;
+}
+/* Inter-token spacing inside productions (tc39 `emu-gann, emu-production emu-t,
+   emu-rhs emu-nt { margin-right:.5ex }`), zeroed on the last child of a grammar
+   annotation so trailing tokens don't push a gap. Without this the RHS symbols
+   render flush against each other. */
+.ecma-spec emu-production emu-t,
+.ecma-spec emu-rhs emu-nt,
+.ecma-spec emu-grammar emu-gann {
+  margin-right: 0.5ex;
+}
+.ecma-spec emu-gann emu-gprose:last-child,
+.ecma-spec emu-gann emu-nt:last-child,
+.ecma-spec emu-gann emu-t:last-child {
+  margin-right: 0;
 }
 .ecma-spec emu-grammar emu-geq {
   opacity: 0.55;
@@ -1889,25 +1940,35 @@ html.dark .ecma-spec var {
   /* tc39.es: `emu-geq { font-weight: 700 }`. */
   font-weight: 700;
 }
-.ecma-spec emu-grammar emu-params,
 .ecma-spec emu-grammar emu-gann,
 .ecma-spec emu-grammar emu-gmod {
   font-family: var(--font-mono);
   font-size: 0.85em;
   opacity: 0.75;
 }
-/* tc39.es: `emu-constraints { font-size: .75em }` with NO font-family
-   override, so it stays in the serif body font — unlike the mono grammar
-   annotations above. */
+/* Parameter lists (`[Yield, Await]`) — tc39 colours these teal
+   (`emu-params { color: var(--params-foreground-color); font-family: mono;
+   margin-right: 1ex }`) rather than dimming them. */
+.ecma-spec emu-grammar emu-params {
+  font-family: var(--font-mono);
+  color: var(--params-foreground-color);
+  margin-right: 1ex;
+}
+/* Constraints (`[+In]`, `[lookahead …]`) — tc39 `emu-constraints { font-size:
+   .75em; color: var(--params-foreground-color); margin-right: .5ex }` with NO
+   font-family override, so it stays in the serif body font. */
 .ecma-spec emu-grammar emu-constraints {
   font-size: 0.75em;
-  opacity: 0.75;
+  color: var(--params-foreground-color);
+  margin-right: 0.5ex;
 }
-/* tc39.es: `emu-opt { font-family:'IBM Plex Mono',monospace }` with no
-   font-size or vertical-align — rendered inline at full size, not as a
-   sub/superscript. */
+/* Optional markers (`?`/`*`/`+` as <emu-opt>) — tc39 colours these gold
+   (`emu-opt { color: var(--opt-foreground-color); font-family: mono;
+   margin-right: 1ex }`), rendered inline at full size. */
 .ecma-spec emu-grammar emu-opt {
   font-family: var(--font-mono);
+  color: var(--opt-foreground-color);
+  margin-right: 1ex;
 }
 /* tc39.es: `emu-mods { font-size:.85em; vertical-align:sub;
    font-style:normal; font-weight:400 }` (the `?`/`*`/`+` style modifiers). */
