@@ -1105,6 +1105,8 @@ function applyAlgSubst(html) {
 //   • :, ::, :::, :::: → <emu-geq>…</emu-geq>                (production arrow)
 //   • [A-Z]\w*         → <emu-nt>…</emu-nt>                  (nonterminal)
 //   • ? * +            → <emu-mods><emu-opt>…</emu-opt></emu-mods>
+//                        (the optional `?` renders as the subscript "opt",
+//                         matching tc39.es/ecma262's grammar notation)
 //   • "one of"         → <emu-oneof>one of</emu-oneof>
 // Trailing modifiers ([params] and ?/*/+) that sit flush against an <emu-nt>
 // (no intervening whitespace) get nested inside it as <emu-mods> children,
@@ -1178,7 +1180,7 @@ function tokenizeGrammarLine(line) {
       while (j < line.length) {
         const c2 = line[j];
         if (c2 === "?" || c2 === "*" || c2 === "+") {
-          mods += `<emu-opt>${c2}</emu-opt>`;
+          mods += `<emu-opt>${c2 === "?" ? "opt" : c2}</emu-opt>`;
           j++;
         } else if (c2 === "[") {
           const end = line.indexOf("]", j + 1);
@@ -1205,7 +1207,9 @@ function tokenizeGrammarLine(line) {
       continue;
     }
     if (ch === "?" || ch === "*" || ch === "+") {
-      out += `<emu-mods><emu-opt>${ch}</emu-opt></emu-mods>`;
+      out += `<emu-mods><emu-opt>${
+        ch === "?" ? "opt" : ch
+      }</emu-opt></emu-mods>`;
       i++;
       continue;
     }
@@ -1414,7 +1418,7 @@ function transformInlineText(text) {
         : name;
       let mods = "";
       if (params) mods += `<emu-params>${params}</emu-params>`;
-      if (opt) mods += `<emu-opt>${opt}</emu-opt>`;
+      if (opt) mods += `<emu-opt>opt</emu-opt>`;
       return `<emu-nt>${head}${
         mods ? `<emu-mods>${mods}</emu-mods>` : ""
       }</emu-nt>`;
