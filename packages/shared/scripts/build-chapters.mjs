@@ -1508,20 +1508,26 @@ const dfnLinkSkipTags = new Set([
   "style",
 ]);
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-// Build one surface-form alternative. Matching is case-SENSITIVE except the
-// first character, which may be either case — exactly ecmarkup's rule: it links
-// a sentence-start capitalisation of a lowercase term (and vice versa) but does
-// NOT match a differently-cased interior. So "early error" / "Early error" link
-// to the term "early error", while "Early Error" (both words capitalised) is
-// left plain, and a lowercase "early error rule" matches the term "early error"
-// rather than the capitalised term "Early Error Rule".
+// Build one surface-form alternative. Matching is case-SENSITIVE except that a
+// LOWERCASE-defined term may also match with its first character capitalised —
+// exactly ecmarkup's rule, which is one-directional: it links a sentence-start
+// capitalisation of a lowercase term ("early error" → "Early error"), but an
+// UPPERCASE-defined term is matched strictly and does NOT match a lowercased
+// occurrence (the term "List" links "List" but not the common word "list" in
+// "comma separated list"; likewise "Record"/"Assert" etc.). A differently-cased
+// interior never matches, so "Early Error" (both words capitalised) stays plain
+// and a lowercase "early error rule" matches the term "early error" + plain
+// "rule" rather than the capitalised term "Early Error Rule".
 function dfnAlt(surface) {
   const first = surface[0];
   const lo = first.toLowerCase();
   const up = first.toUpperCase();
-  return lo === up
-    ? escapeRe(surface)
-    : `[${lo}${up}]${escapeRe(surface.slice(1))}`;
+  if (lo === up) return escapeRe(surface); // non-letter first char
+  // Lowercase-defined: allow a sentence-start capital. Uppercase-defined:
+  // strict case-sensitive match (no lowercased-word false positives).
+  return first === lo
+    ? `[${lo}${up}]${escapeRe(surface.slice(1))}`
+    : escapeRe(surface);
 }
 // One alternation of every surface form, longest first so multi-word terms win
 // over any shorter term nested inside them. \b keeps matches to whole words.
