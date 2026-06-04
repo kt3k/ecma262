@@ -1721,12 +1721,22 @@ html.dark .ecma-spec .hljs-string {
   background-color: var(--production-rhs-background-color);
 }
 /* Collapsed (single-line) productions keep the RHS inline right after the `::`
-   rather than dropping to its own indented line — no production indent/margin,
-   no hanging indent, no hover border. tc39 ecmarkup.css:
-   `emu-production[collapsed] emu-rhs { display:inline; padding-left:.5ex;
-   margin-left:0 }` and `emu-production[collapsed] { margin:0 }`. The
-   `:not([collapsed])` hover rule above already exempts these. */
-.ecma-spec emu-grammar[type="definition"] emu-production[collapsed] {
+   rather than dropping to its own indented line — no hanging indent, no hover
+   border. tc39 ecmarkup.css: `emu-production[collapsed] emu-rhs { display:inline;
+   padding-left:.5ex; margin-left:0 }` and `emu-production[collapsed] { margin:0 }`.
+   The `:not([collapsed])` hover rule above already exempts these.
+
+   The production itself KEEPS the base 5ex indent + 1em vertical margins (it's
+   not flush-left/tight). That mirrors tc39's cascade: tc39's
+   `emu-production[collapsed] { margin:0 }` (specificity 0,1,1) is LESS specific
+   than `emu-grammar[type=definition] emu-production` (0,1,2), so for collapsed
+   productions inside a definition grammar the base margins win and the `margin:0`
+   only takes effect outside definition grammars (e.g. inline grammars). We match
+   that by leaving this selector unscoped — `.ecma-spec emu-production[collapsed]`
+   is (0,2,1), below our base rule's (0,2,2), so base wins the same way. (An
+   earlier `[type="definition"]`-scoped version was 0,3,2 and wrongly beat base,
+   zeroing the indent — see git history.) */
+.ecma-spec emu-production[collapsed] {
   margin: 0;
 }
 .ecma-spec emu-production[collapsed] > emu-rhs {
