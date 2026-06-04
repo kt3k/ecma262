@@ -532,7 +532,13 @@ function registerSectionIds(tree, chapPrefix, chapSlug, into) {
     const childPrefix = chapPrefix === ""
       ? String(idx + 1)
       : `${chapPrefix}.${idx + 1}`;
-    if (child.id) into.set(child.id, { number: childPrefix, slug: chapSlug });
+    if (child.id) {
+      into.set(child.id, {
+        number: childPrefix,
+        slug: chapSlug,
+        title: child.title,
+      });
+    }
     registerSectionIds(child.tree, childPrefix, chapSlug, into);
   });
 }
@@ -554,7 +560,7 @@ const built = chapters.map((c) => {
     chapterNum = c.backMatter ? "" : annexLabel(annexIdx++);
   }
   const tree = parseTree(c.inner);
-  idToSection.set(c.id, { number: chapterNum, slug: pageSlug });
+  idToSection.set(c.id, { number: chapterNum, slug: pageSlug, title: c.title });
   registerSectionIds(tree, chapterNum, pageSlug, idToSection);
   return { ...c, slug, pageSlug, chapterNum, tree };
 });
@@ -747,8 +753,10 @@ function pathFor(slug) {
   return `${BASE_PATH}${local}`;
 }
 
-// <emu-xref href="#id"> is ecmarkup's cross-reference tag. Two source forms:
+// <emu-xref href="#id"> is ecmarkup's cross-reference tag. Source forms:
 //   <emu-xref href="#id"></emu-xref>       — empty, ecmarkup injects "14.7.2"
+//   <emu-xref href="#id" title></emu-xref> — empty + `title`: ecmarkup injects
+//       the target clause's TITLE ("White Space") instead of its number
 //   <emu-xref href="#id">link text</emu-xref> — author-supplied text
 // We keep the <emu-xref> wrapper (matching tc39.es/ecma262's serialisation)
 // and inject an <a href="/<slug>#<id>">…</a> inside. Anchors `id="<id>"` are
@@ -793,7 +801,14 @@ function applyXrefSubst(html) {
       const l = idToLabel.get(id);
       const target = s ?? l;
       if (!target) return inner || id;
-      const text = inner.trim() === "" ? (s ? s.number : l.text) : inner;
+      // `title` attribute: inject the clause title instead of the number
+      // (run it through the inline-markup pass, same as the heading does).
+      const wantTitle = /(?:^|\s)title(?:\s|=|$)/.test(attrs);
+      const text = inner.trim() !== ""
+        ? inner
+        : (wantTitle && s)
+        ? transformInlineText(s.title)
+        : (s ? s.number : l.text);
       return `<emu-xref${attrs}><a href="${
         pathFor(target.slug)
       }#${id}">${text}</a></emu-xref>`;
