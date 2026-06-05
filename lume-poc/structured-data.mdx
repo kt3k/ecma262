@@ -1,0 +1,1292 @@
+---
+title: "25 Structured Data"
+layout: page.tsx
+url: /structured-data/
+slug: structured-data
+---
+
+import { Sec } from './lib/structured-data.jsx'
+
+<div id="spec-container" className="ecma-spec">
+
+<emu-clause id="sec-structured-data">
+
+# <span className="secnum">25</span> Structured Data
+
+<emu-clause id="sec-arraybuffer-objects">
+
+## <span className="secnum">25.1</span> ArrayBuffer Objects
+
+<emu-clause id="sec-arraybuffer-notation">
+
+### <span className="secnum">25.1.1</span> Notation
+
+<Sec id="1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-fixed-length-and-resizable-arraybuffer-objects">
+
+### <span className="secnum">25.1.2</span> Fixed-length and Resizable ArrayBuffer Objects
+
+<Sec id="1.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-abstract-operations-for-arraybuffer-objects">
+
+### <span className="secnum">25.1.3</span> Abstract Operations For ArrayBuffer Objects
+
+<emu-clause id="sec-allocatearraybuffer">
+
+#### <span className="secnum">25.1.3.1</span> AllocateArrayBuffer ( <var>ctor</var>, <var>byteLength</var> [ , <var>maxByteLength</var> ] )
+
+<Sec id="1.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybufferbytelength">
+
+#### <span className="secnum">25.1.3.2</span> ArrayBufferByteLength ( <var>arrayBuffer</var>, <var>order</var> )
+
+<Sec id="1.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffercopyanddetach">
+
+#### <span className="secnum">25.1.3.3</span> ArrayBufferCopyAndDetach ( <var>arrayBuffer</var>, <var>newLength</var>, <var>preserveResizability</var> )
+
+<Sec id="1.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-isdetachedbuffer">
+
+#### <span className="secnum">25.1.3.4</span> IsDetachedBuffer ( <var>arrayBuffer</var> )
+
+<Sec id="1.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-detacharraybuffer">
+
+#### <span className="secnum">25.1.3.5</span> DetachArrayBuffer ( <var>arrayBuffer</var> [ , <var>key</var> ] )
+
+<Sec id="1.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-clonearraybuffer">
+
+#### <span className="secnum">25.1.3.6</span> CloneArrayBuffer ( <var>sourceBuffer</var>, <var>sourceByteOffset</var>, <var>sourceLength</var> )
+
+<Sec id="1.3.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-getarraybuffermaxbytelengthoption">
+
+#### <span className="secnum">25.1.3.7</span> GetArrayBufferMaxByteLengthOption ( <var>options</var> )
+
+<Sec id="1.3.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-hostresizearraybuffer">
+
+#### <span className="secnum">25.1.3.8</span> HostResizeArrayBuffer ( <var>buffer</var>, <var>newByteLength</var> )
+
+<Sec id="1.3.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-isfixedlengtharraybuffer">
+
+#### <span className="secnum">25.1.3.9</span> IsFixedLengthArrayBuffer ( <var>arrayBuffer</var> )
+
+<Sec id="1.3.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-isunsignedelementtype">
+
+#### <span className="secnum">25.1.3.10</span> IsUnsignedElementType ( <var>type</var> )
+
+<Sec id="1.3.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-isunclampedintegerelementtype">
+
+#### <span className="secnum">25.1.3.11</span> IsUnclampedIntegerElementType ( <var>type</var> )
+
+<Sec id="1.3.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-isbigintelementtype">
+
+#### <span className="secnum">25.1.3.12</span> IsBigIntElementType ( <var>type</var> )
+
+<Sec id="1.3.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-isnotearconfiguration">
+
+#### <span className="secnum">25.1.3.13</span> IsNoTearConfiguration ( <var>type</var>, <var>order</var> )
+
+<Sec id="1.3.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-rawbytestonumeric">
+
+#### <span className="secnum">25.1.3.14</span> RawBytesToNumeric ( <var>type</var>, <var>rawBytes</var>, <var>isLittleEndian</var> )
+
+<Sec id="1.3.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-getrawbytesfromsharedblock">
+
+#### <span className="secnum">25.1.3.15</span> GetRawBytesFromSharedBlock ( <var>block</var>, <var>byteIndex</var>, <var>type</var>, <var>isTypedArray</var>, <var>order</var> )
+
+<Sec id="1.3.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-getvaluefrombuffer">
+
+#### <span className="secnum">25.1.3.16</span> GetValueFromBuffer ( <var>arrayBuffer</var>, <var>byteIndex</var>, <var>type</var>, <var>isTypedArray</var>, <var>order</var> [ , <var>isLittleEndian</var> ] )
+
+<Sec id="1.3.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-numerictorawbytes">
+
+#### <span className="secnum">25.1.3.17</span> NumericToRawBytes ( <var>type</var>, <var>value</var>, <var>isLittleEndian</var> )
+
+<Sec id="1.3.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-setvalueinbuffer">
+
+#### <span className="secnum">25.1.3.18</span> SetValueInBuffer ( <var>arrayBuffer</var>, <var>byteIndex</var>, <var>type</var>, <var>value</var>, <var>isTypedArray</var>, <var>order</var> [ , <var>isLittleEndian</var> ] )
+
+<Sec id="1.3.18" />
+
+</emu-clause>
+
+<emu-clause id="sec-getmodifysetvalueinbuffer">
+
+#### <span className="secnum">25.1.3.19</span> GetModifySetValueInBuffer ( <var>arrayBuffer</var>, <var>byteIndex</var>, <var>type</var>, <var>value</var>, <var>op</var> )
+
+<Sec id="1.3.19" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffer-constructor">
+
+### <span className="secnum">25.1.4</span> The ArrayBuffer Constructor
+
+<Sec id="1.4" />
+
+<emu-clause id="sec-arraybuffer-length">
+
+#### <span className="secnum">25.1.4.1</span> ArrayBuffer ( <var>length</var> [ , <var>options</var> ] )
+
+<Sec id="1.4.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-arraybuffer-constructor">
+
+### <span className="secnum">25.1.5</span> Properties of the ArrayBuffer Constructor
+
+<Sec id="1.5" />
+
+<emu-clause id="sec-arraybuffer.isview">
+
+#### <span className="secnum">25.1.5.1</span> ArrayBuffer.isView ( <var>arg</var> )
+
+<Sec id="1.5.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffer.prototype">
+
+#### <span className="secnum">25.1.5.2</span> ArrayBuffer.prototype
+
+<Sec id="1.5.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-arraybuffer-%symbol.species%">
+
+#### <span className="secnum">25.1.5.3</span> get ArrayBuffer [ <emu-intrinsic>%Symbol.species%</emu-intrinsic> ]
+
+<Sec id="1.5.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-arraybuffer-prototype-object">
+
+### <span className="secnum">25.1.6</span> Properties of the ArrayBuffer Prototype Object
+
+<Sec id="1.6" />
+
+<emu-clause id="sec-get-arraybuffer.prototype.bytelength">
+
+#### <span className="secnum">25.1.6.1</span> get ArrayBuffer.prototype.byteLength
+
+<Sec id="1.6.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffer.prototype.constructor">
+
+#### <span className="secnum">25.1.6.2</span> ArrayBuffer.prototype.constructor
+
+<Sec id="1.6.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-arraybuffer.prototype.detached">
+
+#### <span className="secnum">25.1.6.3</span> get ArrayBuffer.prototype.detached
+
+<Sec id="1.6.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-arraybuffer.prototype.maxbytelength">
+
+#### <span className="secnum">25.1.6.4</span> get ArrayBuffer.prototype.maxByteLength
+
+<Sec id="1.6.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-arraybuffer.prototype.resizable">
+
+#### <span className="secnum">25.1.6.5</span> get ArrayBuffer.prototype.resizable
+
+<Sec id="1.6.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffer.prototype.resize">
+
+#### <span className="secnum">25.1.6.6</span> ArrayBuffer.prototype.resize ( <var>newLength</var> )
+
+<Sec id="1.6.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffer.prototype.slice">
+
+#### <span className="secnum">25.1.6.7</span> ArrayBuffer.prototype.slice ( <var>start</var>, <var>end</var> )
+
+<Sec id="1.6.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffer.prototype.transfer">
+
+#### <span className="secnum">25.1.6.8</span> ArrayBuffer.prototype.transfer ( [ <var>newLength</var> ] )
+
+<Sec id="1.6.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffer.prototype.transfertofixedlength">
+
+#### <span className="secnum">25.1.6.9</span> ArrayBuffer.prototype.transferToFixedLength ( [ <var>newLength</var> ] )
+
+<Sec id="1.6.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-arraybuffer.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">25.1.6.10</span> ArrayBuffer.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="1.6.10" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-arraybuffer-instances">
+
+### <span className="secnum">25.1.7</span> Properties of ArrayBuffer Instances
+
+<Sec id="1.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-resizable-arraybuffer-guidelines">
+
+### <span className="secnum">25.1.8</span> Resizable ArrayBuffer Guidelines
+
+<Sec id="1.8" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-sharedarraybuffer-objects">
+
+## <span className="secnum">25.2</span> SharedArrayBuffer Objects
+
+<emu-clause id="sec-fixed-length-and-growable-sharedarraybuffer-objects">
+
+### <span className="secnum">25.2.1</span> Fixed-length and Growable SharedArrayBuffer Objects
+
+<Sec id="2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-abstract-operations-for-sharedarraybuffer-objects">
+
+### <span className="secnum">25.2.2</span> Abstract Operations for SharedArrayBuffer Objects
+
+<emu-clause id="sec-allocatesharedarraybuffer">
+
+#### <span className="secnum">25.2.2.1</span> AllocateSharedArrayBuffer ( <var>ctor</var>, <var>byteLength</var> [ , <var>maxByteLength</var> ] )
+
+<Sec id="2.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-issharedarraybuffer">
+
+#### <span className="secnum">25.2.2.2</span> IsSharedArrayBuffer ( <var>obj</var> )
+
+<Sec id="2.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-isgrowablesharedarraybuffer">
+
+#### <span className="secnum">25.2.2.3</span> IsGrowableSharedArrayBuffer ( <var>obj</var> )
+
+<Sec id="2.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-hostgrowsharedarraybuffer">
+
+#### <span className="secnum">25.2.2.4</span> HostGrowSharedArrayBuffer ( <var>buffer</var>, <var>newByteLength</var> )
+
+<Sec id="2.2.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-sharedarraybuffer-constructor">
+
+### <span className="secnum">25.2.3</span> The SharedArrayBuffer Constructor
+
+<Sec id="2.3" />
+
+<emu-clause id="sec-sharedarraybuffer-length">
+
+#### <span className="secnum">25.2.3.1</span> SharedArrayBuffer ( <var>length</var> [ , <var>options</var> ] )
+
+<Sec id="2.3.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-sharedarraybuffer-constructor">
+
+### <span className="secnum">25.2.4</span> Properties of the SharedArrayBuffer Constructor
+
+<Sec id="2.4" />
+
+<emu-clause id="sec-sharedarraybuffer.prototype">
+
+#### <span className="secnum">25.2.4.1</span> SharedArrayBuffer.prototype
+
+<Sec id="2.4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-sharedarraybuffer-%symbol.species%">
+
+#### <span className="secnum">25.2.4.2</span> get SharedArrayBuffer [ <emu-intrinsic>%Symbol.species%</emu-intrinsic> ]
+
+<Sec id="2.4.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-sharedarraybuffer-prototype-object">
+
+### <span className="secnum">25.2.5</span> Properties of the SharedArrayBuffer Prototype Object
+
+<Sec id="2.5" />
+
+<emu-clause id="sec-get-sharedarraybuffer.prototype.bytelength">
+
+#### <span className="secnum">25.2.5.1</span> get SharedArrayBuffer.prototype.byteLength
+
+<Sec id="2.5.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-sharedarraybuffer.prototype.constructor">
+
+#### <span className="secnum">25.2.5.2</span> SharedArrayBuffer.prototype.constructor
+
+<Sec id="2.5.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-sharedarraybuffer.prototype.grow">
+
+#### <span className="secnum">25.2.5.3</span> SharedArrayBuffer.prototype.grow ( <var>newLength</var> )
+
+<Sec id="2.5.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-sharedarraybuffer.prototype.growable">
+
+#### <span className="secnum">25.2.5.4</span> get SharedArrayBuffer.prototype.growable
+
+<Sec id="2.5.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-sharedarraybuffer.prototype.maxbytelength">
+
+#### <span className="secnum">25.2.5.5</span> get SharedArrayBuffer.prototype.maxByteLength
+
+<Sec id="2.5.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-sharedarraybuffer.prototype.slice">
+
+#### <span className="secnum">25.2.5.6</span> SharedArrayBuffer.prototype.slice ( <var>start</var>, <var>end</var> )
+
+<Sec id="2.5.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-sharedarraybuffer.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">25.2.5.7</span> SharedArrayBuffer.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="2.5.7" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-sharedarraybuffer-instances">
+
+### <span className="secnum">25.2.6</span> Properties of SharedArrayBuffer Instances
+
+<Sec id="2.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-growable-sharedarraybuffer-guidelines">
+
+### <span className="secnum">25.2.7</span> Growable SharedArrayBuffer Guidelines
+
+<Sec id="2.7" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-dataview-objects">
+
+## <span className="secnum">25.3</span> DataView Objects
+
+<emu-clause id="sec-abstract-operations-for-dataview-objects">
+
+### <span className="secnum">25.3.1</span> Abstract Operations For DataView Objects
+
+<emu-clause id="sec-dataview-with-buffer-witness-records">
+
+#### <span className="secnum">25.3.1.1</span> DataView With Buffer Witness Records
+
+<Sec id="3.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-makedataviewwithbufferwitnessrecord">
+
+#### <span className="secnum">25.3.1.2</span> MakeDataViewWithBufferWitnessRecord ( <var>obj</var>, <var>order</var> )
+
+<Sec id="3.1.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-getviewbytelength">
+
+#### <span className="secnum">25.3.1.3</span> GetViewByteLength ( <var>viewRecord</var> )
+
+<Sec id="3.1.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-isviewoutofbounds">
+
+#### <span className="secnum">25.3.1.4</span> IsViewOutOfBounds ( <var>viewRecord</var> )
+
+<Sec id="3.1.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-getviewvalue">
+
+#### <span className="secnum">25.3.1.5</span> GetViewValue ( <var>view</var>, <var>requestIndex</var>, <var>isLittleEndian</var>, <var>type</var> )
+
+<Sec id="3.1.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-setviewvalue">
+
+#### <span className="secnum">25.3.1.6</span> SetViewValue ( <var>view</var>, <var>requestIndex</var>, <var>isLittleEndian</var>, <var>type</var>, <var>value</var> )
+
+<Sec id="3.1.6" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-dataview-constructor">
+
+### <span className="secnum">25.3.2</span> The DataView Constructor
+
+<Sec id="3.2" />
+
+<emu-clause id="sec-dataview-buffer-byteoffset-bytelength">
+
+#### <span className="secnum">25.3.2.1</span> DataView ( <var>buffer</var> [ , <var>byteOffset</var> [ , <var>byteLength</var> ] ] )
+
+<Sec id="3.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-dataview-constructor">
+
+### <span className="secnum">25.3.3</span> Properties of the DataView Constructor
+
+<Sec id="3.3" />
+
+<emu-clause id="sec-dataview.prototype">
+
+#### <span className="secnum">25.3.3.1</span> DataView.prototype
+
+<Sec id="3.3.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-dataview-prototype-object">
+
+### <span className="secnum">25.3.4</span> Properties of the DataView Prototype Object
+
+<Sec id="3.4" />
+
+<emu-clause id="sec-get-dataview.prototype.buffer">
+
+#### <span className="secnum">25.3.4.1</span> get DataView.prototype.buffer
+
+<Sec id="3.4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-dataview.prototype.bytelength">
+
+#### <span className="secnum">25.3.4.2</span> get DataView.prototype.byteLength
+
+<Sec id="3.4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-dataview.prototype.byteoffset">
+
+#### <span className="secnum">25.3.4.3</span> get DataView.prototype.byteOffset
+
+<Sec id="3.4.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.constructor">
+
+#### <span className="secnum">25.3.4.4</span> DataView.prototype.constructor
+
+<Sec id="3.4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getbigint64">
+
+#### <span className="secnum">25.3.4.5</span> DataView.prototype.getBigInt64 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getbiguint64">
+
+#### <span className="secnum">25.3.4.6</span> DataView.prototype.getBigUint64 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getfloat16">
+
+#### <span className="secnum">25.3.4.7</span> DataView.prototype.getFloat16 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getfloat32">
+
+#### <span className="secnum">25.3.4.8</span> DataView.prototype.getFloat32 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getfloat64">
+
+#### <span className="secnum">25.3.4.9</span> DataView.prototype.getFloat64 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getint8">
+
+#### <span className="secnum">25.3.4.10</span> DataView.prototype.getInt8 ( <var>byteOffset</var> )
+
+<Sec id="3.4.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getint16">
+
+#### <span className="secnum">25.3.4.11</span> DataView.prototype.getInt16 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getint32">
+
+#### <span className="secnum">25.3.4.12</span> DataView.prototype.getInt32 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getuint8">
+
+#### <span className="secnum">25.3.4.13</span> DataView.prototype.getUint8 ( <var>byteOffset</var> )
+
+<Sec id="3.4.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getuint16">
+
+#### <span className="secnum">25.3.4.14</span> DataView.prototype.getUint16 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.getuint32">
+
+#### <span className="secnum">25.3.4.15</span> DataView.prototype.getUint32 ( <var>byteOffset</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setbigint64">
+
+#### <span className="secnum">25.3.4.16</span> DataView.prototype.setBigInt64 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setbiguint64">
+
+#### <span className="secnum">25.3.4.17</span> DataView.prototype.setBigUint64 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setfloat16">
+
+#### <span className="secnum">25.3.4.18</span> DataView.prototype.setFloat16 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.18" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setfloat32">
+
+#### <span className="secnum">25.3.4.19</span> DataView.prototype.setFloat32 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.19" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setfloat64">
+
+#### <span className="secnum">25.3.4.20</span> DataView.prototype.setFloat64 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.20" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setint8">
+
+#### <span className="secnum">25.3.4.21</span> DataView.prototype.setInt8 ( <var>byteOffset</var>, <var>value</var> )
+
+<Sec id="3.4.21" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setint16">
+
+#### <span className="secnum">25.3.4.22</span> DataView.prototype.setInt16 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.22" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setint32">
+
+#### <span className="secnum">25.3.4.23</span> DataView.prototype.setInt32 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.23" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setuint8">
+
+#### <span className="secnum">25.3.4.24</span> DataView.prototype.setUint8 ( <var>byteOffset</var>, <var>value</var> )
+
+<Sec id="3.4.24" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setuint16">
+
+#### <span className="secnum">25.3.4.25</span> DataView.prototype.setUint16 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.25" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype.setuint32">
+
+#### <span className="secnum">25.3.4.26</span> DataView.prototype.setUint32 ( <var>byteOffset</var>, <var>value</var> [ , <var>littleEndian</var> ] )
+
+<Sec id="3.4.26" />
+
+</emu-clause>
+
+<emu-clause id="sec-dataview.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">25.3.4.27</span> DataView.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="3.4.27" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-dataview-instances">
+
+### <span className="secnum">25.3.5</span> Properties of DataView Instances
+
+<Sec id="3.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-atomics-object">
+
+## <span className="secnum">25.4</span> The Atomics Object
+
+<Sec id="4" />
+
+<emu-clause id="sec-waiter-record">
+
+### <span className="secnum">25.4.1</span> Waiter Record
+
+<Sec id="4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-waiterlist-records">
+
+### <span className="secnum">25.4.2</span> WaiterList Records
+
+<Sec id="4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-abstract-operations-for-atomics">
+
+### <span className="secnum">25.4.3</span> Abstract Operations for Atomics
+
+<emu-clause id="sec-validateintegertypedarray">
+
+#### <span className="secnum">25.4.3.1</span> ValidateIntegerTypedArray ( <var>ta</var>, <var>waitable</var> )
+
+<Sec id="4.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-validateatomicaccess">
+
+#### <span className="secnum">25.4.3.2</span> ValidateAtomicAccess ( <var>taRecord</var>, <var>requestIndex</var> )
+
+<Sec id="4.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-validateatomicaccessonintegertypedarray">
+
+#### <span className="secnum">25.4.3.3</span> ValidateAtomicAccessOnIntegerTypedArray ( <var>ta</var>, <var>requestIndex</var> )
+
+<Sec id="4.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-revalidateatomicaccess">
+
+#### <span className="secnum">25.4.3.4</span> RevalidateAtomicAccess ( <var>ta</var>, <var>byteIndexInBuffer</var> )
+
+<Sec id="4.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-getwaiterlist">
+
+#### <span className="secnum">25.4.3.5</span> GetWaiterList ( <var>block</var>, <var>i</var> )
+
+<Sec id="4.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-entercriticalsection">
+
+#### <span className="secnum">25.4.3.6</span> EnterCriticalSection ( <var>waiterList</var> )
+
+<Sec id="4.3.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-leavecriticalsection">
+
+#### <span className="secnum">25.4.3.7</span> LeaveCriticalSection ( <var>waiterList</var> )
+
+<Sec id="4.3.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-addwaiter">
+
+#### <span className="secnum">25.4.3.8</span> AddWaiter ( <var>waiterList</var>, <var>waiterRecord</var> )
+
+<Sec id="4.3.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-removewaiter">
+
+#### <span className="secnum">25.4.3.9</span> RemoveWaiter ( <var>waiterList</var>, <var>waiterRecord</var> )
+
+<Sec id="4.3.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-removewaiters">
+
+#### <span className="secnum">25.4.3.10</span> RemoveWaiters ( <var>waiterList</var>, <var>count</var> )
+
+<Sec id="4.3.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-suspendthisagent">
+
+#### <span className="secnum">25.4.3.11</span> SuspendThisAgent ( <var>waiterList</var>, <var>waiterRecord</var> )
+
+<Sec id="4.3.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-notifywaiter">
+
+#### <span className="secnum">25.4.3.12</span> NotifyWaiter ( <var>waiterList</var>, <var>waiterRecord</var> )
+
+<Sec id="4.3.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-enqueueresolveinagentjob">
+
+#### <span className="secnum">25.4.3.13</span> EnqueueResolveInAgentJob ( <var>agentSignifier</var>, <var>promiseCapability</var>, <var>resolution</var> )
+
+<Sec id="4.3.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-dowait">
+
+#### <span className="secnum">25.4.3.14</span> DoWait ( <var>mode</var>, <var>ta</var>, <var>index</var>, <var>value</var>, <var>timeout</var> )
+
+<Sec id="4.3.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-enqueueatomicswaitasynctimeoutjob">
+
+#### <span className="secnum">25.4.3.15</span> EnqueueAtomicsWaitAsyncTimeoutJob ( <var>waiterList</var>, <var>waiterRecord</var> )
+
+<Sec id="4.3.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomiccompareexchangeinsharedblock">
+
+#### <span className="secnum">25.4.3.16</span> AtomicCompareExchangeInSharedBlock ( <var>block</var>, <var>byteIndexInBuffer</var>, <var>elementSize</var>, <var>expectedBytes</var>, <var>replacementBytes</var> )
+
+<Sec id="4.3.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomicreadmodifywrite">
+
+#### <span className="secnum">25.4.3.17</span> AtomicReadModifyWrite ( <var>ta</var>, <var>index</var>, <var>value</var>, <var>op</var> )
+
+<Sec id="4.3.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-bytelistbitwiseop">
+
+#### <span className="secnum">25.4.3.18</span> ByteListBitwiseOp ( <var>op</var>, <var>xBytes</var>, <var>yBytes</var> )
+
+<Sec id="4.3.18" />
+
+</emu-clause>
+
+<emu-clause id="sec-bytelistequal">
+
+#### <span className="secnum">25.4.3.19</span> ByteListEqual ( <var>xBytes</var>, <var>yBytes</var> )
+
+<Sec id="4.3.19" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.add">
+
+### <span className="secnum">25.4.4</span> Atomics.add ( <var>ta</var>, <var>index</var>, <var>value</var> )
+
+<Sec id="4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.and">
+
+### <span className="secnum">25.4.5</span> Atomics.and ( <var>ta</var>, <var>index</var>, <var>value</var> )
+
+<Sec id="4.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.compareexchange">
+
+### <span className="secnum">25.4.6</span> Atomics.compareExchange ( <var>ta</var>, <var>index</var>, <var>expectedValue</var>, <var>replacementValue</var> )
+
+<Sec id="4.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.exchange">
+
+### <span className="secnum">25.4.7</span> Atomics.exchange ( <var>ta</var>, <var>index</var>, <var>value</var> )
+
+<Sec id="4.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.islockfree">
+
+### <span className="secnum">25.4.8</span> Atomics.isLockFree ( <var>size</var> )
+
+<Sec id="4.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.load">
+
+### <span className="secnum">25.4.9</span> Atomics.load ( <var>ta</var>, <var>index</var> )
+
+<Sec id="4.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.notify">
+
+### <span className="secnum">25.4.10</span> Atomics.notify ( <var>ta</var>, <var>index</var>, <var>count</var> )
+
+<Sec id="4.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.or">
+
+### <span className="secnum">25.4.11</span> Atomics.or ( <var>ta</var>, <var>index</var>, <var>value</var> )
+
+<Sec id="4.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.pause">
+
+### <span className="secnum">25.4.12</span> Atomics.pause ( )
+
+<Sec id="4.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.store">
+
+### <span className="secnum">25.4.13</span> Atomics.store ( <var>ta</var>, <var>index</var>, <var>value</var> )
+
+<Sec id="4.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.sub">
+
+### <span className="secnum">25.4.14</span> Atomics.sub ( <var>ta</var>, <var>index</var>, <var>value</var> )
+
+<Sec id="4.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.wait">
+
+### <span className="secnum">25.4.15</span> Atomics.wait ( <var>ta</var>, <var>index</var>, <var>value</var>, <var>timeout</var> )
+
+<Sec id="4.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.waitasync">
+
+### <span className="secnum">25.4.16</span> Atomics.waitAsync ( <var>ta</var>, <var>index</var>, <var>value</var>, <var>timeout</var> )
+
+<Sec id="4.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics.xor">
+
+### <span className="secnum">25.4.17</span> Atomics.xor ( <var>ta</var>, <var>index</var>, <var>value</var> )
+
+<Sec id="4.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-atomics-%symbol.tostringtag%">
+
+### <span className="secnum">25.4.18</span> Atomics [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="4.18" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-json-object">
+
+## <span className="secnum">25.5</span> The JSON Object
+
+<Sec id="5" />
+
+<emu-clause id="sec-json.israwjson">
+
+### <span className="secnum">25.5.1</span> JSON.isRawJSON ( <var>obj</var> )
+
+<Sec id="5.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-json.parse">
+
+### <span className="secnum">25.5.2</span> JSON.parse ( <var>text</var> [ , <var>reviver</var> ] )
+
+<Sec id="5.2" />
+
+<emu-clause id="sec-ParseJSON">
+
+#### <span className="secnum">25.5.2.1</span> ParseJSON ( <var>text</var> )
+
+<Sec id="5.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-json-parse-record">
+
+#### <span className="secnum">25.5.2.2</span> JSON Parse Record
+
+<Sec id="5.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-createjsonparserecord">
+
+#### <span className="secnum">25.5.2.3</span> CreateJSONParseRecord ( <var>parseNode</var>, <var>key</var>, <var>value</var> )
+
+<Sec id="5.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-internalizejsonproperty">
+
+#### <span className="secnum">25.5.2.4</span> InternalizeJSONProperty ( <var>holder</var>, <var>name</var>, <var>reviver</var>, <var>parseRecord</var> )
+
+<Sec id="5.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-shallowestcontainedjsonvalue">
+
+#### <span className="secnum">25.5.2.5</span> Static Semantics: ShallowestContainedJSONValue ( <var>root</var> )
+
+<Sec id="5.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-jsonarrayliteralcontentnodes">
+
+#### <span className="secnum">25.5.2.6</span> Static Semantics: JSONArrayLiteralContentNodes
+
+<Sec id="5.2.6" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-json.rawjson">
+
+### <span className="secnum">25.5.3</span> JSON.rawJSON ( <var>text</var> )
+
+<Sec id="5.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-json.stringify">
+
+### <span className="secnum">25.5.4</span> JSON.stringify ( <var>value</var> [ , <var>replacer</var> [ , <var>space</var> ] ] )
+
+<Sec id="5.4" />
+
+<emu-clause id="sec-json-serialization-record">
+
+#### <span className="secnum">25.5.4.1</span> JSON Serialization Record
+
+<Sec id="5.4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-serializejsonproperty">
+
+#### <span className="secnum">25.5.4.2</span> SerializeJSONProperty ( <var>state</var>, <var>key</var>, <var>holder</var> )
+
+<Sec id="5.4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-quotejsonstring">
+
+#### <span className="secnum">25.5.4.3</span> QuoteJSONString ( <var>value</var> )
+
+<Sec id="5.4.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-unicodeescape">
+
+#### <span className="secnum">25.5.4.4</span> UnicodeEscape ( <var>codeUnit</var> )
+
+<Sec id="5.4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-serializejsonobject">
+
+#### <span className="secnum">25.5.4.5</span> SerializeJSONObject ( <var>state</var>, <var>value</var> )
+
+<Sec id="5.4.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-serializejsonarray">
+
+#### <span className="secnum">25.5.4.6</span> SerializeJSONArray ( <var>state</var>, <var>value</var> )
+
+<Sec id="5.4.6" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-json-%symbol.tostringtag%">
+
+### <span className="secnum">25.5.5</span> JSON [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="5.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</div>

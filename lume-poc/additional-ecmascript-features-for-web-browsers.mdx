@@ -1,0 +1,418 @@
+---
+title: "Annex B (normative) Additional ECMAScript Features for Web Browsers"
+layout: page.tsx
+url: /additional-ecmascript-features-for-web-browsers/
+slug: additional-ecmascript-features-for-web-browsers
+---
+
+import { Sec } from './lib/additional-ecmascript-features-for-web-browsers.jsx'
+
+<div id="spec-container" className="ecma-spec">
+
+<emu-annex id="sec-additional-ecmascript-features-for-web-browsers">
+
+# <span className="secnum">Annex B</span> (normative) Additional ECMAScript Features for Web Browsers
+
+<Sec id="" />
+
+<emu-clause id="sec-additional-syntax">
+
+## <span className="secnum">B.1</span> Additional Syntax
+
+<emu-clause id="sec-html-like-comments">
+
+### <span className="secnum">B.1.1</span> HTML-like Comments
+
+<Sec id="1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-regular-expressions-patterns">
+
+### <span className="secnum">B.1.2</span> Regular Expressions Patterns
+
+<Sec id="1.2" />
+
+<emu-clause id="sec-patterns-static-semantics-early-errors-annexb">
+
+#### <span className="secnum">B.1.2.1</span> Static Semantics: Early Errors
+
+<Sec id="1.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-countleftcapturingparens-annexb">
+
+#### <span className="secnum">B.1.2.2</span> Static Semantics: CountLeftCapturingParensWithin and CountLeftCapturingParensBefore
+
+<Sec id="1.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-patterns-static-semantics-is-character-class-annexb">
+
+#### <span className="secnum">B.1.2.3</span> Static Semantics: IsCharacterClass
+
+<Sec id="1.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-patterns-static-semantics-character-value-annexb">
+
+#### <span className="secnum">B.1.2.4</span> Static Semantics: CharacterValue
+
+<Sec id="1.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-compilesubpattern-annexb">
+
+#### <span className="secnum">B.1.2.5</span> Runtime Semantics: CompileSubpattern
+
+<Sec id="1.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-compileassertion-annexb">
+
+#### <span className="secnum">B.1.2.6</span> Runtime Semantics: CompileAssertion
+
+<Sec id="1.2.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-compileatom-annexb">
+
+#### <span className="secnum">B.1.2.7</span> Runtime Semantics: CompileAtom
+
+<Sec id="1.2.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-compiletocharset-annexb">
+
+#### <span className="secnum">B.1.2.8</span> Runtime Semantics: CompileToCharSet
+
+<Sec id="1.2.8" />
+
+<emu-clause id="sec-runtime-semantics-characterrangeorunion-abstract-operation">
+
+##### <span className="secnum">B.1.2.8.1</span> CharacterRangeOrUnion ( <var>regexpRecord</var>, <var>charSet</var>, <var>otherSet</var> )
+
+<Sec id="1.2.8.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-parsepattern-annexb">
+
+#### <span className="secnum">B.1.2.9</span> Static Semantics: ParsePattern ( <var>patternText</var>, <var>u</var>, <var>v</var> )
+
+<Sec id="1.2.9" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-additional-built-in-properties">
+
+## <span className="secnum">B.2</span> Additional Built-in Properties
+
+<Sec id="2" />
+
+<emu-clause id="sec-additional-properties-of-the-global-object">
+
+### <span className="secnum">B.2.1</span> Additional Properties of the Global Object
+
+<Sec id="2.1" />
+
+<emu-clause id="sec-escape-string">
+
+#### <span className="secnum">B.2.1.1</span> escape ( <var>string</var> )
+
+<Sec id="2.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-unescape-string">
+
+#### <span className="secnum">B.2.1.2</span> unescape ( <var>string</var> )
+
+<Sec id="2.1.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-additional-properties-of-the-string.prototype-object">
+
+### <span className="secnum">B.2.2</span> Additional Properties of the String.prototype Object
+
+<emu-clause id="sec-string.prototype.substr">
+
+#### <span className="secnum">B.2.2.1</span> String.prototype.substr ( <var>start</var>, <var>length</var> )
+
+<Sec id="2.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.anchor">
+
+#### <span className="secnum">B.2.2.2</span> String.prototype.anchor ( <var>name</var> )
+
+<Sec id="2.2.2" />
+
+<emu-clause id="sec-createhtml">
+
+##### <span className="secnum">B.2.2.2.1</span> CreateHTML ( <var>contents</var>, <var>tag</var>, <var>attr</var>, <var>attrValue</var> )
+
+<Sec id="2.2.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.big">
+
+#### <span className="secnum">B.2.2.3</span> String.prototype.big ( )
+
+<Sec id="2.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.blink">
+
+#### <span className="secnum">B.2.2.4</span> String.prototype.blink ( )
+
+<Sec id="2.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.bold">
+
+#### <span className="secnum">B.2.2.5</span> String.prototype.bold ( )
+
+<Sec id="2.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.fixed">
+
+#### <span className="secnum">B.2.2.6</span> String.prototype.fixed ( )
+
+<Sec id="2.2.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.fontcolor">
+
+#### <span className="secnum">B.2.2.7</span> String.prototype.fontcolor ( <var>colour</var> )
+
+<Sec id="2.2.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.fontsize">
+
+#### <span className="secnum">B.2.2.8</span> String.prototype.fontsize ( <var>size</var> )
+
+<Sec id="2.2.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.italics">
+
+#### <span className="secnum">B.2.2.9</span> String.prototype.italics ( )
+
+<Sec id="2.2.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.link">
+
+#### <span className="secnum">B.2.2.10</span> String.prototype.link ( <var>url</var> )
+
+<Sec id="2.2.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.small">
+
+#### <span className="secnum">B.2.2.11</span> String.prototype.small ( )
+
+<Sec id="2.2.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.strike">
+
+#### <span className="secnum">B.2.2.12</span> String.prototype.strike ( )
+
+<Sec id="2.2.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.sub">
+
+#### <span className="secnum">B.2.2.13</span> String.prototype.sub ( )
+
+<Sec id="2.2.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-string.prototype.sup">
+
+#### <span className="secnum">B.2.2.14</span> String.prototype.sup ( )
+
+<Sec id="2.2.14" />
+
+</emu-clause>
+
+<emu-clause id="String.prototype.trimleft">
+
+#### <span className="secnum">B.2.2.15</span> String.prototype.trimLeft ( )
+
+<Sec id="2.2.15" />
+
+</emu-clause>
+
+<emu-clause id="String.prototype.trimright">
+
+#### <span className="secnum">B.2.2.16</span> String.prototype.trimRight ( )
+
+<Sec id="2.2.16" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-additional-properties-of-the-date.prototype-object">
+
+### <span className="secnum">B.2.3</span> Additional Properties of the Date.prototype Object
+
+<emu-clause id="sec-date.prototype.getyear">
+
+#### <span className="secnum">B.2.3.1</span> Date.prototype.getYear ( )
+
+<Sec id="2.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setyear">
+
+#### <span className="secnum">B.2.3.2</span> Date.prototype.setYear ( <var>year</var> )
+
+<Sec id="2.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.togmtstring">
+
+#### <span className="secnum">B.2.3.3</span> Date.prototype.toGMTString ( )
+
+<Sec id="2.3.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-additional-properties-of-the-regexp.prototype-object">
+
+### <span className="secnum">B.2.4</span> Additional Properties of the RegExp.prototype Object
+
+<emu-clause id="sec-regexp.prototype.compile">
+
+#### <span className="secnum">B.2.4.1</span> RegExp.prototype.compile ( <var>pattern</var>, <var>flags</var> )
+
+<Sec id="2.4.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-other-additional-features">
+
+## <span className="secnum">B.3</span> Other Additional Features
+
+<emu-clause id="sec-labelled-function-declarations">
+
+### <span className="secnum">B.3.1</span> Labelled Function Declarations
+
+<Sec id="3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-block-level-function-declarations-web-legacy-compatibility-semantics">
+
+### <span className="secnum">B.3.2</span> Block-Level Function Declarations Web Legacy Compatibility Semantics
+
+<Sec id="3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-functiondeclarations-in-ifstatement-statement-clauses">
+
+### <span className="secnum">B.3.3</span> FunctionDeclarations in IfStatement Statement Clauses
+
+<Sec id="3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-variablestatements-in-catch-blocks">
+
+### <span className="secnum">B.3.4</span> VariableStatements in Catch Blocks
+
+<Sec id="3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-initializers-in-forin-statement-heads">
+
+### <span className="secnum">B.3.5</span> Initializers in ForIn Statement Heads
+
+<Sec id="3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-IsHTMLDDA-internal-slot">
+
+### <span className="secnum">B.3.6</span> The <var class="field">[[IsHTMLDDA]]</var> Internal Slot
+
+<Sec id="3.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-web-compat-host-make-job-callback">
+
+### <span className="secnum">B.3.7</span> Non-default behaviour in HostMakeJobCallback
+
+<Sec id="3.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-web-compat-host-ensure-can-add-private-field">
+
+### <span className="secnum">B.3.8</span> Non-default behaviour in HostEnsureCanAddPrivateElement
+
+<Sec id="3.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-runtime-errors-for-function-call-assignment-targets">
+
+### <span className="secnum">B.3.9</span> Runtime Errors for Function Call Assignment Targets
+
+<Sec id="3.9" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-annex>
+
+</div>

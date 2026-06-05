@@ -1,0 +1,568 @@
+---
+title: "16 ECMAScript Language: Scripts and Modules"
+layout: page.tsx
+url: /ecmascript-language-scripts-and-modules/
+slug: ecmascript-language-scripts-and-modules
+---
+
+import { Sec } from './lib/ecmascript-language-scripts-and-modules.jsx'
+
+<div id="spec-container" className="ecma-spec">
+
+<emu-clause id="sec-ecmascript-language-scripts-and-modules">
+
+# <span className="secnum">16</span> ECMAScript Language: Scripts and Modules
+
+<emu-clause id="sec-scripts">
+
+## <span className="secnum">16.1</span> Scripts
+
+<Sec id="1" />
+
+<emu-clause id="sec-scripts-static-semantics-early-errors">
+
+### <span className="secnum">16.1.1</span> Static Semantics: Early Errors
+
+<Sec id="1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-scriptisstrict">
+
+### <span className="secnum">16.1.2</span> Static Semantics: ScriptIsStrict
+
+<Sec id="1.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-script-semantics-runtime-semantics-evaluation">
+
+### <span className="secnum">16.1.3</span> Runtime Semantics: Evaluation
+
+<Sec id="1.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-script-records">
+
+### <span className="secnum">16.1.4</span> Script Records
+
+<Sec id="1.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-parse-script">
+
+### <span className="secnum">16.1.5</span> ParseScript ( <var>sourceText</var>, <var>realm</var>, <var>hostDefined</var> )
+
+<Sec id="1.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-runtime-semantics-scriptevaluation">
+
+### <span className="secnum">16.1.6</span> ScriptEvaluation ( <var>scriptRecord</var> )
+
+<Sec id="1.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-globaldeclarationinstantiation">
+
+### <span className="secnum">16.1.7</span> GlobalDeclarationInstantiation ( <var>script</var>, <var>envRecord</var> )
+
+<Sec id="1.7" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-modules">
+
+## <span className="secnum">16.2</span> Modules
+
+<Sec id="2" />
+
+<emu-clause id="sec-module-semantics">
+
+### <span className="secnum">16.2.1</span> Module Semantics
+
+<emu-clause id="sec-module-semantics-static-semantics-early-errors">
+
+#### <span className="secnum">16.2.1.1</span> Static Semantics: Early Errors
+
+<Sec id="2.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-importedlocalnames">
+
+#### <span className="secnum">16.2.1.2</span> Static Semantics: ImportedLocalNames ( <var>importEntries</var> )
+
+<Sec id="2.1.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-modulerequest-record">
+
+#### <span className="secnum">16.2.1.3</span> ModuleRequest Records
+
+<Sec id="2.1.3" />
+
+<emu-clause id="sec-ModuleRequestsEqual">
+
+##### <span className="secnum">16.2.1.3.1</span> ModuleRequestsEqual ( <var>x</var>, <var>y</var> )
+
+<Sec id="2.1.3.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-modulerequests">
+
+#### <span className="secnum">16.2.1.4</span> Static Semantics: ModuleRequests
+
+<Sec id="2.1.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-abstract-module-records">
+
+#### <span className="secnum">16.2.1.5</span> Abstract Module Records
+
+<Sec id="2.1.5" />
+
+<emu-clause id="sec-EvaluateModuleSync">
+
+##### <span className="secnum">16.2.1.5.1</span> EvaluateModuleSync ( <var>module</var> )
+
+<Sec id="2.1.5.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-cyclic-module-records">
+
+#### <span className="secnum">16.2.1.6</span> Cyclic Module Records
+
+<Sec id="2.1.6" />
+
+<emu-clause id="sec-cyclic-module-record-module-record-methods">
+
+##### <span className="secnum">16.2.1.6.1</span> Implementation of Module Record Abstract Methods
+
+<Sec id="2.1.6.1" />
+
+<emu-clause id="sec-LoadRequestedModules">
+
+###### <span className="secnum">16.2.1.6.1.1</span> LoadRequestedModules ( [ <var>hostDefined</var> ] )
+
+<Sec id="2.1.6.1.1" />
+
+<emu-clause id="sec-InnerModuleLoading">
+
+###### <span className="secnum">16.2.1.6.1.1.1</span> InnerModuleLoading ( <var>state</var>, <var>module</var> )
+
+<Sec id="2.1.6.1.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-ContinueModuleLoading">
+
+###### <span className="secnum">16.2.1.6.1.1.2</span> ContinueModuleLoading ( <var>state</var>, <var>moduleCompletion</var> )
+
+<Sec id="2.1.6.1.1.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-moduledeclarationlinking">
+
+###### <span className="secnum">16.2.1.6.1.2</span> Link ( )
+
+<Sec id="2.1.6.1.2" />
+
+<emu-clause id="sec-InnerModuleLinking">
+
+###### <span className="secnum">16.2.1.6.1.2.1</span> InnerModuleLinking ( <var>module</var>, <var>stack</var>, <var>index</var> )
+
+<Sec id="2.1.6.1.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-moduleevaluation">
+
+###### <span className="secnum">16.2.1.6.1.3</span> Evaluate ( )
+
+<Sec id="2.1.6.1.3" />
+
+<emu-clause id="sec-innermoduleevaluation">
+
+###### <span className="secnum">16.2.1.6.1.3.1</span> InnerModuleEvaluation ( <var>module</var>, <var>stack</var>, <var>index</var> )
+
+<Sec id="2.1.6.1.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-execute-async-module">
+
+###### <span className="secnum">16.2.1.6.1.3.2</span> ExecuteAsyncModule ( <var>module</var> )
+
+<Sec id="2.1.6.1.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-gather-available-ancestors">
+
+###### <span className="secnum">16.2.1.6.1.3.3</span> GatherAvailableAncestors ( <var>module</var>, <var>execList</var> )
+
+<Sec id="2.1.6.1.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-async-module-execution-fulfilled">
+
+###### <span className="secnum">16.2.1.6.1.3.4</span> AsyncModuleExecutionFulfilled ( <var>module</var> )
+
+<Sec id="2.1.6.1.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-async-module-execution-rejected">
+
+###### <span className="secnum">16.2.1.6.1.3.5</span> AsyncModuleExecutionRejected ( <var>module</var>, <var>error</var> )
+
+<Sec id="2.1.6.1.3.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-example-cyclic-module-record-graphs">
+
+##### <span className="secnum">16.2.1.6.2</span> Example Cyclic Module Record Graphs
+
+<Sec id="2.1.6.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-source-text-module-records">
+
+#### <span className="secnum">16.2.1.7</span> Source Text Module Records
+
+<Sec id="2.1.7" />
+
+<emu-clause id="sec-parsemodule">
+
+##### <span className="secnum">16.2.1.7.1</span> ParseModule ( <var>sourceText</var>, <var>realm</var>, <var>hostDefined</var> )
+
+<Sec id="2.1.7.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-source-text-module-record-module-record-methods">
+
+##### <span className="secnum">16.2.1.7.2</span> Implementation of Module Record Abstract Methods
+
+<Sec id="2.1.7.2" />
+
+<emu-clause id="sec-getexportednames">
+
+###### <span className="secnum">16.2.1.7.2.1</span> GetExportedNames ( [ <var>exportStarSet</var> ] )
+
+<Sec id="2.1.7.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-resolveexport">
+
+###### <span className="secnum">16.2.1.7.2.2</span> ResolveExport ( <var>exportName</var> [ , <var>resolveSet</var> ] )
+
+<Sec id="2.1.7.2.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-source-text-module-record-cyclic-module-record-methods">
+
+##### <span className="secnum">16.2.1.7.3</span> Implementation of Cyclic Module Record Abstract Methods
+
+<Sec id="2.1.7.3" />
+
+<emu-clause id="sec-source-text-module-record-initialize-environment">
+
+###### <span className="secnum">16.2.1.7.3.1</span> InitializeEnvironment ( )
+
+<Sec id="2.1.7.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-source-text-module-record-execute-module">
+
+###### <span className="secnum">16.2.1.7.3.2</span> ExecuteModule ( [ <var>capability</var> ] )
+
+<Sec id="2.1.7.3.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-synthetic-module-records">
+
+#### <span className="secnum">16.2.1.8</span> Synthetic Module Records
+
+<Sec id="2.1.8" />
+
+<emu-clause id="sec-create-default-export-synthetic-module">
+
+##### <span className="secnum">16.2.1.8.1</span> CreateDefaultExportSyntheticModule ( <var>defaultExport</var> )
+
+<Sec id="2.1.8.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-parse-json-module">
+
+##### <span className="secnum">16.2.1.8.2</span> ParseJSONModule ( <var>source</var> )
+
+<Sec id="2.1.8.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-setsyntheticmoduleexport">
+
+##### <span className="secnum">16.2.1.8.3</span> SetSyntheticModuleExport ( <var>module</var>, <var>exportName</var>, <var>exportValue</var> )
+
+<Sec id="2.1.8.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-smr-module-record-methods">
+
+##### <span className="secnum">16.2.1.8.4</span> Implementation of Module Record Abstract Methods
+
+<Sec id="2.1.8.4" />
+
+<emu-clause id="sec-smr-LoadRequestedModules">
+
+###### <span className="secnum">16.2.1.8.4.1</span> LoadRequestedModules ( [ <var>hostDefined</var> ] )
+
+<Sec id="2.1.8.4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-smr-getexportednames">
+
+###### <span className="secnum">16.2.1.8.4.2</span> GetExportedNames ( [ <var>exportStarSet</var> ] )
+
+<Sec id="2.1.8.4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-smr-resolveexport">
+
+###### <span className="secnum">16.2.1.8.4.3</span> ResolveExport ( <var>exportName</var> [ , <var>resolveSet</var> ] )
+
+<Sec id="2.1.8.4.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-smr-Link">
+
+###### <span className="secnum">16.2.1.8.4.4</span> Link ( )
+
+<Sec id="2.1.8.4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-smr-Evaluate">
+
+###### <span className="secnum">16.2.1.8.4.5</span> Evaluate ( )
+
+<Sec id="2.1.8.4.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-GetImportedModule">
+
+#### <span className="secnum">16.2.1.9</span> GetImportedModule ( <var>referrer</var>, <var>request</var> )
+
+<Sec id="2.1.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-HostLoadImportedModule">
+
+#### <span className="secnum">16.2.1.10</span> HostLoadImportedModule ( <var>referrer</var>, <var>moduleRequest</var>, <var>hostDefined</var>, <var>payload</var> )
+
+<Sec id="2.1.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-FinishLoadingImportedModule">
+
+#### <span className="secnum">16.2.1.11</span> FinishLoadingImportedModule ( <var>referrer</var>, <var>moduleRequest</var>, <var>payload</var>, <var>result</var> )
+
+<Sec id="2.1.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-AllImportAttributesSupported">
+
+#### <span className="secnum">16.2.1.12</span> AllImportAttributesSupported ( <var>attrs</var> )
+
+<Sec id="2.1.12" />
+
+<emu-clause id="sec-hostgetsupportedimportattributes">
+
+##### <span className="secnum">16.2.1.12.1</span> HostGetSupportedImportAttributes ( )
+
+<Sec id="2.1.12.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-getmodulenamespace">
+
+#### <span className="secnum">16.2.1.13</span> GetModuleNamespace ( <var>module</var> )
+
+<Sec id="2.1.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-module-semantics-runtime-semantics-evaluation">
+
+#### <span className="secnum">16.2.1.14</span> Runtime Semantics: Evaluation
+
+<Sec id="2.1.14" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-imports">
+
+### <span className="secnum">16.2.2</span> Imports
+
+<Sec id="2.2" />
+
+<emu-clause id="sec-imports-static-semantics-early-errors">
+
+#### <span className="secnum">16.2.2.1</span> Static Semantics: Early Errors
+
+<Sec id="2.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-importentries">
+
+#### <span className="secnum">16.2.2.2</span> Static Semantics: ImportEntries
+
+<Sec id="2.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-importentriesformodule">
+
+#### <span className="secnum">16.2.2.3</span> Static Semantics: ImportEntriesForModule
+
+<Sec id="2.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-withclausetoattributes">
+
+#### <span className="secnum">16.2.2.4</span> Static Semantics: WithClauseToAttributes
+
+<Sec id="2.2.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-exports">
+
+### <span className="secnum">16.2.3</span> Exports
+
+<Sec id="2.3" />
+
+<emu-clause id="sec-exports-static-semantics-early-errors">
+
+#### <span className="secnum">16.2.3.1</span> Static Semantics: Early Errors
+
+<Sec id="2.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-exportedbindings">
+
+#### <span className="secnum">16.2.3.2</span> Static Semantics: ExportedBindings
+
+<Sec id="2.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-exportednames">
+
+#### <span className="secnum">16.2.3.3</span> Static Semantics: ExportedNames
+
+<Sec id="2.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-exportentries">
+
+#### <span className="secnum">16.2.3.4</span> Static Semantics: ExportEntries
+
+<Sec id="2.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-exportentriesformodule">
+
+#### <span className="secnum">16.2.3.5</span> Static Semantics: ExportEntriesForModule
+
+<Sec id="2.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-referencedbindings">
+
+#### <span className="secnum">16.2.3.6</span> Static Semantics: ReferencedBindings
+
+<Sec id="2.3.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-exports-runtime-semantics-evaluation">
+
+#### <span className="secnum">16.2.3.7</span> Runtime Semantics: Evaluation
+
+<Sec id="2.3.7" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</div>

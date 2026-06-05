@@ -1,0 +1,830 @@
+---
+title: "9 Executable Code and Execution Contexts"
+layout: page.tsx
+url: /executable-code-and-execution-contexts/
+slug: executable-code-and-execution-contexts
+---
+
+import { Sec } from './lib/executable-code-and-execution-contexts.jsx'
+
+<div id="spec-container" className="ecma-spec">
+
+<emu-clause id="sec-executable-code-and-execution-contexts">
+
+# <span className="secnum">9</span> Executable Code and Execution Contexts
+
+<emu-clause id="sec-environment-records">
+
+## <span className="secnum">9.1</span> Environment Records
+
+<Sec id="1" />
+
+<emu-clause id="sec-the-environment-record-type-hierarchy">
+
+### <span className="secnum">9.1.1</span> The Environment Record Type Hierarchy
+
+<Sec id="1.1" />
+
+<emu-clause id="sec-declarative-environment-records">
+
+#### <span className="secnum">9.1.1.1</span> Declarative Environment Records
+
+<Sec id="1.1.1" />
+
+<emu-clause id="sec-declarative-environment-records-hasbinding-n">
+
+##### <span className="secnum">9.1.1.1.1</span> HasBinding ( <var>name</var> )
+
+<Sec id="1.1.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-createmutablebinding-n-d">
+
+##### <span className="secnum">9.1.1.1.2</span> CreateMutableBinding ( <var>name</var>, <var>deletable</var> )
+
+<Sec id="1.1.1.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-createimmutablebinding-n-s">
+
+##### <span className="secnum">9.1.1.1.3</span> CreateImmutableBinding ( <var>name</var>, <var>strict</var> )
+
+<Sec id="1.1.1.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-initializebinding-n-v">
+
+##### <span className="secnum">9.1.1.1.4</span> InitializeBinding ( <var>name</var>, <var>value</var> )
+
+<Sec id="1.1.1.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-setmutablebinding-n-v-s">
+
+##### <span className="secnum">9.1.1.1.5</span> SetMutableBinding ( <var>name</var>, <var>value</var>, <var>strict</var> )
+
+<Sec id="1.1.1.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-getbindingvalue-n-s">
+
+##### <span className="secnum">9.1.1.1.6</span> GetBindingValue ( <var>name</var>, <var>strict</var> )
+
+<Sec id="1.1.1.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-deletebinding-n">
+
+##### <span className="secnum">9.1.1.1.7</span> DeleteBinding ( <var>name</var> )
+
+<Sec id="1.1.1.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-hasthisbinding">
+
+##### <span className="secnum">9.1.1.1.8</span> HasThisBinding ( )
+
+<Sec id="1.1.1.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-getthisbinding">
+
+##### <span className="secnum">9.1.1.1.9</span> GetThisBinding ( )
+
+<Sec id="1.1.1.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-hassuperbinding">
+
+##### <span className="secnum">9.1.1.1.10</span> HasSuperBinding ( )
+
+<Sec id="1.1.1.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-declarative-environment-records-withbaseobject">
+
+##### <span className="secnum">9.1.1.1.11</span> WithBaseObject ( )
+
+<Sec id="1.1.1.11" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records">
+
+#### <span className="secnum">9.1.1.2</span> Object Environment Records
+
+<Sec id="1.1.2" />
+
+<emu-clause id="sec-object-environment-records-hasbinding-n">
+
+##### <span className="secnum">9.1.1.2.1</span> HasBinding ( <var>name</var> )
+
+<Sec id="1.1.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-createmutablebinding-n-d">
+
+##### <span className="secnum">9.1.1.2.2</span> CreateMutableBinding ( <var>name</var>, <var>deletable</var> )
+
+<Sec id="1.1.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-createimmutablebinding-n-s">
+
+##### <span className="secnum">9.1.1.2.3</span> CreateImmutableBinding ( <var>name</var>, <var>strict</var> )
+
+<Sec id="1.1.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-initializebinding-n-v">
+
+##### <span className="secnum">9.1.1.2.4</span> InitializeBinding ( <var>name</var>, <var>value</var> )
+
+<Sec id="1.1.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-setmutablebinding-n-v-s">
+
+##### <span className="secnum">9.1.1.2.5</span> SetMutableBinding ( <var>name</var>, <var>value</var>, <var>strict</var> )
+
+<Sec id="1.1.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-getbindingvalue-n-s">
+
+##### <span className="secnum">9.1.1.2.6</span> GetBindingValue ( <var>name</var>, <var>strict</var> )
+
+<Sec id="1.1.2.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-deletebinding-n">
+
+##### <span className="secnum">9.1.1.2.7</span> DeleteBinding ( <var>name</var> )
+
+<Sec id="1.1.2.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-hasthisbinding">
+
+##### <span className="secnum">9.1.1.2.8</span> HasThisBinding ( )
+
+<Sec id="1.1.2.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-getthisbinding">
+
+##### <span className="secnum">9.1.1.2.9</span> GetThisBinding ( )
+
+<Sec id="1.1.2.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-hassuperbinding">
+
+##### <span className="secnum">9.1.1.2.10</span> HasSuperBinding ( )
+
+<Sec id="1.1.2.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-object-environment-records-withbaseobject">
+
+##### <span className="secnum">9.1.1.2.11</span> WithBaseObject ( )
+
+<Sec id="1.1.2.11" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-function-environment-records">
+
+#### <span className="secnum">9.1.1.3</span> Function Environment Records
+
+<Sec id="1.1.3" />
+
+<emu-clause id="sec-bindthisvalue">
+
+##### <span className="secnum">9.1.1.3.1</span> BindThisValue ( <var>envRecord</var>, <var>value</var> )
+
+<Sec id="1.1.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-function-environment-records-hasthisbinding">
+
+##### <span className="secnum">9.1.1.3.2</span> HasThisBinding ( )
+
+<Sec id="1.1.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-function-environment-records-getthisbinding">
+
+##### <span className="secnum">9.1.1.3.3</span> GetThisBinding ( )
+
+<Sec id="1.1.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-function-environment-records-hassuperbinding">
+
+##### <span className="secnum">9.1.1.3.4</span> HasSuperBinding ( )
+
+<Sec id="1.1.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-getsuperbase">
+
+##### <span className="secnum">9.1.1.3.5</span> GetSuperBase ( <var>envRecord</var> )
+
+<Sec id="1.1.3.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records">
+
+#### <span className="secnum">9.1.1.4</span> Global Environment Records
+
+<Sec id="1.1.4" />
+
+<emu-clause id="sec-global-environment-records-hasbinding-n">
+
+##### <span className="secnum">9.1.1.4.1</span> HasBinding ( <var>name</var> )
+
+<Sec id="1.1.4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-createmutablebinding-n-d">
+
+##### <span className="secnum">9.1.1.4.2</span> CreateMutableBinding ( <var>name</var>, <var>deletable</var> )
+
+<Sec id="1.1.4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-createimmutablebinding-n-s">
+
+##### <span className="secnum">9.1.1.4.3</span> CreateImmutableBinding ( <var>name</var>, <var>strict</var> )
+
+<Sec id="1.1.4.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-initializebinding-n-v">
+
+##### <span className="secnum">9.1.1.4.4</span> InitializeBinding ( <var>name</var>, <var>value</var> )
+
+<Sec id="1.1.4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-setmutablebinding-n-v-s">
+
+##### <span className="secnum">9.1.1.4.5</span> SetMutableBinding ( <var>name</var>, <var>value</var>, <var>strict</var> )
+
+<Sec id="1.1.4.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-getbindingvalue-n-s">
+
+##### <span className="secnum">9.1.1.4.6</span> GetBindingValue ( <var>name</var>, <var>strict</var> )
+
+<Sec id="1.1.4.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-deletebinding-n">
+
+##### <span className="secnum">9.1.1.4.7</span> DeleteBinding ( <var>name</var> )
+
+<Sec id="1.1.4.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-hasthisbinding">
+
+##### <span className="secnum">9.1.1.4.8</span> HasThisBinding ( )
+
+<Sec id="1.1.4.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-getthisbinding">
+
+##### <span className="secnum">9.1.1.4.9</span> GetThisBinding ( )
+
+<Sec id="1.1.4.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-hassuperbinding">
+
+##### <span className="secnum">9.1.1.4.10</span> HasSuperBinding ( )
+
+<Sec id="1.1.4.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-global-environment-records-withbaseobject">
+
+##### <span className="secnum">9.1.1.4.11</span> WithBaseObject ( )
+
+<Sec id="1.1.4.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-haslexicaldeclaration">
+
+##### <span className="secnum">9.1.1.4.12</span> HasLexicalDeclaration ( <var>envRecord</var>, <var>name</var> )
+
+<Sec id="1.1.4.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-hasrestrictedglobalproperty">
+
+##### <span className="secnum">9.1.1.4.13</span> HasRestrictedGlobalProperty ( <var>envRecord</var>, <var>name</var> )
+
+<Sec id="1.1.4.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-candeclareglobalvar">
+
+##### <span className="secnum">9.1.1.4.14</span> CanDeclareGlobalVar ( <var>envRecord</var>, <var>name</var> )
+
+<Sec id="1.1.4.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-candeclareglobalfunction">
+
+##### <span className="secnum">9.1.1.4.15</span> CanDeclareGlobalFunction ( <var>envRecord</var>, <var>name</var> )
+
+<Sec id="1.1.4.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-createglobalvarbinding">
+
+##### <span className="secnum">9.1.1.4.16</span> CreateGlobalVarBinding ( <var>envRecord</var>, <var>name</var>, <var>deletable</var> )
+
+<Sec id="1.1.4.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-createglobalfunctionbinding">
+
+##### <span className="secnum">9.1.1.4.17</span> CreateGlobalFunctionBinding ( <var>envRecord</var>, <var>name</var>, <var>value</var>, <var>deletable</var> )
+
+<Sec id="1.1.4.17" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-module-environment-records">
+
+#### <span className="secnum">9.1.1.5</span> Module Environment Records
+
+<Sec id="1.1.5" />
+
+<emu-clause id="sec-module-environment-records-getbindingvalue-n-s">
+
+##### <span className="secnum">9.1.1.5.1</span> GetBindingValue ( <var>name</var>, <var>strict</var> )
+
+<Sec id="1.1.5.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-module-environment-records-deletebinding-n">
+
+##### <span className="secnum">9.1.1.5.2</span> DeleteBinding ( <var>name</var> )
+
+<Sec id="1.1.5.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-module-environment-records-hasthisbinding">
+
+##### <span className="secnum">9.1.1.5.3</span> HasThisBinding ( )
+
+<Sec id="1.1.5.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-module-environment-records-getthisbinding">
+
+##### <span className="secnum">9.1.1.5.4</span> GetThisBinding ( )
+
+<Sec id="1.1.5.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-createimportbinding">
+
+##### <span className="secnum">9.1.1.5.5</span> CreateImportBinding ( <var>envRecord</var>, <var>name</var>, <var>targetModule</var>, <var>targetName</var> )
+
+<Sec id="1.1.5.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-environment-record-operations">
+
+### <span className="secnum">9.1.2</span> Environment Record Operations
+
+<Sec id="1.2" />
+
+<emu-clause id="sec-getidentifierreference">
+
+#### <span className="secnum">9.1.2.1</span> GetIdentifierReference ( <var>envRecord</var>, <var>name</var>, <var>strict</var> )
+
+<Sec id="1.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-newdeclarativeenvironment">
+
+#### <span className="secnum">9.1.2.2</span> NewDeclarativeEnvironment ( <var>outerEnv</var> )
+
+<Sec id="1.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-newobjectenvironment">
+
+#### <span className="secnum">9.1.2.3</span> NewObjectEnvironment ( <var>obj</var>, <var>isWithEnv</var>, <var>outerEnv</var> )
+
+<Sec id="1.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-newfunctionenvironment">
+
+#### <span className="secnum">9.1.2.4</span> NewFunctionEnvironment ( <var>func</var>, <var>newTarget</var> )
+
+<Sec id="1.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-newglobalenvironment">
+
+#### <span className="secnum">9.1.2.5</span> NewGlobalEnvironment ( <var>obj</var>, <var>thisValue</var> )
+
+<Sec id="1.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-newmoduleenvironment">
+
+#### <span className="secnum">9.1.2.6</span> NewModuleEnvironment ( <var>outerEnv</var> )
+
+<Sec id="1.2.6" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-privateenvironment-records">
+
+## <span className="secnum">9.2</span> PrivateEnvironment Records
+
+<Sec id="2" />
+
+<emu-clause id="sec-privateenvironment-record-operations">
+
+### <span className="secnum">9.2.1</span> PrivateEnvironment Record Operations
+
+<Sec id="2.1" />
+
+<emu-clause id="sec-newprivateenvironment">
+
+#### <span className="secnum">9.2.1.1</span> NewPrivateEnvironment ( <var>outerPrivateEnv</var> )
+
+<Sec id="2.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-resolve-private-identifier">
+
+#### <span className="secnum">9.2.1.2</span> ResolvePrivateIdentifier ( <var>privateEnv</var>, <var>identifier</var> )
+
+<Sec id="2.1.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-code-realms">
+
+## <span className="secnum">9.3</span> Realms
+
+<Sec id="3" />
+
+<emu-clause id="sec-initializehostdefinedrealm">
+
+### <span className="secnum">9.3.1</span> InitializeHostDefinedRealm ( )
+
+<Sec id="3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-createintrinsics">
+
+### <span className="secnum">9.3.2</span> CreateIntrinsics ( <var>realmRecord</var> )
+
+<Sec id="3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-setdefaultglobalbindings">
+
+### <span className="secnum">9.3.3</span> SetDefaultGlobalBindings ( <var>realmRecord</var> )
+
+<Sec id="3.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-execution-contexts">
+
+## <span className="secnum">9.4</span> Execution Contexts
+
+<Sec id="4" />
+
+<emu-clause id="sec-getactivescriptormodule">
+
+### <span className="secnum">9.4.1</span> GetActiveScriptOrModule ( )
+
+<Sec id="4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-resolvebinding">
+
+### <span className="secnum">9.4.2</span> ResolveBinding ( <var>name</var> [ , <var>envRecord</var> ] )
+
+<Sec id="4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-getthisenvironment">
+
+### <span className="secnum">9.4.3</span> GetThisEnvironment ( )
+
+<Sec id="4.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-resolvethisbinding">
+
+### <span className="secnum">9.4.4</span> ResolveThisBinding ( )
+
+<Sec id="4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-getnewtarget">
+
+### <span className="secnum">9.4.5</span> GetNewTarget ( )
+
+<Sec id="4.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-getglobalobject">
+
+### <span className="secnum">9.4.6</span> GetGlobalObject ( )
+
+<Sec id="4.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-runsuspendedcontext">
+
+### <span className="secnum">9.4.7</span> RunSuspendedContext ( <var>context</var>, <var>completionRecord</var> )
+
+<Sec id="4.7" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-jobs">
+
+## <span className="secnum">9.5</span> Jobs and Host Operations to Enqueue Jobs
+
+<Sec id="5" />
+
+<emu-clause id="sec-jobcallback-records">
+
+### <span className="secnum">9.5.1</span> JobCallback Records
+
+<Sec id="5.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-hostmakejobcallback">
+
+### <span className="secnum">9.5.2</span> HostMakeJobCallback ( <var>callback</var> )
+
+<Sec id="5.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-hostcalljobcallback">
+
+### <span className="secnum">9.5.3</span> HostCallJobCallback ( <var>jobCallback</var>, <var>value</var>, <var>argList</var> )
+
+<Sec id="5.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-hostenqueuegenericjob">
+
+### <span className="secnum">9.5.4</span> HostEnqueueGenericJob ( <var>job</var>, <var>realm</var> )
+
+<Sec id="5.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-hostenqueuepromisejob">
+
+### <span className="secnum">9.5.5</span> HostEnqueuePromiseJob ( <var>job</var>, <var>realm</var> )
+
+<Sec id="5.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-hostenqueuetimeoutjob">
+
+### <span className="secnum">9.5.6</span> HostEnqueueTimeoutJob ( <var>timeoutJob</var>, <var>realm</var>, <var>milliseconds</var> )
+
+<Sec id="5.6" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-agents">
+
+## <span className="secnum">9.6</span> Agents
+
+<Sec id="6" />
+
+<emu-clause id="sec-agentsignifier">
+
+### <span className="secnum">9.6.1</span> AgentSignifier ( )
+
+<Sec id="6.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-agentcansuspend">
+
+### <span className="secnum">9.6.2</span> AgentCanSuspend ( )
+
+<Sec id="6.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-IncrementModuleAsyncEvaluationCount">
+
+### <span className="secnum">9.6.3</span> IncrementModuleAsyncEvaluationCount ( )
+
+<Sec id="6.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-agent-clusters">
+
+## <span className="secnum">9.7</span> Agent Clusters
+
+<Sec id="7" />
+
+</emu-clause>
+
+<emu-clause id="sec-forward-progress">
+
+## <span className="secnum">9.8</span> Forward Progress
+
+<Sec id="8" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakref-processing-model">
+
+## <span className="secnum">9.9</span> Processing Model of WeakRef and FinalizationRegistry Targets
+
+<emu-clause id="sec-weakref-invariants">
+
+### <span className="secnum">9.9.1</span> Objectives
+
+<Sec id="9.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-liveness">
+
+### <span className="secnum">9.9.2</span> Liveness
+
+<Sec id="9.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakref-execution">
+
+### <span className="secnum">9.9.3</span> Execution
+
+<Sec id="9.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakref-host-hooks">
+
+### <span className="secnum">9.9.4</span> Host Hooks
+
+<emu-clause id="sec-host-cleanup-finalization-registry">
+
+#### <span className="secnum">9.9.4.1</span> HostEnqueueFinalizationRegistryCleanupJob ( <var>finalizationRegistry</var> )
+
+<Sec id="9.4.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-clear-kept-objects">
+
+## <span className="secnum">9.10</span> ClearKeptObjects ( )
+
+<Sec id="10" />
+
+</emu-clause>
+
+<emu-clause id="sec-addtokeptobjects">
+
+## <span className="secnum">9.11</span> AddToKeptObjects ( <var>value</var> )
+
+<Sec id="11" />
+
+</emu-clause>
+
+<emu-clause id="sec-cleanup-finalization-registry">
+
+## <span className="secnum">9.12</span> CleanupFinalizationRegistry ( <var>finalizationRegistry</var> )
+
+<Sec id="12" />
+
+</emu-clause>
+
+<emu-clause id="sec-canbeheldweakly">
+
+## <span className="secnum">9.13</span> CanBeHeldWeakly ( <var>arg</var> )
+
+<Sec id="13" />
+
+</emu-clause>
+
+</emu-clause>
+
+</div>

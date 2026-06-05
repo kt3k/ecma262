@@ -6,10 +6,10 @@ import chapters from "./chapters.ts";
 // — no card, no "Previous"/"Next" label, the chapter title carries the
 // meaning. Next link sits right-aligned via margin-start: auto.
 //
-// Lookup is by slug position in the chapters array; for chapters that aren't
-// Lume-rendered yet the link falls back to the gh-pages /draft/ build.
+// Lookup is by slug position in the chapters array; every chapter is now
+// Lume-rendered (scripts/build-pages.ts), so links point at the local pages.
 export default function PrevNext(
-  { basePath, currentSlug, fallbackBase }: {
+  { basePath, currentSlug, fallbackBase: _fallbackBase }: {
     basePath: string;
     currentSlug: string;
     fallbackBase: string;
@@ -23,9 +23,7 @@ export default function PrevNext(
   if (!prev && !next) return null;
 
   const hrefFor = (slug: string) =>
-    slug === currentSlug
-      ? `${basePath}/${slug}/`
-      : `${fallbackBase}/${slug === "index" ? "" : slug}`;
+    slug === "index" ? `${basePath}/` : `${basePath}/${slug}/`;
 
   // Chevron-right SVG; the prev variant gets `class="flip"` so CSS rotates
   // it 180° (matches Nextra's `x:ltr:rotate-180` on the prev arrow).

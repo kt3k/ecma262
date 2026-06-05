@@ -1,0 +1,1202 @@
+---
+title: "20 Fundamental Objects"
+layout: page.tsx
+url: /fundamental-objects/
+slug: fundamental-objects
+---
+
+import { Sec } from './lib/fundamental-objects.jsx'
+
+<div id="spec-container" className="ecma-spec">
+
+<emu-clause id="sec-fundamental-objects">
+
+# <span className="secnum">20</span> Fundamental Objects
+
+<emu-clause id="sec-object-objects">
+
+## <span className="secnum">20.1</span> Object Objects
+
+<emu-clause id="sec-object-constructor">
+
+### <span className="secnum">20.1.1</span> The Object Constructor
+
+<Sec id="1.1" />
+
+<emu-clause id="sec-object-value">
+
+#### <span className="secnum">20.1.1.1</span> Object ( <var>value</var> )
+
+<Sec id="1.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-object-constructor">
+
+### <span className="secnum">20.1.2</span> Properties of the Object Constructor
+
+<Sec id="1.2" />
+
+<emu-clause id="sec-object.assign">
+
+#### <span className="secnum">20.1.2.1</span> Object.assign ( <var>target</var>, ...<var>sources</var> )
+
+<Sec id="1.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.create">
+
+#### <span className="secnum">20.1.2.2</span> Object.create ( <var>proto</var>, <var>properties</var> )
+
+<Sec id="1.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.defineproperties">
+
+#### <span className="secnum">20.1.2.3</span> Object.defineProperties ( <var>obj</var>, <var>properties</var> )
+
+<Sec id="1.2.3" />
+
+<emu-clause id="sec-objectdefineproperties">
+
+##### <span className="secnum">20.1.2.3.1</span> ObjectDefineProperties ( <var>obj</var>, <var>properties</var> )
+
+<Sec id="1.2.3.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-object.defineproperty">
+
+#### <span className="secnum">20.1.2.4</span> Object.defineProperty ( <var>obj</var>, <var>key</var>, <var>attrs</var> )
+
+<Sec id="1.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.entries">
+
+#### <span className="secnum">20.1.2.5</span> Object.entries ( <var>obj</var> )
+
+<Sec id="1.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.freeze">
+
+#### <span className="secnum">20.1.2.6</span> Object.freeze ( <var>obj</var> )
+
+<Sec id="1.2.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.fromentries">
+
+#### <span className="secnum">20.1.2.7</span> Object.fromEntries ( <var>iterable</var> )
+
+<Sec id="1.2.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.getownpropertydescriptor">
+
+#### <span className="secnum">20.1.2.8</span> Object.getOwnPropertyDescriptor ( <var>obj</var>, <var>key</var> )
+
+<Sec id="1.2.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.getownpropertydescriptors">
+
+#### <span className="secnum">20.1.2.9</span> Object.getOwnPropertyDescriptors ( <var>obj</var> )
+
+<Sec id="1.2.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.getownpropertynames">
+
+#### <span className="secnum">20.1.2.10</span> Object.getOwnPropertyNames ( <var>obj</var> )
+
+<Sec id="1.2.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.getownpropertysymbols">
+
+#### <span className="secnum">20.1.2.11</span> Object.getOwnPropertySymbols ( <var>obj</var> )
+
+<Sec id="1.2.11" />
+
+<emu-clause id="sec-getownpropertykeys">
+
+##### <span className="secnum">20.1.2.11.1</span> GetOwnPropertyKeys ( <var>value</var>, <var>type</var> )
+
+<Sec id="1.2.11.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-object.getprototypeof">
+
+#### <span className="secnum">20.1.2.12</span> Object.getPrototypeOf ( <var>obj</var> )
+
+<Sec id="1.2.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.groupby">
+
+#### <span className="secnum">20.1.2.13</span> Object.groupBy ( <var>items</var>, <var>callback</var> )
+
+<Sec id="1.2.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.hasown">
+
+#### <span className="secnum">20.1.2.14</span> Object.hasOwn ( <var>obj</var>, <var>key</var> )
+
+<Sec id="1.2.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.is">
+
+#### <span className="secnum">20.1.2.15</span> Object.is ( <var>value1</var>, <var>value2</var> )
+
+<Sec id="1.2.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.isextensible">
+
+#### <span className="secnum">20.1.2.16</span> Object.isExtensible ( <var>obj</var> )
+
+<Sec id="1.2.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.isfrozen">
+
+#### <span className="secnum">20.1.2.17</span> Object.isFrozen ( <var>obj</var> )
+
+<Sec id="1.2.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.issealed">
+
+#### <span className="secnum">20.1.2.18</span> Object.isSealed ( <var>obj</var> )
+
+<Sec id="1.2.18" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.keys">
+
+#### <span className="secnum">20.1.2.19</span> Object.keys ( <var>obj</var> )
+
+<Sec id="1.2.19" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.preventextensions">
+
+#### <span className="secnum">20.1.2.20</span> Object.preventExtensions ( <var>obj</var> )
+
+<Sec id="1.2.20" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype">
+
+#### <span className="secnum">20.1.2.21</span> Object.prototype
+
+<Sec id="1.2.21" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.seal">
+
+#### <span className="secnum">20.1.2.22</span> Object.seal ( <var>obj</var> )
+
+<Sec id="1.2.22" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.setprototypeof">
+
+#### <span className="secnum">20.1.2.23</span> Object.setPrototypeOf ( <var>obj</var>, <var>proto</var> )
+
+<Sec id="1.2.23" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.values">
+
+#### <span className="secnum">20.1.2.24</span> Object.values ( <var>obj</var> )
+
+<Sec id="1.2.24" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-object-prototype-object">
+
+### <span className="secnum">20.1.3</span> Properties of the Object Prototype Object
+
+<Sec id="1.3" />
+
+<emu-clause id="sec-object.prototype.constructor">
+
+#### <span className="secnum">20.1.3.1</span> Object.prototype.constructor
+
+<Sec id="1.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.hasownproperty">
+
+#### <span className="secnum">20.1.3.2</span> Object.prototype.hasOwnProperty ( <var>value</var> )
+
+<Sec id="1.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.isprototypeof">
+
+#### <span className="secnum">20.1.3.3</span> Object.prototype.isPrototypeOf ( <var>value</var> )
+
+<Sec id="1.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.propertyisenumerable">
+
+#### <span className="secnum">20.1.3.4</span> Object.prototype.propertyIsEnumerable ( <var>value</var> )
+
+<Sec id="1.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.tolocalestring">
+
+#### <span className="secnum">20.1.3.5</span> Object.prototype.toLocaleString ( [ <var>reserved1</var> [ , <var>reserved2</var> ] ] )
+
+<Sec id="1.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.tostring">
+
+#### <span className="secnum">20.1.3.6</span> Object.prototype.toString ( )
+
+<Sec id="1.3.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.valueof">
+
+#### <span className="secnum">20.1.3.7</span> Object.prototype.valueOf ( )
+
+<Sec id="1.3.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.__proto__">
+
+#### <span className="secnum">20.1.3.8</span> Object.prototype.__proto__
+
+<Sec id="1.3.8" />
+
+<emu-clause id="sec-get-object.prototype.__proto__">
+
+##### <span className="secnum">20.1.3.8.1</span> get Object.prototype.__proto__
+
+<Sec id="1.3.8.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-set-object.prototype.__proto__">
+
+##### <span className="secnum">20.1.3.8.2</span> set Object.prototype.__proto__
+
+<Sec id="1.3.8.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype-legacy-accessor-methods">
+
+#### <span className="secnum">20.1.3.9</span> Legacy Object.prototype Accessor Methods
+
+<emu-clause id="sec-object.prototype.__defineGetter__">
+
+##### <span className="secnum">20.1.3.9.1</span> Object.prototype.__defineGetter__ ( <var>key</var>, <var>getter</var> )
+
+<Sec id="1.3.9.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.__defineSetter__">
+
+##### <span className="secnum">20.1.3.9.2</span> Object.prototype.__defineSetter__ ( <var>key</var>, <var>setter</var> )
+
+<Sec id="1.3.9.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.__lookupGetter__">
+
+##### <span className="secnum">20.1.3.9.3</span> Object.prototype.__lookupGetter__ ( <var>key</var> )
+
+<Sec id="1.3.9.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-object.prototype.__lookupSetter__">
+
+##### <span className="secnum">20.1.3.9.4</span> Object.prototype.__lookupSetter__ ( <var>key</var> )
+
+<Sec id="1.3.9.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-object-instances">
+
+### <span className="secnum">20.1.4</span> Properties of Object Instances
+
+<Sec id="1.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-function-objects">
+
+## <span className="secnum">20.2</span> Function Objects
+
+<emu-clause id="sec-function-constructor">
+
+### <span className="secnum">20.2.1</span> The Function Constructor
+
+<Sec id="2.1" />
+
+<emu-clause id="sec-function-p1-p2-pn-body">
+
+#### <span className="secnum">20.2.1.1</span> Function ( ...<var>paramArgs</var>, <var>bodyArg</var> )
+
+<Sec id="2.1.1" />
+
+<emu-clause id="sec-createdynamicfunction">
+
+##### <span className="secnum">20.2.1.1.1</span> CreateDynamicFunction ( <var>ctor</var>, <var>newTarget</var>, <var>kind</var>, <var>paramArgs</var>, <var>bodyArg</var> )
+
+<Sec id="2.1.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-function-constructor">
+
+### <span className="secnum">20.2.2</span> Properties of the Function Constructor
+
+<Sec id="2.2" />
+
+<emu-clause id="sec-function.prototype">
+
+#### <span className="secnum">20.2.2.1</span> Function.prototype
+
+<Sec id="2.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-function-prototype-object">
+
+### <span className="secnum">20.2.3</span> Properties of the Function Prototype Object
+
+<Sec id="2.3" />
+
+<emu-clause id="sec-function.prototype.apply">
+
+#### <span className="secnum">20.2.3.1</span> Function.prototype.apply ( <var>thisArg</var>, <var>argArray</var> )
+
+<Sec id="2.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-function.prototype.bind">
+
+#### <span className="secnum">20.2.3.2</span> Function.prototype.bind ( <var>thisArg</var>, ...<var>args</var> )
+
+<Sec id="2.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-function.prototype.call">
+
+#### <span className="secnum">20.2.3.3</span> Function.prototype.call ( <var>thisArg</var>, ...<var>args</var> )
+
+<Sec id="2.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-function.prototype.constructor">
+
+#### <span className="secnum">20.2.3.4</span> Function.prototype.constructor
+
+<Sec id="2.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-function.prototype.tostring">
+
+#### <span className="secnum">20.2.3.5</span> Function.prototype.toString ( )
+
+<Sec id="2.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-function.prototype-%symbol.hasinstance%">
+
+#### <span className="secnum">20.2.3.6</span> Function.prototype [ <emu-intrinsic>%Symbol.hasInstance%</emu-intrinsic> ] ( <var>value</var> )
+
+<Sec id="2.3.6" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-function-instances">
+
+### <span className="secnum">20.2.4</span> Function Instances
+
+<Sec id="2.4" />
+
+<emu-clause id="sec-function-instances-length">
+
+#### <span className="secnum">20.2.4.1</span> length
+
+<Sec id="2.4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-function-instances-name">
+
+#### <span className="secnum">20.2.4.2</span> name
+
+<Sec id="2.4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-function-instances-prototype">
+
+#### <span className="secnum">20.2.4.3</span> prototype
+
+<Sec id="2.4.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-hosthassourcetextavailable">
+
+### <span className="secnum">20.2.5</span> HostHasSourceTextAvailable ( <var>func</var> )
+
+<Sec id="2.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-boolean-objects">
+
+## <span className="secnum">20.3</span> Boolean Objects
+
+<emu-clause id="sec-boolean-constructor">
+
+### <span className="secnum">20.3.1</span> The Boolean Constructor
+
+<Sec id="3.1" />
+
+<emu-clause id="sec-boolean-constructor-boolean-value">
+
+#### <span className="secnum">20.3.1.1</span> Boolean ( <var>value</var> )
+
+<Sec id="3.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-boolean-constructor">
+
+### <span className="secnum">20.3.2</span> Properties of the Boolean Constructor
+
+<Sec id="3.2" />
+
+<emu-clause id="sec-boolean.prototype">
+
+#### <span className="secnum">20.3.2.1</span> Boolean.prototype
+
+<Sec id="3.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-boolean-prototype-object">
+
+### <span className="secnum">20.3.3</span> Properties of the Boolean Prototype Object
+
+<Sec id="3.3" />
+
+<emu-clause id="sec-boolean.prototype.constructor">
+
+#### <span className="secnum">20.3.3.1</span> Boolean.prototype.constructor
+
+<Sec id="3.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-boolean.prototype.tostring">
+
+#### <span className="secnum">20.3.3.2</span> Boolean.prototype.toString ( )
+
+<Sec id="3.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-boolean.prototype.valueof">
+
+#### <span className="secnum">20.3.3.3</span> Boolean.prototype.valueOf ( )
+
+<Sec id="3.3.3" />
+
+<emu-clause id="sec-thisbooleanvalue">
+
+##### <span className="secnum">20.3.3.3.1</span> ThisBooleanValue ( <var>arg</var> )
+
+<Sec id="3.3.3.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-boolean-instances">
+
+### <span className="secnum">20.3.4</span> Properties of Boolean Instances
+
+<Sec id="3.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-symbol-objects">
+
+## <span className="secnum">20.4</span> Symbol Objects
+
+<emu-clause id="sec-symbol-constructor">
+
+### <span className="secnum">20.4.1</span> The Symbol Constructor
+
+<Sec id="4.1" />
+
+<emu-clause id="sec-symbol-description">
+
+#### <span className="secnum">20.4.1.1</span> Symbol ( [ <var>description</var> ] )
+
+<Sec id="4.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-symbol-constructor">
+
+### <span className="secnum">20.4.2</span> Properties of the Symbol Constructor
+
+<Sec id="4.2" />
+
+<emu-clause id="sec-symbol.asynciterator">
+
+#### <span className="secnum">20.4.2.1</span> Symbol.asyncIterator
+
+<Sec id="4.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.for">
+
+#### <span className="secnum">20.4.2.2</span> Symbol.for ( <var>key</var> )
+
+<Sec id="4.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.hasinstance">
+
+#### <span className="secnum">20.4.2.3</span> Symbol.hasInstance
+
+<Sec id="4.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.isconcatspreadable">
+
+#### <span className="secnum">20.4.2.4</span> Symbol.isConcatSpreadable
+
+<Sec id="4.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.iterator">
+
+#### <span className="secnum">20.4.2.5</span> Symbol.iterator
+
+<Sec id="4.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.keyfor">
+
+#### <span className="secnum">20.4.2.6</span> Symbol.keyFor ( <var>symbol</var> )
+
+<Sec id="4.2.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.match">
+
+#### <span className="secnum">20.4.2.7</span> Symbol.match
+
+<Sec id="4.2.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.matchall">
+
+#### <span className="secnum">20.4.2.8</span> Symbol.matchAll
+
+<Sec id="4.2.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.prototype">
+
+#### <span className="secnum">20.4.2.9</span> Symbol.prototype
+
+<Sec id="4.2.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.replace">
+
+#### <span className="secnum">20.4.2.10</span> Symbol.replace
+
+<Sec id="4.2.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.search">
+
+#### <span className="secnum">20.4.2.11</span> Symbol.search
+
+<Sec id="4.2.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.species">
+
+#### <span className="secnum">20.4.2.12</span> Symbol.species
+
+<Sec id="4.2.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.split">
+
+#### <span className="secnum">20.4.2.13</span> Symbol.split
+
+<Sec id="4.2.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.toprimitive">
+
+#### <span className="secnum">20.4.2.14</span> Symbol.toPrimitive
+
+<Sec id="4.2.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.tostringtag">
+
+#### <span className="secnum">20.4.2.15</span> Symbol.toStringTag
+
+<Sec id="4.2.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.unscopables">
+
+#### <span className="secnum">20.4.2.16</span> Symbol.unscopables
+
+<Sec id="4.2.16" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-symbol-prototype-object">
+
+### <span className="secnum">20.4.3</span> Properties of the Symbol Prototype Object
+
+<Sec id="4.3" />
+
+<emu-clause id="sec-symbol.prototype.constructor">
+
+#### <span className="secnum">20.4.3.1</span> Symbol.prototype.constructor
+
+<Sec id="4.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.prototype.description">
+
+#### <span className="secnum">20.4.3.2</span> get Symbol.prototype.description
+
+<Sec id="4.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.prototype.tostring">
+
+#### <span className="secnum">20.4.3.3</span> Symbol.prototype.toString ( )
+
+<Sec id="4.3.3" />
+
+<emu-clause id="sec-symboldescriptivestring">
+
+##### <span className="secnum">20.4.3.3.1</span> SymbolDescriptiveString ( <var>symbol</var> )
+
+<Sec id="4.3.3.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.prototype.valueof">
+
+#### <span className="secnum">20.4.3.4</span> Symbol.prototype.valueOf ( )
+
+<Sec id="4.3.4" />
+
+<emu-clause id="sec-thissymbolvalue">
+
+##### <span className="secnum">20.4.3.4.1</span> ThisSymbolValue ( <var>arg</var> )
+
+<Sec id="4.3.4.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.prototype-%symbol.toprimitive%">
+
+#### <span className="secnum">20.4.3.5</span> Symbol.prototype [ <emu-intrinsic>%Symbol.toPrimitive%</emu-intrinsic> ] ( <var>hint</var> )
+
+<Sec id="4.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-symbol.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">20.4.3.6</span> Symbol.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="4.3.6" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-symbol-instances">
+
+### <span className="secnum">20.4.4</span> Properties of Symbol Instances
+
+<Sec id="4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-abstract-operations-for-symbols">
+
+### <span className="secnum">20.4.5</span> Abstract Operations for Symbols
+
+<emu-clause id="sec-globalsymbolregistry-records">
+
+#### <span className="secnum">20.4.5.1</span> GlobalSymbolRegistry Records
+
+<Sec id="4.5.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-keyforsymbol">
+
+#### <span className="secnum">20.4.5.2</span> KeyForSymbol ( <var>symbol</var> )
+
+<Sec id="4.5.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-error-objects">
+
+## <span className="secnum">20.5</span> Error Objects
+
+<Sec id="5" />
+
+<emu-clause id="sec-error-constructor">
+
+### <span className="secnum">20.5.1</span> The Error Constructor
+
+<Sec id="5.1" />
+
+<emu-clause id="sec-error-message">
+
+#### <span className="secnum">20.5.1.1</span> Error ( <var>message</var> [ , <var>options</var> ] )
+
+<Sec id="5.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-error-constructor">
+
+### <span className="secnum">20.5.2</span> Properties of the Error Constructor
+
+<Sec id="5.2" />
+
+<emu-clause id="sec-error.iserror">
+
+#### <span className="secnum">20.5.2.1</span> Error.isError ( <var>arg</var> )
+
+<Sec id="5.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-error.prototype">
+
+#### <span className="secnum">20.5.2.2</span> Error.prototype
+
+<Sec id="5.2.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-error-prototype-object">
+
+### <span className="secnum">20.5.3</span> Properties of the Error Prototype Object
+
+<Sec id="5.3" />
+
+<emu-clause id="sec-error.prototype.constructor">
+
+#### <span className="secnum">20.5.3.1</span> Error.prototype.constructor
+
+<Sec id="5.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-error.prototype.message">
+
+#### <span className="secnum">20.5.3.2</span> Error.prototype.message
+
+<Sec id="5.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-error.prototype.name">
+
+#### <span className="secnum">20.5.3.3</span> Error.prototype.name
+
+<Sec id="5.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-error.prototype.tostring">
+
+#### <span className="secnum">20.5.3.4</span> Error.prototype.toString ( )
+
+<Sec id="5.3.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-error-instances">
+
+### <span className="secnum">20.5.4</span> Properties of Error Instances
+
+<Sec id="5.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-native-error-types-used-in-this-standard">
+
+### <span className="secnum">20.5.5</span> Native Error Types Used in This Standard
+
+<Sec id="5.5" />
+
+<emu-clause id="sec-native-error-types-used-in-this-standard-evalerror">
+
+#### <span className="secnum">20.5.5.1</span> EvalError
+
+<Sec id="5.5.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-native-error-types-used-in-this-standard-rangeerror">
+
+#### <span className="secnum">20.5.5.2</span> RangeError
+
+<Sec id="5.5.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-native-error-types-used-in-this-standard-referenceerror">
+
+#### <span className="secnum">20.5.5.3</span> ReferenceError
+
+<Sec id="5.5.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-native-error-types-used-in-this-standard-syntaxerror">
+
+#### <span className="secnum">20.5.5.4</span> SyntaxError
+
+<Sec id="5.5.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-native-error-types-used-in-this-standard-typeerror">
+
+#### <span className="secnum">20.5.5.5</span> TypeError
+
+<Sec id="5.5.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-native-error-types-used-in-this-standard-urierror">
+
+#### <span className="secnum">20.5.5.6</span> URIError
+
+<Sec id="5.5.6" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-nativeerror-object-structure">
+
+### <span className="secnum">20.5.6</span> <var>NativeError</var> Object Structure
+
+<Sec id="5.6" />
+
+<emu-clause id="sec-nativeerror-constructors">
+
+#### <span className="secnum">20.5.6.1</span> The <var>NativeError</var> Constructors
+
+<Sec id="5.6.1" />
+
+<emu-clause id="sec-nativeerror">
+
+##### <span className="secnum">20.5.6.1.1</span> <var>NativeError</var> ( <var>message</var> [ , <var>options</var> ] )
+
+<Sec id="5.6.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-nativeerror-constructors">
+
+#### <span className="secnum">20.5.6.2</span> Properties of the <var>NativeError</var> Constructors
+
+<Sec id="5.6.2" />
+
+<emu-clause id="sec-nativeerror.prototype">
+
+##### <span className="secnum">20.5.6.2.1</span> <var>NativeError</var>.prototype
+
+<Sec id="5.6.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-nativeerror-prototype-objects">
+
+#### <span className="secnum">20.5.6.3</span> Properties of the <var>NativeError</var> Prototype Objects
+
+<Sec id="5.6.3" />
+
+<emu-clause id="sec-nativeerror.prototype.constructor">
+
+##### <span className="secnum">20.5.6.3.1</span> <var>NativeError</var>.prototype.constructor
+
+<Sec id="5.6.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-nativeerror.prototype.message">
+
+##### <span className="secnum">20.5.6.3.2</span> <var>NativeError</var>.prototype.message
+
+<Sec id="5.6.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-nativeerror.prototype.name">
+
+##### <span className="secnum">20.5.6.3.3</span> <var>NativeError</var>.prototype.name
+
+<Sec id="5.6.3.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-nativeerror-instances">
+
+#### <span className="secnum">20.5.6.4</span> Properties of <var>NativeError</var> Instances
+
+<Sec id="5.6.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-aggregate-error-objects">
+
+### <span className="secnum">20.5.7</span> AggregateError Objects
+
+<emu-clause id="sec-aggregate-error-constructor">
+
+#### <span className="secnum">20.5.7.1</span> The AggregateError Constructor
+
+<Sec id="5.7.1" />
+
+<emu-clause id="sec-aggregate-error">
+
+##### <span className="secnum">20.5.7.1.1</span> AggregateError ( <var>errors</var>, <var>message</var> [ , <var>options</var> ] )
+
+<Sec id="5.7.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-aggregate-error-constructors">
+
+#### <span className="secnum">20.5.7.2</span> Properties of the AggregateError Constructor
+
+<Sec id="5.7.2" />
+
+<emu-clause id="sec-aggregate-error.prototype">
+
+##### <span className="secnum">20.5.7.2.1</span> AggregateError.prototype
+
+<Sec id="5.7.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-aggregate-error-prototype-objects">
+
+#### <span className="secnum">20.5.7.3</span> Properties of the AggregateError Prototype Object
+
+<Sec id="5.7.3" />
+
+<emu-clause id="sec-aggregate-error.prototype.constructor">
+
+##### <span className="secnum">20.5.7.3.1</span> AggregateError.prototype.constructor
+
+<Sec id="5.7.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-aggregate-error.prototype.message">
+
+##### <span className="secnum">20.5.7.3.2</span> AggregateError.prototype.message
+
+<Sec id="5.7.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-aggregate-error.prototype.name">
+
+##### <span className="secnum">20.5.7.3.3</span> AggregateError.prototype.name
+
+<Sec id="5.7.3.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-aggregate-error-instances">
+
+#### <span className="secnum">20.5.7.4</span> Properties of AggregateError Instances
+
+<Sec id="5.7.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-abstract-operations-for-error-objects">
+
+### <span className="secnum">20.5.8</span> Abstract Operations for Error Objects
+
+<emu-clause id="sec-installerrorcause">
+
+#### <span className="secnum">20.5.8.1</span> InstallErrorCause ( <var>obj</var>, <var>options</var> )
+
+<Sec id="5.8.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</div>

@@ -4,11 +4,11 @@ import chapters from "./chapters.ts";
 // The list scrolls; the footer area doesn't — same affordance Nextra's
 // `<div class="nextra-sidebar-footer">` provides.
 //
-// Only the current chapter actually links to a Lume-rendered page; siblings
-// link to the existing Next.js/Nextra-rendered draft so the navigation isn't
-// dead until those chapters get ported too.
+// Every chapter is now Lume-rendered (see scripts/build-pages.ts), so all
+// entries link to their local page; `fallbackBase` is kept only as the target
+// for any slug not yet generated.
 export default function Sidebar(
-  { basePath, currentSlug, fallbackBase }: {
+  { basePath, currentSlug, fallbackBase: _fallbackBase }: {
     basePath: string;
     currentSlug: string;
     fallbackBase: string;
@@ -41,9 +41,9 @@ export default function Sidebar(
       <ol class="sidebar-list">
         {chapters.map((c, i) => {
           const isCurrent = c.slug === currentSlug;
-          const href = isCurrent
-            ? `${basePath}/${c.slug}/`
-            : `${fallbackBase}/${c.slug === "index" ? "" : c.slug}`;
+          const href = c.slug === "index"
+            ? `${basePath}/`
+            : `${basePath}/${c.slug}/`;
           // Draw a divider above each new group (annex / back-matter). The
           // first item never gets one. Detection is positional so adding /
           // reordering chapters in chapters.ts "just works".

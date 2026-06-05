@@ -1,0 +1,790 @@
+---
+title: "24 Keyed Collections"
+layout: page.tsx
+url: /keyed-collections/
+slug: keyed-collections
+---
+
+import { Sec } from './lib/keyed-collections.jsx'
+
+<div id="spec-container" className="ecma-spec">
+
+<emu-clause id="sec-keyed-collections">
+
+# <span className="secnum">24</span> Keyed Collections
+
+<emu-clause id="sec-map-objects">
+
+## <span className="secnum">24.1</span> Map Objects
+
+<Sec id="1" />
+
+<emu-clause id="sec-map-constructor">
+
+### <span className="secnum">24.1.1</span> The Map Constructor
+
+<Sec id="1.1" />
+
+<emu-clause id="sec-map-iterable">
+
+#### <span className="secnum">24.1.1.1</span> Map ( [ <var>iterable</var> ] )
+
+<Sec id="1.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-add-entries-from-iterable">
+
+#### <span className="secnum">24.1.1.2</span> AddEntriesFromIterable ( <var>target</var>, <var>iterable</var>, <var>adder</var> )
+
+<Sec id="1.1.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-map-constructor">
+
+### <span className="secnum">24.1.2</span> Properties of the Map Constructor
+
+<Sec id="1.2" />
+
+<emu-clause id="sec-map.groupby">
+
+#### <span className="secnum">24.1.2.1</span> Map.groupBy ( <var>items</var>, <var>callback</var> )
+
+<Sec id="1.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype">
+
+#### <span className="secnum">24.1.2.2</span> Map.prototype
+
+<Sec id="1.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-map-%symbol.species%">
+
+#### <span className="secnum">24.1.2.3</span> get Map [ <emu-intrinsic>%Symbol.species%</emu-intrinsic> ]
+
+<Sec id="1.2.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-map-prototype-object">
+
+### <span className="secnum">24.1.3</span> Properties of the Map Prototype Object
+
+<Sec id="1.3" />
+
+<emu-clause id="sec-map.prototype.clear">
+
+#### <span className="secnum">24.1.3.1</span> Map.prototype.clear ( )
+
+<Sec id="1.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.constructor">
+
+#### <span className="secnum">24.1.3.2</span> Map.prototype.constructor
+
+<Sec id="1.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.delete">
+
+#### <span className="secnum">24.1.3.3</span> Map.prototype.delete ( <var>key</var> )
+
+<Sec id="1.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.entries">
+
+#### <span className="secnum">24.1.3.4</span> Map.prototype.entries ( )
+
+<Sec id="1.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.foreach">
+
+#### <span className="secnum">24.1.3.5</span> Map.prototype.forEach ( <var>callback</var> [ , <var>thisArg</var> ] )
+
+<Sec id="1.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.get">
+
+#### <span className="secnum">24.1.3.6</span> Map.prototype.get ( <var>key</var> )
+
+<Sec id="1.3.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.getorinsert">
+
+#### <span className="secnum">24.1.3.7</span> Map.prototype.getOrInsert ( <var>key</var>, <var>value</var> )
+
+<Sec id="1.3.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.getorinsertcomputed">
+
+#### <span className="secnum">24.1.3.8</span> Map.prototype.getOrInsertComputed ( <var>key</var>, <var>callback</var> )
+
+<Sec id="1.3.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.has">
+
+#### <span className="secnum">24.1.3.9</span> Map.prototype.has ( <var>key</var> )
+
+<Sec id="1.3.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.keys">
+
+#### <span className="secnum">24.1.3.10</span> Map.prototype.keys ( )
+
+<Sec id="1.3.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.set">
+
+#### <span className="secnum">24.1.3.11</span> Map.prototype.set ( <var>key</var>, <var>value</var> )
+
+<Sec id="1.3.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-map.prototype.size">
+
+#### <span className="secnum">24.1.3.12</span> get Map.prototype.size
+
+<Sec id="1.3.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype.values">
+
+#### <span className="secnum">24.1.3.13</span> Map.prototype.values ( )
+
+<Sec id="1.3.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype-%symbol.iterator%">
+
+#### <span className="secnum">24.1.3.14</span> Map.prototype [ <emu-intrinsic>%Symbol.iterator%</emu-intrinsic> ] ( )
+
+<Sec id="1.3.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-map.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">24.1.3.15</span> Map.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="1.3.15" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-map-instances">
+
+### <span className="secnum">24.1.4</span> Properties of Map Instances
+
+<Sec id="1.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-map-iterator-objects">
+
+### <span className="secnum">24.1.5</span> Map Iterator Objects
+
+<Sec id="1.5" />
+
+<emu-clause id="sec-createmapiterator">
+
+#### <span className="secnum">24.1.5.1</span> CreateMapIterator ( <var>map</var>, <var>kind</var> )
+
+<Sec id="1.5.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-%mapiteratorprototype%-object">
+
+#### <span className="secnum">24.1.5.2</span> The <emu-intrinsic>%MapIteratorPrototype%</emu-intrinsic> Object
+
+<Sec id="1.5.2" />
+
+<emu-clause id="sec-%mapiteratorprototype%.next">
+
+##### <span className="secnum">24.1.5.2.1</span> <emu-intrinsic>%MapIteratorPrototype%</emu-intrinsic>.next ( )
+
+<Sec id="1.5.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-%mapiteratorprototype%-%symbol.tostringtag%">
+
+##### <span className="secnum">24.1.5.2.2</span> <emu-intrinsic>%MapIteratorPrototype%</emu-intrinsic> [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="1.5.2.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-set-objects">
+
+## <span className="secnum">24.2</span> Set Objects
+
+<Sec id="2" />
+
+<emu-clause id="sec-abstract-operations-for-set-objects">
+
+### <span className="secnum">24.2.1</span> Abstract Operations For Set Objects
+
+<emu-clause id="sec-set-records">
+
+#### <span className="secnum">24.2.1.1</span> Set Records
+
+<Sec id="2.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-getsetrecord">
+
+#### <span className="secnum">24.2.1.2</span> GetSetRecord ( <var>obj</var> )
+
+<Sec id="2.1.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-setdatahas">
+
+#### <span className="secnum">24.2.1.3</span> SetDataHas ( <var>setData</var>, <var>value</var> )
+
+<Sec id="2.1.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-setdataindex">
+
+#### <span className="secnum">24.2.1.4</span> SetDataIndex ( <var>setData</var>, <var>value</var> )
+
+<Sec id="2.1.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-setdatasize">
+
+#### <span className="secnum">24.2.1.5</span> SetDataSize ( <var>setData</var> )
+
+<Sec id="2.1.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-set-constructor">
+
+### <span className="secnum">24.2.2</span> The Set Constructor
+
+<Sec id="2.2" />
+
+<emu-clause id="sec-set-iterable">
+
+#### <span className="secnum">24.2.2.1</span> Set ( [ <var>iterable</var> ] )
+
+<Sec id="2.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-set-constructor">
+
+### <span className="secnum">24.2.3</span> Properties of the Set Constructor
+
+<Sec id="2.3" />
+
+<emu-clause id="sec-set.prototype">
+
+#### <span className="secnum">24.2.3.1</span> Set.prototype
+
+<Sec id="2.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-set-%symbol.species%">
+
+#### <span className="secnum">24.2.3.2</span> get Set [ <emu-intrinsic>%Symbol.species%</emu-intrinsic> ]
+
+<Sec id="2.3.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-set-prototype-object">
+
+### <span className="secnum">24.2.4</span> Properties of the Set Prototype Object
+
+<Sec id="2.4" />
+
+<emu-clause id="sec-set.prototype.add">
+
+#### <span className="secnum">24.2.4.1</span> Set.prototype.add ( <var>value</var> )
+
+<Sec id="2.4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.clear">
+
+#### <span className="secnum">24.2.4.2</span> Set.prototype.clear ( )
+
+<Sec id="2.4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.constructor">
+
+#### <span className="secnum">24.2.4.3</span> Set.prototype.constructor
+
+<Sec id="2.4.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.delete">
+
+#### <span className="secnum">24.2.4.4</span> Set.prototype.delete ( <var>value</var> )
+
+<Sec id="2.4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.difference">
+
+#### <span className="secnum">24.2.4.5</span> Set.prototype.difference ( <var>other</var> )
+
+<Sec id="2.4.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.entries">
+
+#### <span className="secnum">24.2.4.6</span> Set.prototype.entries ( )
+
+<Sec id="2.4.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.foreach">
+
+#### <span className="secnum">24.2.4.7</span> Set.prototype.forEach ( <var>callback</var> [ , <var>thisArg</var> ] )
+
+<Sec id="2.4.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.has">
+
+#### <span className="secnum">24.2.4.8</span> Set.prototype.has ( <var>value</var> )
+
+<Sec id="2.4.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.intersection">
+
+#### <span className="secnum">24.2.4.9</span> Set.prototype.intersection ( <var>other</var> )
+
+<Sec id="2.4.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.isdisjointfrom">
+
+#### <span className="secnum">24.2.4.10</span> Set.prototype.isDisjointFrom ( <var>other</var> )
+
+<Sec id="2.4.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.issubsetof">
+
+#### <span className="secnum">24.2.4.11</span> Set.prototype.isSubsetOf ( <var>other</var> )
+
+<Sec id="2.4.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.issupersetof">
+
+#### <span className="secnum">24.2.4.12</span> Set.prototype.isSupersetOf ( <var>other</var> )
+
+<Sec id="2.4.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.keys">
+
+#### <span className="secnum">24.2.4.13</span> Set.prototype.keys ( )
+
+<Sec id="2.4.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-get-set.prototype.size">
+
+#### <span className="secnum">24.2.4.14</span> get Set.prototype.size
+
+<Sec id="2.4.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.symmetricdifference">
+
+#### <span className="secnum">24.2.4.15</span> Set.prototype.symmetricDifference ( <var>other</var> )
+
+<Sec id="2.4.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.union">
+
+#### <span className="secnum">24.2.4.16</span> Set.prototype.union ( <var>other</var> )
+
+<Sec id="2.4.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype.values">
+
+#### <span className="secnum">24.2.4.17</span> Set.prototype.values ( )
+
+<Sec id="2.4.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype-%symbol.iterator%">
+
+#### <span className="secnum">24.2.4.18</span> Set.prototype [ <emu-intrinsic>%Symbol.iterator%</emu-intrinsic> ] ( )
+
+<Sec id="2.4.18" />
+
+</emu-clause>
+
+<emu-clause id="sec-set.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">24.2.4.19</span> Set.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="2.4.19" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-set-instances">
+
+### <span className="secnum">24.2.5</span> Properties of Set Instances
+
+<Sec id="2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-set-iterator-objects">
+
+### <span className="secnum">24.2.6</span> Set Iterator Objects
+
+<Sec id="2.6" />
+
+<emu-clause id="sec-createsetiterator">
+
+#### <span className="secnum">24.2.6.1</span> CreateSetIterator ( <var>set</var>, <var>kind</var> )
+
+<Sec id="2.6.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-%setiteratorprototype%-object">
+
+#### <span className="secnum">24.2.6.2</span> The <emu-intrinsic>%SetIteratorPrototype%</emu-intrinsic> Object
+
+<Sec id="2.6.2" />
+
+<emu-clause id="sec-%setiteratorprototype%.next">
+
+##### <span className="secnum">24.2.6.2.1</span> <emu-intrinsic>%SetIteratorPrototype%</emu-intrinsic>.next ( )
+
+<Sec id="2.6.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-%setiteratorprototype%-%symbol.tostringtag%">
+
+##### <span className="secnum">24.2.6.2.2</span> <emu-intrinsic>%SetIteratorPrototype%</emu-intrinsic> [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="2.6.2.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-weakmap-objects">
+
+## <span className="secnum">24.3</span> WeakMap Objects
+
+<Sec id="3" />
+
+<emu-clause id="sec-weakmap-constructor">
+
+### <span className="secnum">24.3.1</span> The WeakMap Constructor
+
+<Sec id="3.1" />
+
+<emu-clause id="sec-weakmap-iterable">
+
+#### <span className="secnum">24.3.1.1</span> WeakMap ( [ <var>iterable</var> ] )
+
+<Sec id="3.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-weakmap-constructor">
+
+### <span className="secnum">24.3.2</span> Properties of the WeakMap Constructor
+
+<Sec id="3.2" />
+
+<emu-clause id="sec-weakmap.prototype">
+
+#### <span className="secnum">24.3.2.1</span> WeakMap.prototype
+
+<Sec id="3.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-weakmap-prototype-object">
+
+### <span className="secnum">24.3.3</span> Properties of the WeakMap Prototype Object
+
+<Sec id="3.3" />
+
+<emu-clause id="sec-weakmap.prototype.constructor">
+
+#### <span className="secnum">24.3.3.1</span> WeakMap.prototype.constructor
+
+<Sec id="3.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakmap.prototype.delete">
+
+#### <span className="secnum">24.3.3.2</span> WeakMap.prototype.delete ( <var>key</var> )
+
+<Sec id="3.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakmap.prototype.get">
+
+#### <span className="secnum">24.3.3.3</span> WeakMap.prototype.get ( <var>key</var> )
+
+<Sec id="3.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakmap.prototype.getorinsert">
+
+#### <span className="secnum">24.3.3.4</span> WeakMap.prototype.getOrInsert ( <var>key</var>, <var>value</var> )
+
+<Sec id="3.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakmap.prototype.getorinsertcomputed">
+
+#### <span className="secnum">24.3.3.5</span> WeakMap.prototype.getOrInsertComputed ( <var>key</var>, <var>callback</var> )
+
+<Sec id="3.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakmap.prototype.has">
+
+#### <span className="secnum">24.3.3.6</span> WeakMap.prototype.has ( <var>key</var> )
+
+<Sec id="3.3.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakmap.prototype.set">
+
+#### <span className="secnum">24.3.3.7</span> WeakMap.prototype.set ( <var>key</var>, <var>value</var> )
+
+<Sec id="3.3.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakmap.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">24.3.3.8</span> WeakMap.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="3.3.8" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-weakmap-instances">
+
+### <span className="secnum">24.3.4</span> Properties of WeakMap Instances
+
+<Sec id="3.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-weakset-objects">
+
+## <span className="secnum">24.4</span> WeakSet Objects
+
+<Sec id="4" />
+
+<emu-clause id="sec-weakset-constructor">
+
+### <span className="secnum">24.4.1</span> The WeakSet Constructor
+
+<Sec id="4.1" />
+
+<emu-clause id="sec-weakset-iterable">
+
+#### <span className="secnum">24.4.1.1</span> WeakSet ( [ <var>iterable</var> ] )
+
+<Sec id="4.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-weakset-constructor">
+
+### <span className="secnum">24.4.2</span> Properties of the WeakSet Constructor
+
+<Sec id="4.2" />
+
+<emu-clause id="sec-weakset.prototype">
+
+#### <span className="secnum">24.4.2.1</span> WeakSet.prototype
+
+<Sec id="4.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-weakset-prototype-object">
+
+### <span className="secnum">24.4.3</span> Properties of the WeakSet Prototype Object
+
+<Sec id="4.3" />
+
+<emu-clause id="sec-weakset.prototype.add">
+
+#### <span className="secnum">24.4.3.1</span> WeakSet.prototype.add ( <var>value</var> )
+
+<Sec id="4.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakset.prototype.constructor">
+
+#### <span className="secnum">24.4.3.2</span> WeakSet.prototype.constructor
+
+<Sec id="4.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakset.prototype.delete">
+
+#### <span className="secnum">24.4.3.3</span> WeakSet.prototype.delete ( <var>value</var> )
+
+<Sec id="4.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakset.prototype.has">
+
+#### <span className="secnum">24.4.3.4</span> WeakSet.prototype.has ( <var>value</var> )
+
+<Sec id="4.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-weakset.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">24.4.3.5</span> WeakSet.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="4.3.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-weakset-instances">
+
+### <span className="secnum">24.4.4</span> Properties of WeakSet Instances
+
+<Sec id="4.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-abstract-operations-for-keyed-collections">
+
+## <span className="secnum">24.5</span> Abstract Operations for Keyed Collections
+
+<emu-clause id="sec-canonicalizekeyedcollectionkey">
+
+### <span className="secnum">24.5.1</span> CanonicalizeKeyedCollectionKey ( <var>key</var> )
+
+<Sec id="5.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</div>

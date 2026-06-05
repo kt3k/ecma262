@@ -1,0 +1,1530 @@
+---
+title: "21 Numbers and Dates"
+layout: page.tsx
+url: /numbers-and-dates/
+slug: numbers-and-dates
+---
+
+import { Sec } from './lib/numbers-and-dates.jsx'
+
+<div id="spec-container" className="ecma-spec">
+
+<emu-clause id="sec-numbers-and-dates">
+
+# <span className="secnum">21</span> Numbers and Dates
+
+<emu-clause id="sec-number-objects">
+
+## <span className="secnum">21.1</span> Number Objects
+
+<emu-clause id="sec-number-constructor">
+
+### <span className="secnum">21.1.1</span> The Number Constructor
+
+<Sec id="1.1" />
+
+<emu-clause id="sec-number-constructor-number-value">
+
+#### <span className="secnum">21.1.1.1</span> Number ( <var>value</var> )
+
+<Sec id="1.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-number-constructor">
+
+### <span className="secnum">21.1.2</span> Properties of the Number Constructor
+
+<Sec id="1.2" />
+
+<emu-clause id="sec-number.epsilon">
+
+#### <span className="secnum">21.1.2.1</span> Number.EPSILON
+
+<Sec id="1.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.isfinite">
+
+#### <span className="secnum">21.1.2.2</span> Number.isFinite ( <var>number</var> )
+
+<Sec id="1.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.isinteger">
+
+#### <span className="secnum">21.1.2.3</span> Number.isInteger ( <var>number</var> )
+
+<Sec id="1.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.isnan">
+
+#### <span className="secnum">21.1.2.4</span> Number.isNaN ( <var>number</var> )
+
+<Sec id="1.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.issafeinteger">
+
+#### <span className="secnum">21.1.2.5</span> Number.isSafeInteger ( <var>number</var> )
+
+<Sec id="1.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.max_safe_integer">
+
+#### <span className="secnum">21.1.2.6</span> Number.MAX_SAFE_INTEGER
+
+<Sec id="1.2.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.max_value">
+
+#### <span className="secnum">21.1.2.7</span> Number.MAX_VALUE
+
+<Sec id="1.2.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.min_safe_integer">
+
+#### <span className="secnum">21.1.2.8</span> Number.MIN_SAFE_INTEGER
+
+<Sec id="1.2.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.min_value">
+
+#### <span className="secnum">21.1.2.9</span> Number.MIN_VALUE
+
+<Sec id="1.2.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.nan">
+
+#### <span className="secnum">21.1.2.10</span> Number.NaN
+
+<Sec id="1.2.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.negative_infinity">
+
+#### <span className="secnum">21.1.2.11</span> Number.NEGATIVE_INFINITY
+
+<Sec id="1.2.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.parsefloat">
+
+#### <span className="secnum">21.1.2.12</span> Number.parseFloat ( <var>string</var> )
+
+<Sec id="1.2.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.parseint">
+
+#### <span className="secnum">21.1.2.13</span> Number.parseInt ( <var>string</var>, <var>radix</var> )
+
+<Sec id="1.2.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.positive_infinity">
+
+#### <span className="secnum">21.1.2.14</span> Number.POSITIVE_INFINITY
+
+<Sec id="1.2.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.prototype">
+
+#### <span className="secnum">21.1.2.15</span> Number.prototype
+
+<Sec id="1.2.15" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-number-prototype-object">
+
+### <span className="secnum">21.1.3</span> Properties of the Number Prototype Object
+
+<Sec id="1.3" />
+
+<emu-clause id="sec-number.prototype.constructor">
+
+#### <span className="secnum">21.1.3.1</span> Number.prototype.constructor
+
+<Sec id="1.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.prototype.toexponential">
+
+#### <span className="secnum">21.1.3.2</span> Number.prototype.toExponential ( <var>fractionDigits</var> )
+
+<Sec id="1.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.prototype.tofixed">
+
+#### <span className="secnum">21.1.3.3</span> Number.prototype.toFixed ( <var>fractionDigits</var> )
+
+<Sec id="1.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.prototype.tolocalestring">
+
+#### <span className="secnum">21.1.3.4</span> Number.prototype.toLocaleString ( [ <var>reserved1</var> [ , <var>reserved2</var> ] ] )
+
+<Sec id="1.3.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.prototype.toprecision">
+
+#### <span className="secnum">21.1.3.5</span> Number.prototype.toPrecision ( <var>precision</var> )
+
+<Sec id="1.3.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.prototype.tostring">
+
+#### <span className="secnum">21.1.3.6</span> Number.prototype.toString ( [ <var>radix</var> ] )
+
+<Sec id="1.3.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-number.prototype.valueof">
+
+#### <span className="secnum">21.1.3.7</span> Number.prototype.valueOf ( )
+
+<Sec id="1.3.7" />
+
+<emu-clause id="sec-thisnumbervalue">
+
+##### <span className="secnum">21.1.3.7.1</span> ThisNumberValue ( <var>arg</var> )
+
+<Sec id="1.3.7.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-number-instances">
+
+### <span className="secnum">21.1.4</span> Properties of Number Instances
+
+<Sec id="1.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-bigint-objects">
+
+## <span className="secnum">21.2</span> BigInt Objects
+
+<emu-clause id="sec-bigint-constructor">
+
+### <span className="secnum">21.2.1</span> The BigInt Constructor
+
+<Sec id="2.1" />
+
+<emu-clause id="sec-bigint-constructor-number-value">
+
+#### <span className="secnum">21.2.1.1</span> BigInt ( <var>value</var> )
+
+<Sec id="2.1.1" />
+
+<emu-clause id="sec-numbertobigint">
+
+##### <span className="secnum">21.2.1.1.1</span> NumberToBigInt ( <var>number</var> )
+
+<Sec id="2.1.1.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-bigint-constructor">
+
+### <span className="secnum">21.2.2</span> Properties of the BigInt Constructor
+
+<Sec id="2.2" />
+
+<emu-clause id="sec-bigint.asintn">
+
+#### <span className="secnum">21.2.2.1</span> BigInt.asIntN ( <var>bits</var>, <var>bigint</var> )
+
+<Sec id="2.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-bigint.asuintn">
+
+#### <span className="secnum">21.2.2.2</span> BigInt.asUintN ( <var>bits</var>, <var>bigint</var> )
+
+<Sec id="2.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-bigint.prototype">
+
+#### <span className="secnum">21.2.2.3</span> BigInt.prototype
+
+<Sec id="2.2.3" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-bigint-prototype-object">
+
+### <span className="secnum">21.2.3</span> Properties of the BigInt Prototype Object
+
+<Sec id="2.3" />
+
+<emu-clause id="sec-bigint.prototype.constructor">
+
+#### <span className="secnum">21.2.3.1</span> BigInt.prototype.constructor
+
+<Sec id="2.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-bigint.prototype.tolocalestring">
+
+#### <span className="secnum">21.2.3.2</span> BigInt.prototype.toLocaleString ( [ <var>reserved1</var> [ , <var>reserved2</var> ] ] )
+
+<Sec id="2.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-bigint.prototype.tostring">
+
+#### <span className="secnum">21.2.3.3</span> BigInt.prototype.toString ( [ <var>radix</var> ] )
+
+<Sec id="2.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-bigint.prototype.valueof">
+
+#### <span className="secnum">21.2.3.4</span> BigInt.prototype.valueOf ( )
+
+<Sec id="2.3.4" />
+
+<emu-clause id="sec-thisbigintvalue">
+
+##### <span className="secnum">21.2.3.4.1</span> ThisBigIntValue ( <var>arg</var> )
+
+<Sec id="2.3.4.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-bigint.prototype-%symbol.tostringtag%">
+
+#### <span className="secnum">21.2.3.5</span> BigInt.prototype [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="2.3.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-bigint-instances">
+
+### <span className="secnum">21.2.4</span> Properties of BigInt Instances
+
+<Sec id="2.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-math-object">
+
+## <span className="secnum">21.3</span> The Math Object
+
+<Sec id="3" />
+
+<emu-clause id="sec-value-properties-of-the-math-object">
+
+### <span className="secnum">21.3.1</span> Value Properties of the Math Object
+
+<emu-clause id="sec-math.e">
+
+#### <span className="secnum">21.3.1.1</span> Math.E
+
+<Sec id="3.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.ln10">
+
+#### <span className="secnum">21.3.1.2</span> Math.LN10
+
+<Sec id="3.1.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.ln2">
+
+#### <span className="secnum">21.3.1.3</span> Math.LN2
+
+<Sec id="3.1.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.log10e">
+
+#### <span className="secnum">21.3.1.4</span> Math.LOG10E
+
+<Sec id="3.1.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.log2e">
+
+#### <span className="secnum">21.3.1.5</span> Math.LOG2E
+
+<Sec id="3.1.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.pi">
+
+#### <span className="secnum">21.3.1.6</span> Math.PI
+
+<Sec id="3.1.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.sqrt1_2">
+
+#### <span className="secnum">21.3.1.7</span> Math.SQRT1_2
+
+<Sec id="3.1.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.sqrt2">
+
+#### <span className="secnum">21.3.1.8</span> Math.SQRT2
+
+<Sec id="3.1.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-math-%symbol.tostringtag%">
+
+#### <span className="secnum">21.3.1.9</span> Math [ <emu-intrinsic>%Symbol.toStringTag%</emu-intrinsic> ]
+
+<Sec id="3.1.9" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-function-properties-of-the-math-object">
+
+### <span className="secnum">21.3.2</span> Function Properties of the Math Object
+
+<Sec id="3.2" />
+
+<emu-clause id="sec-math.abs">
+
+#### <span className="secnum">21.3.2.1</span> Math.abs ( <var>x</var> )
+
+<Sec id="3.2.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.acos">
+
+#### <span className="secnum">21.3.2.2</span> Math.acos ( <var>x</var> )
+
+<Sec id="3.2.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.acosh">
+
+#### <span className="secnum">21.3.2.3</span> Math.acosh ( <var>x</var> )
+
+<Sec id="3.2.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.asin">
+
+#### <span className="secnum">21.3.2.4</span> Math.asin ( <var>x</var> )
+
+<Sec id="3.2.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.asinh">
+
+#### <span className="secnum">21.3.2.5</span> Math.asinh ( <var>x</var> )
+
+<Sec id="3.2.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.atan">
+
+#### <span className="secnum">21.3.2.6</span> Math.atan ( <var>x</var> )
+
+<Sec id="3.2.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.atanh">
+
+#### <span className="secnum">21.3.2.7</span> Math.atanh ( <var>x</var> )
+
+<Sec id="3.2.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.atan2">
+
+#### <span className="secnum">21.3.2.8</span> Math.atan2 ( <var>y</var>, <var>x</var> )
+
+<Sec id="3.2.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.cbrt">
+
+#### <span className="secnum">21.3.2.9</span> Math.cbrt ( <var>x</var> )
+
+<Sec id="3.2.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.ceil">
+
+#### <span className="secnum">21.3.2.10</span> Math.ceil ( <var>x</var> )
+
+<Sec id="3.2.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.clz32">
+
+#### <span className="secnum">21.3.2.11</span> Math.clz32 ( <var>x</var> )
+
+<Sec id="3.2.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.cos">
+
+#### <span className="secnum">21.3.2.12</span> Math.cos ( <var>x</var> )
+
+<Sec id="3.2.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.cosh">
+
+#### <span className="secnum">21.3.2.13</span> Math.cosh ( <var>x</var> )
+
+<Sec id="3.2.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.exp">
+
+#### <span className="secnum">21.3.2.14</span> Math.exp ( <var>x</var> )
+
+<Sec id="3.2.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.expm1">
+
+#### <span className="secnum">21.3.2.15</span> Math.expm1 ( <var>x</var> )
+
+<Sec id="3.2.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.floor">
+
+#### <span className="secnum">21.3.2.16</span> Math.floor ( <var>x</var> )
+
+<Sec id="3.2.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.fround">
+
+#### <span className="secnum">21.3.2.17</span> Math.fround ( <var>x</var> )
+
+<Sec id="3.2.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.f16round">
+
+#### <span className="secnum">21.3.2.18</span> Math.f16round ( <var>x</var> )
+
+<Sec id="3.2.18" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.hypot">
+
+#### <span className="secnum">21.3.2.19</span> Math.hypot ( ...<var>args</var> )
+
+<Sec id="3.2.19" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.imul">
+
+#### <span className="secnum">21.3.2.20</span> Math.imul ( <var>x</var>, <var>y</var> )
+
+<Sec id="3.2.20" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.log">
+
+#### <span className="secnum">21.3.2.21</span> Math.log ( <var>x</var> )
+
+<Sec id="3.2.21" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.log1p">
+
+#### <span className="secnum">21.3.2.22</span> Math.log1p ( <var>x</var> )
+
+<Sec id="3.2.22" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.log10">
+
+#### <span className="secnum">21.3.2.23</span> Math.log10 ( <var>x</var> )
+
+<Sec id="3.2.23" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.log2">
+
+#### <span className="secnum">21.3.2.24</span> Math.log2 ( <var>x</var> )
+
+<Sec id="3.2.24" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.max">
+
+#### <span className="secnum">21.3.2.25</span> Math.max ( ...<var>args</var> )
+
+<Sec id="3.2.25" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.min">
+
+#### <span className="secnum">21.3.2.26</span> Math.min ( ...<var>args</var> )
+
+<Sec id="3.2.26" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.pow">
+
+#### <span className="secnum">21.3.2.27</span> Math.pow ( <var>base</var>, <var>exponent</var> )
+
+<Sec id="3.2.27" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.random">
+
+#### <span className="secnum">21.3.2.28</span> Math.random ( )
+
+<Sec id="3.2.28" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.round">
+
+#### <span className="secnum">21.3.2.29</span> Math.round ( <var>x</var> )
+
+<Sec id="3.2.29" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.sign">
+
+#### <span className="secnum">21.3.2.30</span> Math.sign ( <var>x</var> )
+
+<Sec id="3.2.30" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.sin">
+
+#### <span className="secnum">21.3.2.31</span> Math.sin ( <var>x</var> )
+
+<Sec id="3.2.31" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.sinh">
+
+#### <span className="secnum">21.3.2.32</span> Math.sinh ( <var>x</var> )
+
+<Sec id="3.2.32" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.sqrt">
+
+#### <span className="secnum">21.3.2.33</span> Math.sqrt ( <var>x</var> )
+
+<Sec id="3.2.33" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.sumprecise">
+
+#### <span className="secnum">21.3.2.34</span> Math.sumPrecise ( <var>items</var> )
+
+<Sec id="3.2.34" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.tan">
+
+#### <span className="secnum">21.3.2.35</span> Math.tan ( <var>x</var> )
+
+<Sec id="3.2.35" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.tanh">
+
+#### <span className="secnum">21.3.2.36</span> Math.tanh ( <var>x</var> )
+
+<Sec id="3.2.36" />
+
+</emu-clause>
+
+<emu-clause id="sec-math.trunc">
+
+#### <span className="secnum">21.3.2.37</span> Math.trunc ( <var>x</var> )
+
+<Sec id="3.2.37" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-date-objects">
+
+## <span className="secnum">21.4</span> Date Objects
+
+<emu-clause id="sec-overview-of-date-objects-and-definitions-of-abstract-operations">
+
+### <span className="secnum">21.4.1</span> Overview of Date Objects and Definitions of Abstract Operations
+
+<Sec id="4.1" />
+
+<emu-clause id="sec-time-values-and-time-range">
+
+#### <span className="secnum">21.4.1.1</span> Time Values and Time Range
+
+<Sec id="4.1.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-time-related-constants">
+
+#### <span className="secnum">21.4.1.2</span> Time-related Constants
+
+<Sec id="4.1.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-day">
+
+#### <span className="secnum">21.4.1.3</span> Day ( <var>tv</var> )
+
+<Sec id="4.1.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-timewithinday">
+
+#### <span className="secnum">21.4.1.4</span> TimeWithinDay ( <var>tv</var> )
+
+<Sec id="4.1.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-daysinyear">
+
+#### <span className="secnum">21.4.1.5</span> DaysInYear ( <var>y</var> )
+
+<Sec id="4.1.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-dayfromyear">
+
+#### <span className="secnum">21.4.1.6</span> DayFromYear ( <var>y</var> )
+
+<Sec id="4.1.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-timefromyear">
+
+#### <span className="secnum">21.4.1.7</span> TimeFromYear ( <var>y</var> )
+
+<Sec id="4.1.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-yearfromtime">
+
+#### <span className="secnum">21.4.1.8</span> YearFromTime ( <var>tv</var> )
+
+<Sec id="4.1.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-daywithinyear">
+
+#### <span className="secnum">21.4.1.9</span> DayWithinYear ( <var>tv</var> )
+
+<Sec id="4.1.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-inleapyear">
+
+#### <span className="secnum">21.4.1.10</span> InLeapYear ( <var>tv</var> )
+
+<Sec id="4.1.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-monthfromtime">
+
+#### <span className="secnum">21.4.1.11</span> MonthFromTime ( <var>tv</var> )
+
+<Sec id="4.1.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-datefromtime">
+
+#### <span className="secnum">21.4.1.12</span> DateFromTime ( <var>tv</var> )
+
+<Sec id="4.1.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-weekday">
+
+#### <span className="secnum">21.4.1.13</span> WeekDay ( <var>tv</var> )
+
+<Sec id="4.1.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-hourfromtime">
+
+#### <span className="secnum">21.4.1.14</span> HourFromTime ( <var>tv</var> )
+
+<Sec id="4.1.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-minfromtime">
+
+#### <span className="secnum">21.4.1.15</span> MinFromTime ( <var>tv</var> )
+
+<Sec id="4.1.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-secfromtime">
+
+#### <span className="secnum">21.4.1.16</span> SecFromTime ( <var>tv</var> )
+
+<Sec id="4.1.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-msfromtime">
+
+#### <span className="secnum">21.4.1.17</span> msFromTime ( <var>tv</var> )
+
+<Sec id="4.1.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-getutcepochnanoseconds">
+
+#### <span className="secnum">21.4.1.18</span> GetUTCEpochNanoseconds ( <var>year</var>, <var>month</var>, <var>day</var>, <var>hour</var>, <var>minute</var>, <var>second</var>, <var>millisecond</var>, <var>microsecond</var>, <var>nanosecond</var> )
+
+<Sec id="4.1.18" />
+
+</emu-clause>
+
+<emu-clause id="sec-time-zone-identifiers">
+
+#### <span className="secnum">21.4.1.19</span> Time Zone Identifiers
+
+<Sec id="4.1.19" />
+
+</emu-clause>
+
+<emu-clause id="sec-getnamedtimezoneepochnanoseconds">
+
+#### <span className="secnum">21.4.1.20</span> GetNamedTimeZoneEpochNanoseconds ( <var>timeZoneIdentifier</var>, <var>year</var>, <var>month</var>, <var>day</var>, <var>hour</var>, <var>minute</var>, <var>second</var>, <var>millisecond</var>, <var>microsecond</var>, <var>nanosecond</var> )
+
+<Sec id="4.1.20" />
+
+</emu-clause>
+
+<emu-clause id="sec-getnamedtimezoneoffsetnanoseconds">
+
+#### <span className="secnum">21.4.1.21</span> GetNamedTimeZoneOffsetNanoseconds ( <var>timeZoneIdentifier</var>, <var>epochNanoseconds</var> )
+
+<Sec id="4.1.21" />
+
+</emu-clause>
+
+<emu-clause id="sec-time-zone-identifier-record">
+
+#### <span className="secnum">21.4.1.22</span> Time Zone Identifier Record
+
+<Sec id="4.1.22" />
+
+</emu-clause>
+
+<emu-clause id="sec-availablenamedtimezoneidentifiers">
+
+#### <span className="secnum">21.4.1.23</span> AvailableNamedTimeZoneIdentifiers ( )
+
+<Sec id="4.1.23" />
+
+</emu-clause>
+
+<emu-clause id="sec-systemtimezoneidentifier">
+
+#### <span className="secnum">21.4.1.24</span> SystemTimeZoneIdentifier ( )
+
+<Sec id="4.1.24" />
+
+</emu-clause>
+
+<emu-clause id="sec-localtime">
+
+#### <span className="secnum">21.4.1.25</span> LocalTime ( <var>tv</var> )
+
+<Sec id="4.1.25" />
+
+</emu-clause>
+
+<emu-clause id="sec-utc-t">
+
+#### <span className="secnum">21.4.1.26</span> UTC ( <var>t</var> )
+
+<Sec id="4.1.26" />
+
+</emu-clause>
+
+<emu-clause id="sec-maketime">
+
+#### <span className="secnum">21.4.1.27</span> MakeTime ( <var>hour</var>, <var>min</var>, <var>sec</var>, <var>ms</var> )
+
+<Sec id="4.1.27" />
+
+</emu-clause>
+
+<emu-clause id="sec-makeday">
+
+#### <span className="secnum">21.4.1.28</span> MakeDay ( <var>year</var>, <var>month</var>, <var>date</var> )
+
+<Sec id="4.1.28" />
+
+</emu-clause>
+
+<emu-clause id="sec-makedate">
+
+#### <span className="secnum">21.4.1.29</span> MakeDate ( <var>day</var>, <var>time</var> )
+
+<Sec id="4.1.29" />
+
+</emu-clause>
+
+<emu-clause id="sec-makefullyear">
+
+#### <span className="secnum">21.4.1.30</span> MakeFullYear ( <var>year</var> )
+
+<Sec id="4.1.30" />
+
+</emu-clause>
+
+<emu-clause id="sec-timeclip">
+
+#### <span className="secnum">21.4.1.31</span> TimeClip ( <var>time</var> )
+
+<Sec id="4.1.31" />
+
+</emu-clause>
+
+<emu-clause id="sec-date-time-string-format">
+
+#### <span className="secnum">21.4.1.32</span> Date Time String Format
+
+<Sec id="4.1.32" />
+
+<emu-clause id="sec-expanded-years">
+
+##### <span className="secnum">21.4.1.32.1</span> Expanded Years
+
+<Sec id="4.1.32.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-time-zone-offset-strings">
+
+#### <span className="secnum">21.4.1.33</span> Time Zone Offset String Format
+
+<Sec id="4.1.33" />
+
+<emu-clause id="sec-istimezoneoffsetstring">
+
+##### <span className="secnum">21.4.1.33.1</span> IsTimeZoneOffsetString ( <var>offsetString</var> )
+
+<Sec id="4.1.33.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-parsetimezoneoffsetstring">
+
+##### <span className="secnum">21.4.1.33.2</span> ParseTimeZoneOffsetString ( <var>offsetString</var> )
+
+<Sec id="4.1.33.2" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-date-constructor">
+
+### <span className="secnum">21.4.2</span> The Date Constructor
+
+<Sec id="4.2" />
+
+<emu-clause id="sec-date">
+
+#### <span className="secnum">21.4.2.1</span> Date ( ...<var>values</var> )
+
+<Sec id="4.2.1" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-date-constructor">
+
+### <span className="secnum">21.4.3</span> Properties of the Date Constructor
+
+<Sec id="4.3" />
+
+<emu-clause id="sec-date.now">
+
+#### <span className="secnum">21.4.3.1</span> Date.now ( )
+
+<Sec id="4.3.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.parse">
+
+#### <span className="secnum">21.4.3.2</span> Date.parse ( <var>string</var> )
+
+<Sec id="4.3.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype">
+
+#### <span className="secnum">21.4.3.3</span> Date.prototype
+
+<Sec id="4.3.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.utc">
+
+#### <span className="secnum">21.4.3.4</span> Date.UTC ( <var>year</var> [ , <var>month</var> [ , <var>date</var> [ , <var>hours</var> [ , <var>minutes</var> [ , <var>seconds</var> [ , <var>ms</var> ] ] ] ] ] ] )
+
+<Sec id="4.3.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-the-date-prototype-object">
+
+### <span className="secnum">21.4.4</span> Properties of the Date Prototype Object
+
+<Sec id="4.4" />
+
+<emu-clause id="sec-date.prototype.constructor">
+
+#### <span className="secnum">21.4.4.1</span> Date.prototype.constructor
+
+<Sec id="4.4.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getdate">
+
+#### <span className="secnum">21.4.4.2</span> Date.prototype.getDate ( )
+
+<Sec id="4.4.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getday">
+
+#### <span className="secnum">21.4.4.3</span> Date.prototype.getDay ( )
+
+<Sec id="4.4.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getfullyear">
+
+#### <span className="secnum">21.4.4.4</span> Date.prototype.getFullYear ( )
+
+<Sec id="4.4.4" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.gethours">
+
+#### <span className="secnum">21.4.4.5</span> Date.prototype.getHours ( )
+
+<Sec id="4.4.5" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getmilliseconds">
+
+#### <span className="secnum">21.4.4.6</span> Date.prototype.getMilliseconds ( )
+
+<Sec id="4.4.6" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getminutes">
+
+#### <span className="secnum">21.4.4.7</span> Date.prototype.getMinutes ( )
+
+<Sec id="4.4.7" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getmonth">
+
+#### <span className="secnum">21.4.4.8</span> Date.prototype.getMonth ( )
+
+<Sec id="4.4.8" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getseconds">
+
+#### <span className="secnum">21.4.4.9</span> Date.prototype.getSeconds ( )
+
+<Sec id="4.4.9" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.gettime">
+
+#### <span className="secnum">21.4.4.10</span> Date.prototype.getTime ( )
+
+<Sec id="4.4.10" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.gettimezoneoffset">
+
+#### <span className="secnum">21.4.4.11</span> Date.prototype.getTimezoneOffset ( )
+
+<Sec id="4.4.11" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getutcdate">
+
+#### <span className="secnum">21.4.4.12</span> Date.prototype.getUTCDate ( )
+
+<Sec id="4.4.12" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getutcday">
+
+#### <span className="secnum">21.4.4.13</span> Date.prototype.getUTCDay ( )
+
+<Sec id="4.4.13" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getutcfullyear">
+
+#### <span className="secnum">21.4.4.14</span> Date.prototype.getUTCFullYear ( )
+
+<Sec id="4.4.14" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getutchours">
+
+#### <span className="secnum">21.4.4.15</span> Date.prototype.getUTCHours ( )
+
+<Sec id="4.4.15" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getutcmilliseconds">
+
+#### <span className="secnum">21.4.4.16</span> Date.prototype.getUTCMilliseconds ( )
+
+<Sec id="4.4.16" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getutcminutes">
+
+#### <span className="secnum">21.4.4.17</span> Date.prototype.getUTCMinutes ( )
+
+<Sec id="4.4.17" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getutcmonth">
+
+#### <span className="secnum">21.4.4.18</span> Date.prototype.getUTCMonth ( )
+
+<Sec id="4.4.18" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.getutcseconds">
+
+#### <span className="secnum">21.4.4.19</span> Date.prototype.getUTCSeconds ( )
+
+<Sec id="4.4.19" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setdate">
+
+#### <span className="secnum">21.4.4.20</span> Date.prototype.setDate ( <var>date</var> )
+
+<Sec id="4.4.20" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setfullyear">
+
+#### <span className="secnum">21.4.4.21</span> Date.prototype.setFullYear ( <var>year</var> [ , <var>month</var> [ , <var>date</var> ] ] )
+
+<Sec id="4.4.21" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.sethours">
+
+#### <span className="secnum">21.4.4.22</span> Date.prototype.setHours ( <var>hour</var> [ , <var>min</var> [ , <var>sec</var> [ , <var>ms</var> ] ] ] )
+
+<Sec id="4.4.22" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setmilliseconds">
+
+#### <span className="secnum">21.4.4.23</span> Date.prototype.setMilliseconds ( <var>ms</var> )
+
+<Sec id="4.4.23" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setminutes">
+
+#### <span className="secnum">21.4.4.24</span> Date.prototype.setMinutes ( <var>min</var> [ , <var>sec</var> [ , <var>ms</var> ] ] )
+
+<Sec id="4.4.24" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setmonth">
+
+#### <span className="secnum">21.4.4.25</span> Date.prototype.setMonth ( <var>month</var> [ , <var>date</var> ] )
+
+<Sec id="4.4.25" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setseconds">
+
+#### <span className="secnum">21.4.4.26</span> Date.prototype.setSeconds ( <var>sec</var> [ , <var>ms</var> ] )
+
+<Sec id="4.4.26" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.settime">
+
+#### <span className="secnum">21.4.4.27</span> Date.prototype.setTime ( <var>time</var> )
+
+<Sec id="4.4.27" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setutcdate">
+
+#### <span className="secnum">21.4.4.28</span> Date.prototype.setUTCDate ( <var>date</var> )
+
+<Sec id="4.4.28" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setutcfullyear">
+
+#### <span className="secnum">21.4.4.29</span> Date.prototype.setUTCFullYear ( <var>year</var> [ , <var>month</var> [ , <var>date</var> ] ] )
+
+<Sec id="4.4.29" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setutchours">
+
+#### <span className="secnum">21.4.4.30</span> Date.prototype.setUTCHours ( <var>hour</var> [ , <var>min</var> [ , <var>sec</var> [ , <var>ms</var> ] ] ] )
+
+<Sec id="4.4.30" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setutcmilliseconds">
+
+#### <span className="secnum">21.4.4.31</span> Date.prototype.setUTCMilliseconds ( <var>ms</var> )
+
+<Sec id="4.4.31" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setutcminutes">
+
+#### <span className="secnum">21.4.4.32</span> Date.prototype.setUTCMinutes ( <var>min</var> [ , <var>sec</var> [ , <var>ms</var> ] ] )
+
+<Sec id="4.4.32" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setutcmonth">
+
+#### <span className="secnum">21.4.4.33</span> Date.prototype.setUTCMonth ( <var>month</var> [ , <var>date</var> ] )
+
+<Sec id="4.4.33" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.setutcseconds">
+
+#### <span className="secnum">21.4.4.34</span> Date.prototype.setUTCSeconds ( <var>sec</var> [ , <var>ms</var> ] )
+
+<Sec id="4.4.34" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.todatestring">
+
+#### <span className="secnum">21.4.4.35</span> Date.prototype.toDateString ( )
+
+<Sec id="4.4.35" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.toisostring">
+
+#### <span className="secnum">21.4.4.36</span> Date.prototype.toISOString ( )
+
+<Sec id="4.4.36" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.tojson">
+
+#### <span className="secnum">21.4.4.37</span> Date.prototype.toJSON ( <var>key</var> )
+
+<Sec id="4.4.37" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.tolocaledatestring">
+
+#### <span className="secnum">21.4.4.38</span> Date.prototype.toLocaleDateString ( [ <var>reserved1</var> [ , <var>reserved2</var> ] ] )
+
+<Sec id="4.4.38" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.tolocalestring">
+
+#### <span className="secnum">21.4.4.39</span> Date.prototype.toLocaleString ( [ <var>reserved1</var> [ , <var>reserved2</var> ] ] )
+
+<Sec id="4.4.39" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.tolocaletimestring">
+
+#### <span className="secnum">21.4.4.40</span> Date.prototype.toLocaleTimeString ( [ <var>reserved1</var> [ , <var>reserved2</var> ] ] )
+
+<Sec id="4.4.40" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.tostring">
+
+#### <span className="secnum">21.4.4.41</span> Date.prototype.toString ( )
+
+<Sec id="4.4.41" />
+
+<emu-clause id="sec-timestring">
+
+##### <span className="secnum">21.4.4.41.1</span> TimeString ( <var>tv</var> )
+
+<Sec id="4.4.41.1" />
+
+</emu-clause>
+
+<emu-clause id="sec-datestring">
+
+##### <span className="secnum">21.4.4.41.2</span> DateString ( <var>tv</var> )
+
+<Sec id="4.4.41.2" />
+
+</emu-clause>
+
+<emu-clause id="sec-timezoneestring">
+
+##### <span className="secnum">21.4.4.41.3</span> TimeZoneString ( <var>tv</var> )
+
+<Sec id="4.4.41.3" />
+
+</emu-clause>
+
+<emu-clause id="sec-todatestring">
+
+##### <span className="secnum">21.4.4.41.4</span> ToDateString ( <var>tv</var> )
+
+<Sec id="4.4.41.4" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.totimestring">
+
+#### <span className="secnum">21.4.4.42</span> Date.prototype.toTimeString ( )
+
+<Sec id="4.4.42" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.toutcstring">
+
+#### <span className="secnum">21.4.4.43</span> Date.prototype.toUTCString ( )
+
+<Sec id="4.4.43" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype.valueof">
+
+#### <span className="secnum">21.4.4.44</span> Date.prototype.valueOf ( )
+
+<Sec id="4.4.44" />
+
+</emu-clause>
+
+<emu-clause id="sec-date.prototype-%symbol.toprimitive%">
+
+#### <span className="secnum">21.4.4.45</span> Date.prototype [ <emu-intrinsic>%Symbol.toPrimitive%</emu-intrinsic> ] ( <var>hint</var> )
+
+<Sec id="4.4.45" />
+
+</emu-clause>
+
+</emu-clause>
+
+<emu-clause id="sec-properties-of-date-instances">
+
+### <span className="secnum">21.4.5</span> Properties of Date Instances
+
+<Sec id="4.5" />
+
+</emu-clause>
+
+</emu-clause>
+
+</emu-clause>
+
+</div>

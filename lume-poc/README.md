@@ -1,7 +1,10 @@
 # lume-poc
 
-Single-page proof-of-concept replacing Nextra with [Lume](https://lume.land/)
-for the `notational-conventions` chapter of the ECMA-262 draft.
+Proof-of-concept replacing Nextra with [Lume](https://lume.land/) for the
+ECMA-262 draft. Every chapter is rendered through the same `build-chapters.mjs`
+conversion that produced `notational-conventions` (one `<slug>.mdx` page +
+`lib/<slug>.jsx` `<Sec>` component each); regenerate them all with
+`deno task pages` (see "Running").
 
 ## What's here
 
@@ -27,9 +30,19 @@ for the `notational-conventions` chapter of the ECMA-262 draft.
 ## Running
 
 ```
-# 1. (re)generate the chapter component from the draft spec. build-chapters.mjs
-#    emits every chapter + wipes its output dirs, so run it into a scratch dir
-#    and copy in just the one chapter this PoC ships.
+# 1. (re)generate every chapter page. scripts/build-pages.ts runs
+#    build-chapters.mjs into a scratch dir, copies each <Sec> component into
+#    lib/<slug>.jsx, and writes one Lume page lume-poc/<slug>.mdx (front matter
+#    + import path adapted from build-chapters' Nextra-flavoured output).
+deno task pages
+
+# 2. build the site.
+deno task build       # writes _site/<slug>/index.html for every chapter
+```
+
+To regenerate a single chapter by hand instead (what the original PoC did):
+
+```
 node ../packages/shared/scripts/build-chapters.mjs \
   --input ../ecma262/draft/spec.html \
   --lib-dir /tmp/lume-build/lib \
@@ -37,9 +50,6 @@ node ../packages/shared/scripts/build-chapters.mjs \
   --public-img-dir /tmp/lume-build/img \
   --base-path ""
 cp /tmp/lume-build/lib/notational-conventions.jsx ./lib/
-
-# 2. build the site.
-deno task build       # writes _site/notational-conventions/index.html
 ```
 
 The base spec is `ecma262/draft/spec.html`. Building from a pinned edition (e.g.

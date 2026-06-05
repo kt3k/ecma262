@@ -8,6 +8,7 @@
     "jsxImportSource": "lume"
   },
   "tasks": {
+    "pages": "deno run -A scripts/build-pages.ts",
     "build": "deno run -A _config.ts",
     "pagefind": "deno run -A npm:pagefind --site _site --output-subdir pagefind"
   }
