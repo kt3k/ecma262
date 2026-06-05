@@ -1050,21 +1050,9 @@ aside.toc .toc-feedback-arrow {
   border-top: 1px solid var(--rule);
   padding-bottom: env(safe-area-inset-bottom);
 }
-/* Switchers strip — thin row above the editions columns holding the
-   theme toggle (lume-poc has no locale switcher). Matches Nextra's
-   <Switchers> wrapper:
-     x:mx-auto x:flex x:max-w-(--nextra-content-width)
-     x:gap-2 x:py-2 x:px-4. */
-.site-switchers {
-  display: flex;
-  gap: 0.5rem;
-  max-width: var(--content-max-w);
-  margin-inline: auto;
-  padding: 0.5rem max(env(safe-area-inset-right), 1rem) 0.5rem
-    max(env(safe-area-inset-left), 1rem);
-}
-/* Hairline between Switchers and the editions columns — matches Nextra's
-   <hr className="nextra-border"> separator. */
+/* Hairline above the editions columns — matches Nextra's
+   <hr className="nextra-border"> separator, which it emits above the footer
+   even when the (sidebar-only) <Switchers> row is absent. */
 .site-footer-divider {
   margin: 0;
   border: 0;
@@ -1282,7 +1270,6 @@ body.menu-open .menu-toggle svg > g:nth-of-type(2) > path {
   footer.site-footer {
     background: transparent;
   }
-  .site-switchers,
   .site-footer-divider {
     display: none;
   }
