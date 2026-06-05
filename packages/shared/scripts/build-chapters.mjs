@@ -1349,12 +1349,24 @@ function tokenizeGrammarInline(text) {
 function applyGrammarSubst(html) {
   return html.replace(
     /<emu-grammar([^>]*?)>([\s\S]*?)<\/emu-grammar>/g,
-    (_full, _attrs, inner, offset, source) => {
+    (_full, attrs, inner, offset, source) => {
       const lineStart = source.lastIndexOf("\n", offset - 1) + 1;
       const isBlock = source.slice(lineStart, offset).trim() === "";
       const trimmed = inner.replace(/^\s*\n/, "").replace(/\n\s*$/, "");
       if (isBlock) {
-        return `<emu-grammar type="definition">${
+        // Mirror the source's grammar kind in the emitted attributes (tc39's
+        // serialisation): a real definition stays `type="definition"`, but an
+        // illustrative `<emu-grammar example>` (a use-grammar referencing an
+        // existing production, e.g. 5.2.3's Block example) stays `example=""`
+        // WITHOUT type — so it doesn't pick up the `emu-grammar[type=definition]
+        // emu-production` 5ex indent the way a definition does. Bare block
+        // grammars keep the default `type="definition"` (unchanged).
+        const hasDef = /\btype="definition"/.test(attrs);
+        const hasEx = /(?:^|\s)example(?:\s|=|$)/.test(attrs);
+        const gattrs = hasEx
+          ? (hasDef ? ` example="" type="definition"` : ` example=""`)
+          : ` type="definition"`;
+        return `<emu-grammar${gattrs}>${
           tokenizeGrammarBlock(dedent(trimmed))
         }</emu-grammar>`;
       }
