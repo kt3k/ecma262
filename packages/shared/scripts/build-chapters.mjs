@@ -680,6 +680,64 @@ const dfnTargets = new Map();
   }
 }
 
+// Abstract-operation autolink targets — ecmarkup's `aoid` mechanism, separate
+// from <dfn> terms. ecmarkup gives an aoid (and links every textual occurrence
+// of it to the definition) to:
+//   • any element with an explicit aoid="X" attribute — that element's own id is
+//     the link target (e.g. <emu-eqn id="eqn-abs" aoid="abs">abs(_x_)</emu-eqn>);
+//   • <emu-clause type="<t>"> for t in AOID_TYPES, whose aoid is the operation
+//     name parsed from its own <h1> (text before the first "(", after dropping a
+//     "Xxx Semantics:" SDO prefix), e.g. ThrowCompletion, Evaluation.
+// Keys are the EXACT (case-sensitive) names. Mirrors tc39's aoidTypes list.
+const AOID_TYPES = new Set([
+  "abstract operation",
+  "sdo",
+  "syntax-directed operation",
+  "host-defined abstract operation",
+  "implementation-defined abstract operation",
+  "numeric method",
+]);
+// ecmarkup only links these very common words when they're a call (`(` next).
+const COMMON_AOS = new Set(["Call", "Set", "Type", "UTC", "remainder"]);
+const aoTargets = new Map(); // exact aoid name → { slug, id }
+{
+  const slugAt = (index) => {
+    const chap = chapters.find((c) => c.offset <= index && index < c.endOffset);
+    return chap ? built.find((x) => x.id === chap.id)?.pageSlug ?? null : null;
+  };
+  // (A) explicit aoid="X" on any id-bearing element (the id is the link target).
+  const aoidRe = /<([a-zA-Z][\w-]*)\b([^>]*\baoid="([^"]+)"[^>]*)>/g;
+  let m;
+  while ((m = aoidRe.exec(src)) !== null) {
+    const aoid = m[3];
+    const idm = m[2].match(/\bid="([^"]+)"/);
+    if (!idm) continue; // no local anchor to point at → skip
+    const slug = slugAt(m.index);
+    if (slug && !aoTargets.has(aoid)) aoTargets.set(aoid, { slug, id: idm[1] });
+  }
+  // (B) emu-clause[type in AOID_TYPES] → aoid = the name from its own <h1>.
+  const clauseRe = /<emu-clause\b([^>]*)>/g;
+  while ((m = clauseRe.exec(src)) !== null) {
+    const typeM = m[1].match(/\btype="([^"]+)"/);
+    const idM = m[1].match(/\bid="([^"]+)"/);
+    if (!typeM || !AOID_TYPES.has(typeM[1]) || !idM) continue;
+    const after = src.slice(clauseRe.lastIndex);
+    const h1M = after.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/);
+    if (!h1M) continue;
+    // The clause's own <h1> must precede any nested clause's.
+    const nestPos = after.indexOf("<emu-clause");
+    if (nestPos !== -1 && nestPos < h1M.index) continue;
+    let name = decodeEntities(h1M[1].replace(/<[^>]+>/g, ""))
+      .replace(/\s+/g, " ").trim()
+      .replace(/^(?:[A-Za-z][\w-]*\s+)*Semantics:\s*/, "");
+    const paren = name.indexOf("(");
+    if (paren !== -1) name = name.slice(0, paren).trim();
+    if (!/^[\p{L}\p{N}][\p{L}\p{N}_:.]*$/u.test(name)) continue; // single token
+    const slug = slugAt(m.index);
+    if (slug && !aoTargets.has(name)) aoTargets.set(name, { slug, id: idM[1] });
+  }
+}
+
 // Add data-num="N" to <emu-table>/<emu-figure> so the caption CSS can render
 // "Table N: <caption>" / "Figure N: <caption>".
 function applyFloatNum(html) {
@@ -1607,6 +1665,110 @@ function applyDfnLinkSubst(html, ownClause = "") {
   return out;
 }
 
+// Auto-link abstract-operation references (see aoTargets above) — ecmarkup's
+// aoid autolinker. Runs as its own pass AFTER applyDfnLinkSubst so any region a
+// <dfn> term already wrapped (e.g. "Completion Record") is skipped, leaving its
+// bare-"Completion" interior untouched — the practical stand-in for ecmarkup's
+// single longest-first pass over terms+ops.
+const aoLinkRe = aoTargets.size
+  ? new RegExp(
+    [...aoTargets.keys()]
+      .sort((a, b) => b.length - a.length) // longest first
+      .map((name) => {
+        const lead = /^\w/.test(name) ? "\\b" : "";
+        // common words: link only as a call; otherwise reject a trailing
+        // letter / `.word` / `%%` / `]]` exactly like ecmarkup's lookAheadBeyond.
+        const look = COMMON_AOS.has(name)
+          ? "(?=\\()"
+          : "(?!\\w|\\.\\w|%%|\\]\\])";
+        return lead + escapeRe(name) + look;
+      })
+      .join("|"),
+    "g",
+  )
+  : null;
+// ecmarkup's NO_CLAUSE_AUTOLINK set (lower-cased). Note emu-eqn is intentionally
+// NOT here — ecmarkup links ops inside equations (e.g. floor(_x_) in an eqn).
+const aoLinkSkipTags = new Set([
+  "pre",
+  "code",
+  "script",
+  "style",
+  "emu-const",
+  "emu-production",
+  "emu-grammar",
+  "emu-xref",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "emu-var",
+  "emu-val",
+  "var",
+  "a",
+  "dfn",
+  "sub",
+  "emu-not-ref",
+]);
+// HTML void elements never carry content, so they don't push onto the open-tag
+// stack the walker uses to balance skip regions.
+const aoVoidTags = new Set([
+  "img",
+  "br",
+  "hr",
+  "col",
+  "wbr",
+  "source",
+  "input",
+  "meta",
+  "link",
+  "area",
+  "base",
+  "embed",
+]);
+function linkAbstractOps(text, ownClause) {
+  return text.replace(aoLinkRe, (match) => {
+    const t = aoTargets.get(match);
+    if (!t || t.id === ownClause) return match; // not within its own definition
+    const href = `${pathFor(t.slug)}#${t.id}`;
+    return `<emu-xref aoid="${match}"><a href="${href}">${match}</a></emu-xref>`;
+  });
+}
+function applyAoLinkSubst(html, ownClause = "") {
+  if (!aoLinkRe) return html;
+  const tagRe = /<\/?([a-zA-Z][a-zA-Z0-9-]*)\b[^>]*>|<!--[\s\S]*?-->/g;
+  let out = "";
+  let last = 0;
+  let skipDepth = 0;
+  const openSkips = []; // skip flag per open element, for balanced pop on close
+  let m;
+  while ((m = tagRe.exec(html)) !== null) {
+    out += skipDepth === 0
+      ? linkAbstractOps(html.slice(last, m.index), ownClause)
+      : html.slice(last, m.index);
+    out += m[0];
+    if (m[1]) {
+      const tag = m[1].toLowerCase();
+      if (m[0].startsWith("</")) {
+        if (openSkips.pop()) skipDepth--;
+      } else if (!m[0].endsWith("/>") && !aoVoidTags.has(tag)) {
+        // Skip ecmarkup's no-autolink elements AND any aoid-bearing definition
+        // element (so it doesn't link its own name to itself).
+        const skip = aoLinkSkipTags.has(tag) || /\baoid=/.test(m[0]);
+        openSkips.push(skip);
+        if (skip) skipDepth++;
+      }
+    }
+    last = tagRe.lastIndex;
+  }
+  out += skipDepth === 0
+    ? linkAbstractOps(html.slice(last), ownClause)
+    : html.slice(last);
+  return out;
+}
+
 fs.rmSync(CONTENT_DIR, { recursive: true, force: true });
 fs.rmSync(LIB_DIR, { recursive: true, force: true });
 fs.mkdirSync(CONTENT_DIR, { recursive: true });
@@ -1620,19 +1782,22 @@ built.forEach((c) => {
   // chapter clause as its immediate clause; nested sections report their own.
   const sections = flattenTree(tree, "", c.id).map(([k, v, clauseId]) => [
     k,
-    applyDfnLinkSubst(
-      applyInlineMarkup(
-        applyXrefSubst(
-          applyProdrefSubst(
-            applyEqnInlineSubst(
-              applyGrammarSubst(
-                applyAlgSubst(
-                  applyHljsSubst(applyFloatNum(applyNoteNum(v))),
+    applyAoLinkSubst(
+      applyDfnLinkSubst(
+        applyInlineMarkup(
+          applyXrefSubst(
+            applyProdrefSubst(
+              applyEqnInlineSubst(
+                applyGrammarSubst(
+                  applyAlgSubst(
+                    applyHljsSubst(applyFloatNum(applyNoteNum(v))),
+                  ),
                 ),
               ),
             ),
           ),
         ),
+        clauseId,
       ),
       clauseId,
     ),
