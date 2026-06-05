@@ -6,6 +6,6 @@
     "build:all": "pnpm -r build",
     "assemble": "node packages/shared/scripts/assemble-dist.mjs",
     "build": "pnpm build:all && pnpm assemble",
-    "dev": "pnpm --filter site-draft dev"
+    "dev": "pnpm --filter site-draft-nextra dev"
   }
 }

@@ -22,7 +22,22 @@ if (editions.length === 0) {
 fs.rmSync(distDir, { recursive: true, force: true });
 fs.mkdirSync(distDir, { recursive: true });
 
+// The `draft` edition is rendered by the Lume build (lume-poc/_site); every
+// other edition is a packages/site-<id> static export.
+const lumeOut = path.join(root, "lume-poc", "_site");
 for (const edition of editions) {
+  if (edition.id === "draft") {
+    if (!fs.existsSync(lumeOut)) {
+      console.error(
+        `[assemble-dist] missing Lume build: ${lumeOut}\n` +
+          "  run `deno task build` in lume-poc/ first",
+      );
+      process.exit(1);
+    }
+    fs.cpSync(lumeOut, path.join(distDir, "draft"), { recursive: true });
+    console.log("[assemble-dist] included lume-poc/_site -> dist/draft/");
+    continue;
+  }
   const out = path.join(packagesDir, `site-${edition.id}`, "out");
   if (!fs.existsSync(out)) {
     console.error(
@@ -32,14 +47,6 @@ for (const edition of editions) {
     process.exit(1);
   }
   fs.cpSync(out, path.join(distDir, edition.id), { recursive: true });
-}
-
-// Optional: include the Lume PoC if it's been built. CI builds it explicitly;
-// locally it's skipped unless you ran `deno task build` in lume-poc/.
-const lumeOut = path.join(root, "lume-poc", "_site");
-if (fs.existsSync(lumeOut)) {
-  fs.cpSync(lumeOut, path.join(distDir, "lume-poc"), { recursive: true });
-  console.log("[assemble-dist] included lume-poc/_site -> dist/lume-poc/");
 }
 
 const escape = (s) =>

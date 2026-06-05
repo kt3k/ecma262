@@ -36,17 +36,21 @@ jobs:
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Build Lume PoC
-        # Outputs to lume-poc/_site/; gets folded into dist/lume-poc/ by
-        # assemble-dist.mjs. BASE_PATH lets the layout's stylesheet href
-        # and Pagefind bundlePath resolve under the gh-pages prefix.
+      - name: Build Lume draft site
+        # The `draft` edition is rendered by Lume (lume-poc); assemble-dist.mjs
+        # folds lume-poc/_site/ into dist/draft/. BASE_PATH prefixes the
+        # layout's asset/nav hrefs (page.tsx), the content cross-page links
+        # (build-pages.ts -> build-chapters --base-path) and Pagefind's
+        # bundlePath, so everything resolves under the gh-pages /ecma262/draft.
+        # `deno task pages` regenerates the chapter components with that base
+        # before the build.
         working-directory: lume-poc
         env:
-          BASE_PATH: /ecma262/lume-poc
-        run: deno task build && deno task pagefind
+          BASE_PATH: /ecma262/draft
+        run: deno task pages && deno task build && deno task pagefind
       - name: Assemble combined dist/
-        # Copies each site's out/ into dist/<id>/, plus lume-poc/_site/ into
-        # dist/lume-poc/, and writes the landing page.
+        # Copies each site's out/ into dist/<id>/, plus the Lume build into
+        # dist/draft/, and writes the landing page.
         run: pnpm assemble
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

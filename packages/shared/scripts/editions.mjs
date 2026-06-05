@@ -27,6 +27,18 @@ export function readEditions(root) {
       };
     });
 
+  // The `draft` edition is rendered by the Lume build (lume-poc), not a
+  // packages/site-* app, so it isn't discovered above. Inject it (unless a
+  // packages/site-draft re-appears) so the landing redirect, version switcher
+  // and footer still list it. assemble-dist copies lume-poc/_site -> dist/draft.
+  if (!editions.some((e) => e.id === "draft")) {
+    editions.push({
+      id: "draft",
+      title: "ECMA-262, 18th, ES2027 draft",
+      source: readSpecSource(path.join(root, "ecma262", "draft")),
+    });
+  }
+
   editions.sort((a, b) => {
     if (a.id === "draft") return -1;
     if (b.id === "draft") return 1;

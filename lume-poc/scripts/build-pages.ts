@@ -15,6 +15,11 @@
 const lumeRoot = new URL("../", import.meta.url).pathname; // lume-poc/
 const repoRoot = new URL("../../", import.meta.url).pathname; // repo root
 
+// Base path the pages deploy under. Empty for local dev (localhost serves at
+// /); CI sets BASE_PATH=/ecma262/draft so build-chapters prefixes every
+// cross-page href accordingly (matching page.tsx's asset/nav base path).
+const basePath = Deno.env.get("BASE_PATH") ?? "";
+
 const scratch = await Deno.makeTempDir({ prefix: "lume-pages-" });
 const buildChapters = `${repoRoot}packages/shared/scripts/build-chapters.mjs`;
 
@@ -31,7 +36,7 @@ const run = new Deno.Command("node", {
     "--public-img-dir",
     `${scratch}/img`,
     "--base-path",
-    "",
+    basePath,
   ],
   stdout: "inherit",
   stderr: "inherit",
