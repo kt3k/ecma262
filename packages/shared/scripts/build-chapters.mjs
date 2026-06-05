@@ -617,6 +617,13 @@ const figureNum = new Map();
 // dfn's offset resolves both its enclosing clause id and (via the chapter
 // range) its page slug. Keys are lowercased surface forms; matching is
 // case-insensitive (see applyDfnLinkSubst).
+// True when a surface form starts with a lowercase letter (so dfnAlt will make
+// its first character case-lenient, matching both the lowercase form and a
+// sentence-start capital).
+const lowerFirst = (s) => {
+  const c = s[0];
+  return c.toLowerCase() === c && c.toUpperCase() !== c;
+};
 const dfnTargets = new Map();
 {
   const re =
@@ -638,12 +645,14 @@ const dfnTargets = new Map();
     const term = decodeEntities(m[4].replace(/<[^>]+>/g, ""))
       .replace(/\s+/g, " ").trim();
     if (!term) continue;
-    // Nearest enclosing clause with an id = the term's DEFINING clause. Used
-    // both as the link target for an id-less dfn AND (for every dfn) as the
-    // clause inside which the term must NOT be auto-linked: tc39 leaves a term
-    // plain within the exact clause that defines it (its own body only — a
-    // sub-clause still links it), since a link back to the very section you're
-    // reading is just noise.
+    // Nearest enclosing clause with an id — the link target for an id-LESS dfn
+    // (ecmarkup mints no per-term anchor there, so the reference points at the
+    // clause). An id-bearing <dfn id="x"> instead targets #x. Either way the
+    // resolved target id (`id` below) doubles as the self-reference guard: tc39
+    // leaves a term plain only within the exact clause its link points at — for
+    // an id-less dfn that's its enclosing clause; for an id-bearing dfn the
+    // target is the dfn's own id, which never equals a clause id, so such terms
+    // link even inside their defining clause (e.g. "integers" → #integer).
     let clauseId = null;
     for (let i = stack.length - 1; i >= 0; i--) {
       if (stack[i]) {
@@ -668,13 +677,18 @@ const dfnTargets = new Map();
       // First definition wins when two dfns share a surface form. `surface`
       // keeps the dfn's original casing so matching can stay case-sensitive
       // (see dfnAlt below); the key is lowercased only for lookup.
-      if (!dfnTargets.has(key)) {
-        dfnTargets.set(key, {
-          slug: b.pageSlug,
-          id,
-          clause: clauseId,
-          surface: surf,
-        });
+      const existing = dfnTargets.get(key);
+      if (!existing) {
+        dfnTargets.set(key, { slug: b.pageSlug, id, surface: surf });
+      } else if (
+        existing.id === id && lowerFirst(surf) && !lowerFirst(existing.surface)
+      ) {
+        // Same dfn offers both "Mathematical values" (term) and a lowercase
+        // variant "mathematical values": prefer the lowercase surface, whose
+        // first-char leniency (dfnAlt) matches BOTH cases. Keeping the uppercase
+        // term would match only the capitalised form and drop the lowercase
+        // occurrences (which tc39 links).
+        existing.surface = surf;
       }
     }
   }
@@ -1627,15 +1641,18 @@ const dfnLinkRe = dfnTargets.size
   )
   : null;
 // `ownClause` is the id of the clause directly containing the current section.
-// A term whose defining clause IS that clause is left plain — tc39 doesn't link
-// a term within the exact clause that defines it (a sub-clause still links it).
-// Other terms link as normal.
+// ecmarkup's self-reference guard is `entryId === currentId`: a term is left
+// plain only within the clause its LINK TARGET points at. For an id-less dfn the
+// target is its enclosing clause, so it stays plain there (a sub-clause still
+// links it); for an id-bearing <dfn id="x"> the target is #x — never a clause
+// id — so it links even inside its defining clause. Hence compare t.id, not the
+// enclosing clause.
 function linkDefinedTerms(text, ownClause) {
   if (!dfnLinkRe) return text;
   return text.replace(dfnLinkRe, (match) => {
     const t = dfnTargets.get(match.toLowerCase());
     if (!t) return match;
-    if (t.clause && t.clause === ownClause) return match;
+    if (t.id === ownClause) return match;
     const href = `${pathFor(t.slug)}#${t.id}`;
     return `<emu-xref href="${href}"><a href="${href}">${match}</a></emu-xref>`;
   });
