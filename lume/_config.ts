@@ -62,8 +62,8 @@ site.copy("img");
 // @font-face declarations at the top of styles.css so spec inline
 // <code> renders in Plex Mono like tc39.es rather than a system mono.
 site.copy("fonts");
-// Lume logo, shipped as the site favicon (see the <link rel="icon"> in
-// _includes/page.tsx). Downloaded from lume.land/favicon.svg.
+// Site favicon (the "JS" mark, same as the Nextra build's app/icon.svg); see
+// the <link rel="icon"> in _includes/page.tsx.
 site.copy("favicon.svg");
 
 // Build the per-page right-rail TOC after rendering. Lume parses each .html

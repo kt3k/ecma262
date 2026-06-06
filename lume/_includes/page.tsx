@@ -33,9 +33,9 @@ export default function Page(
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title ?? "ECMA-262"}</title>
         {
-          /* Lume logo as the favicon (PoC marker). SVG adapts its mark to
-            light/dark via prefers-color-scheme. basePath-prefixed so it
-            resolves under a sub-path deploy too. */
+          /* The "JS" mark favicon — the same icon the Nextra build shipped
+            (its app/icon.svg). basePath-prefixed so it resolves under a
+            sub-path deploy too. */
         }
         <link
           rel="icon"
