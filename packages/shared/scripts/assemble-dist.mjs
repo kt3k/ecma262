@@ -1,17 +1,28 @@
-// Combine every site's static export into a single dist/ for GitHub Pages.
+// Build every edition into a single dist/ for GitHub Pages.
 //
-//   packages/site-<id>/out/  ->  dist/<id>/
-//   dist/index.html          <- landing page linking to each version
+//   Lume editions (draft, es20xx)  ->  built per edition, dist/<id>/
+//   Nextra editions (draft-nextra) ->  packages/site-<id>/out/ -> dist/<id>/
+//   dist/index.html                <-  redirect to the editor's draft
 //
-// Run from anywhere after `pnpm build:all`; paths resolve off the repo root.
+// Lume editions are (re)built here: for each, run lume's pages/build/pagefind
+// tasks with EDITION + BASE_PATH set, then copy lume/_site -> dist/<id>. The
+// few Nextra editions kept for comparison are copied from their static export
+// (so `pnpm build:nextra` must have produced them first). Paths resolve off the
+// repo root.
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { execFileSync } from "node:child_process";
 import { readEditions } from "./editions.mjs";
 
 const root = path.resolve(import.meta.dirname, "../../..");
 const packagesDir = path.join(root, "packages");
 const distDir = path.join(root, "dist");
+const lumeDir = path.join(root, "lume");
+
+// Editions still rendered by Nextra (kept for side-by-side comparison); every
+// other edition is rendered by the Lume build.
+const NEXTRA_EDITIONS = new Set(["draft-nextra"]);
 
 const editions = readEditions(root);
 
@@ -23,31 +34,42 @@ if (editions.length === 0) {
 fs.rmSync(distDir, { recursive: true, force: true });
 fs.mkdirSync(distDir, { recursive: true });
 
-// The `draft` edition is rendered by the Lume build (lume-poc/_site); every
-// other edition is a packages/site-<id> static export.
-const lumeOut = path.join(root, "lume", "_site");
+const lumeSite = path.join(lumeDir, "_site");
 for (const edition of editions) {
-  if (edition.id === "draft") {
-    if (!fs.existsSync(lumeOut)) {
+  const dest = path.join(distDir, edition.id);
+
+  if (NEXTRA_EDITIONS.has(edition.id)) {
+    const out = path.join(packagesDir, `site-${edition.id}`, "out");
+    if (!fs.existsSync(out)) {
       console.error(
-        `[assemble-dist] missing Lume build: ${lumeOut}\n` +
-          "  run `deno task build` in lume/ first",
+        `[assemble-dist] missing build output: ${out}\n` +
+          "  run `pnpm build:nextra` first",
       );
       process.exit(1);
     }
-    fs.cpSync(lumeOut, path.join(distDir, "draft"), { recursive: true });
-    console.log("[assemble-dist] included lume-poc/_site -> dist/draft/");
+    fs.cpSync(out, dest, { recursive: true });
+    console.log(
+      `[assemble-dist] ${edition.id}: Nextra out/ -> dist/${edition.id}/`,
+    );
     continue;
   }
-  const out = path.join(packagesDir, `site-${edition.id}`, "out");
-  if (!fs.existsSync(out)) {
-    console.error(
-      `[assemble-dist] missing build output: ${out}\n` +
-        "  run `pnpm build:all` first",
-    );
-    process.exit(1);
+
+  // Lume-rendered edition: regenerate its pages, build, and index, all under
+  // the edition's deploy prefix, then copy the result in.
+  const env = {
+    ...process.env,
+    EDITION: edition.id,
+    BASE_PATH: `/ecma262/${edition.id}`,
+  };
+  for (const task of ["pages", "build", "pagefind"]) {
+    execFileSync("deno", ["task", task], {
+      cwd: lumeDir,
+      env,
+      stdio: "inherit",
+    });
   }
-  fs.cpSync(out, path.join(distDir, edition.id), { recursive: true });
+  fs.cpSync(lumeSite, dest, { recursive: true });
+  console.log(`[assemble-dist] ${edition.id}: Lume -> dist/${edition.id}/`);
 }
 
 const escape = (s) =>

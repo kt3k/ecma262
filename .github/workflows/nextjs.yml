@@ -29,28 +29,19 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build all sites
-        run: pnpm build:all
       - name: Setup Deno
-        # Needed only for the Lume PoC build below.
+        # The editions are rendered by Lume (Deno) in the assemble step.
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Build Lume draft site
-        # The `draft` edition is rendered by Lume (lume-poc); assemble-dist.mjs
-        # folds lume/_site/ into dist/draft/. BASE_PATH prefixes the layout's
-        # asset/nav hrefs (page.tsx), the content cross-page links
-        # (build-pages.ts -> build-chapters --base-path) and Pagefind's
-        # bundlePath, so everything resolves under the gh-pages /ecma262/draft.
-        # `deno task pages` regenerates the chapter components with that base
-        # before the build.
-        working-directory: lume
-        env:
-          BASE_PATH: /ecma262/draft
-        run: deno task pages && deno task build && deno task pagefind
+      - name: Build Nextra comparison site(s)
+        # Only the Nextra editions kept for comparison (draft-nextra) need their
+        # static export; the real editions are built by Lume in assemble.
+        run: pnpm build:nextra
       - name: Assemble combined dist/
-        # Copies each site's out/ into dist/<id>/, plus the Lume build into
-        # dist/draft/, and writes the landing page.
+        # Builds each Lume edition (pages/build/pagefind with EDITION +
+        # BASE_PATH=/ecma262/<id>) into dist/<id>/, copies the Nextra
+        # comparison out/ into dist/<id>/, and writes the landing page.
         run: pnpm assemble
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

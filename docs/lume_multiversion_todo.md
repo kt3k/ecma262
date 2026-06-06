@@ -49,7 +49,7 @@ done
   - 生成物(`lib/*.jsx`・`content/*.mdx`・生成した章一覧)を **gitignore**
     して毎ビルド再生成(版数ぶんのコミット肥大・submodule 追従 churn を回避)
 
-- [ ] **(2) `assemble-dist.mjs` を全版 Lume ループに**
+- [x] **(2) `assemble-dist.mjs` を全版 Lume ループに**
   - 現状 draft だけ Lume(`lume/_site → dist/draft`)、他版は Nextra
     `packages/site-<id>/out`。これを全版 Lume ビルドに切り替え
   - 版ごとに `EDITION`/`BASE_PATH` を設定して再生成 + ビルド + Pagefind し、

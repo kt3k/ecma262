@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:all": "pnpm -r build",
+    "build:nextra": "pnpm --filter site-draft-nextra build",
     "assemble": "node packages/shared/scripts/assemble-dist.mjs",
-    "build": "pnpm build:all && pnpm assemble",
+    "build": "pnpm build:nextra && pnpm assemble",
     "dev": "pnpm --filter site-draft-nextra dev"
   }
 }
