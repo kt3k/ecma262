@@ -2,5 +2,6 @@
   { "id": "draft", "title": "ECMA-262, 18th, ES2027 draft" },
   { "id": "es2026", "title": "ECMA-262, 17th, ES2026 candidate" },
   { "id": "es2025", "title": "ECMA-262, 16th, ES2025" },
-  { "id": "es2024", "title": "ECMA-262, 15th, ES2024" }
+  { "id": "es2024", "title": "ECMA-262, 15th, ES2024" },
+  { "id": "es2023", "title": "ECMA-262, 14th, ES2023" }
 ]
