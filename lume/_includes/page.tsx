@@ -111,7 +111,7 @@ export default function Page(
             />
           </main>
           <aside class="toc">
-            <h2>On this page</h2>
+            <h2>On This Page</h2>
             <ol></ol>
             {
               /* "Question? Give us feedback →" — Nextra's default link below

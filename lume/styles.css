@@ -920,7 +920,7 @@ aside.toc {
   grid-template-rows: min-content 1fr min-content;
   font-size: 0.875rem; /* x:text-sm */
 }
-/* "On this page" heading — plain semibold label, no uppercase / muted /
+/* "On This Page" heading — plain semibold label, no uppercase / muted /
    spacing, matching Nextra's <p class="x:pt-6 x:px-4 x:font-semibold">. */
 aside.toc h2 {
   margin: 0;
@@ -1024,6 +1024,13 @@ aside.toc .toc-feedback {
 }
 aside.toc .toc-feedback:hover {
   color: var(--fg);
+}
+/* On a page with no sections the TOC heading + list are removed (see the
+   .toc-empty flag set in _config.ts), so the feedback link is the only child —
+   drop its top rule, matching Nextra (which adds the rule only when there are
+   headings). */
+aside.toc.toc-empty .toc-feedback {
+  border-top: none;
 }
 aside.toc .toc-feedback-arrow {
   width: 1em;

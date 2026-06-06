@@ -145,6 +145,17 @@ site.process([".html"], (pages) => {
     if (sidebarToc && !sidebarToc.firstChild) {
       sidebarToc.remove();
     }
+
+    // Pages with no sections have an empty right-rail TOC. Match Nextra, which
+    // renders the "On This Page" heading + list only when there are headings:
+    // drop the heading and the empty <ol>, leaving just the feedback link, and
+    // flag the <aside> so its CSS can drop the now-orphaned top rule.
+    if (!tocOl.firstChild) {
+      const aside = document.querySelector("aside.toc");
+      aside?.querySelector("h2")?.remove();
+      tocOl.remove();
+      aside?.classList.add("toc-empty");
+    }
   }
 });
 
