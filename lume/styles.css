@@ -258,6 +258,16 @@ body {
   transition: grid-template-columns 0.2s ease-in-out;
 }
 
+/* Offset in-page anchor jumps (#sec-…, dfn / step / prodref targets, etc.) by
+   the sticky header's height so the target lands below the bar instead of
+   hidden under it. Matches Nextra's
+   `html:not(:has(*:focus)) { scroll-padding-top: var(--nextra-navbar-height) }`;
+   the :focus guard keeps a focused field's scroll-into-view from gaining the
+   offset. */
+html:not(:has(*:focus)) {
+  scroll-padding-top: var(--header-h);
+}
+
 .site-header {
   /* Outer bar: sticky positioning only — bg + border live on the absolute
      .site-header-blur child so the underlying layer can blur content that
