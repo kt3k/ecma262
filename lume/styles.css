@@ -1581,40 +1581,30 @@ main[data-pagefind-body]
   margin-bottom: 0.4em;
 }
 
-/* Spec body links keep a faint underline at rest, deepen on hover — easier
-   to spot the xrefs since the spec is dense with them. Scoped to .ecma-spec
-   so Nextra's nav / sidebar / footer links keep their own treatment. */
-.ecma-spec a {
-  text-decoration: underline;
-  text-decoration-color: rgba(115, 115, 115, 0.45);
-  text-underline-offset: 2px;
-  transition: text-decoration-color 0.15s;
-}
-.ecma-spec a:hover {
-  text-decoration-color: currentColor;
-}
-
-/* Cross-reference links (<emu-xref>) follow tc39.es's anchor treatment
-   rather than the faint-underline body-link style above: a blue link with
-   no underline at rest, gaining an underline + brighter blue on hover.
-   tc39 ecmarkup.css: `a{text-decoration:none;color:#206ca7}` /
-   `a:hover{text-decoration:underline;color:#239dee}` (dark: #439de2 /
-   #80cafb). Scoped to emu-xref so prose links keep the body-link style. */
-.ecma-spec emu-xref a,
-.ecma-spec emu-xref a:visited {
+/* Spec body links — tc39.es's anchor treatment for every prose / xref /
+   external link: a muted blue link with no underline at rest, gaining an
+   underline + brighter blue on hover. tc39 ecmarkup.css:
+   `a{text-decoration:none;color:#206ca7}` /
+   `a:hover{text-decoration:underline;color:#239dee}` (dark: #439de2 / #80cafb).
+   `:visited` keeps the same colour (tc39 doesn't distinguish visited, and it
+   avoids the UA purple). Scoped to .ecma-spec so the nav / sidebar / footer
+   keep their own treatment; emu-nt grammar-symbol links override the colour
+   below. */
+.ecma-spec a,
+.ecma-spec a:visited {
   color: #206ca7;
   text-decoration: none;
 }
-.ecma-spec emu-xref a:hover {
+.ecma-spec a:hover {
   color: #239dee;
   text-decoration: underline;
   text-decoration-color: currentColor;
 }
-html.dark .ecma-spec emu-xref a,
-html.dark .ecma-spec emu-xref a:visited {
+html.dark .ecma-spec a,
+html.dark .ecma-spec a:visited {
   color: #439de2;
 }
-html.dark .ecma-spec emu-xref a:hover {
+html.dark .ecma-spec a:hover {
   color: #80cafb;
 }
 
