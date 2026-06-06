@@ -56,7 +56,7 @@ done
     `_site` を `dist/<id>` へコピーするオーケストレーション
   - CI(`nextjs.yml`)も全版 Lume ビルドに更新
 
-- [ ] **(3) Nextra `packages/site-es20xx` の退役**
+- [x] **(3) Nextra `packages/site-es20xx` の退役**
   - 全版が Lume で配信できることを確認後、`packages/site-es2024` / `site-es2025`
     / `site-es2026` を削除(`pnpm-lock.yaml` の importer も)
   - 比較用に `site-draft-nextra`(`/ecma262/draft-nextra/`)は残す

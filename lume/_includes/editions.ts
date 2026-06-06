@@ -1,21 +1,13 @@
-// Edition list for the footer + version switcher. Mirrors
-// packages/site-*/app/layout.jsx's `const siteTitle = …` values; in a real
-// migration the build script would emit this so titles stay in sync with each
-// site's navbar/<title> tag.
-//
-// Order: draft first (the one we work against), then descending year — same
-// sort `packages/shared/scripts/editions.mjs` applies.
+// Edition list for the footer + version switcher, from the shared single source
+// of truth that assemble-dist / the Nextra footers also read (newest first).
+import data from "../../packages/shared/editions.json" with { type: "json" };
+
 export interface Edition {
   id: string;
   title: string;
 }
 
-const editions: Edition[] = [
-  { id: "draft", title: "ECMA-262, 18th, ES2027 draft" },
-  { id: "es2026", title: "ECMA-262, 17th, ES2026 candidate" },
-  { id: "es2025", title: "ECMA-262, 16th, ES2025" },
-  { id: "es2024", title: "ECMA-262, 15th, ES2024" },
-];
+const editions = data as Edition[];
 
 // The edition this build renders, from the EDITION env var (default "draft").
 // scripts/build-pages.ts reads the same var to pick the spec source, so the

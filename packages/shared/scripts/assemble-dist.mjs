@@ -1,14 +1,13 @@
 // Build every edition into a single dist/ for GitHub Pages.
 //
-//   Lume editions (draft, es20xx)  ->  built per edition, dist/<id>/
-//   Nextra editions (draft-nextra) ->  packages/site-<id>/out/ -> dist/<id>/
-//   dist/index.html                <-  redirect to the editor's draft
+//   editions (draft, es20xx)  ->  built per edition with Lume, dist/<id>/
+//   site-draft-nextra/out/    ->  dist/draft-nextra/ (comparison, if built)
+//   dist/index.html           <-  redirect to the editor's draft
 //
-// Lume editions are (re)built here: for each, run lume's pages/build/pagefind
-// tasks with EDITION + BASE_PATH set, then copy lume/_site -> dist/<id>. The
-// few Nextra editions kept for comparison are copied from their static export
-// (so `pnpm build:nextra` must have produced them first). Paths resolve off the
-// repo root.
+// Each edition is (re)built here: run lume's pages/build/pagefind tasks with
+// EDITION + BASE_PATH set, then copy lume/_site -> dist/<id>. The Nextra
+// comparison build is copied from its static export when present. Paths resolve
+// off the repo root.
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -20,14 +19,10 @@ const packagesDir = path.join(root, "packages");
 const distDir = path.join(root, "dist");
 const lumeDir = path.join(root, "lume");
 
-// Editions still rendered by Nextra (kept for side-by-side comparison); every
-// other edition is rendered by the Lume build.
-const NEXTRA_EDITIONS = new Set(["draft-nextra"]);
-
 const editions = readEditions(root);
 
 if (editions.length === 0) {
-  console.error("[assemble-dist] no packages/site-* found");
+  console.error("[assemble-dist] no editions in packages/shared/editions.json");
   process.exit(1);
 }
 
@@ -36,26 +31,8 @@ fs.mkdirSync(distDir, { recursive: true });
 
 const lumeSite = path.join(lumeDir, "_site");
 for (const edition of editions) {
-  const dest = path.join(distDir, edition.id);
-
-  if (NEXTRA_EDITIONS.has(edition.id)) {
-    const out = path.join(packagesDir, `site-${edition.id}`, "out");
-    if (!fs.existsSync(out)) {
-      console.error(
-        `[assemble-dist] missing build output: ${out}\n` +
-          "  run `pnpm build:nextra` first",
-      );
-      process.exit(1);
-    }
-    fs.cpSync(out, dest, { recursive: true });
-    console.log(
-      `[assemble-dist] ${edition.id}: Nextra out/ -> dist/${edition.id}/`,
-    );
-    continue;
-  }
-
-  // Lume-rendered edition: regenerate its pages, build, and index, all under
-  // the edition's deploy prefix, then copy the result in.
+  // Regenerate this edition's pages, build, and index, all under its deploy
+  // prefix, then copy the result in.
   const env = {
     ...process.env,
     EDITION: edition.id,
@@ -68,8 +45,22 @@ for (const edition of editions) {
       stdio: "inherit",
     });
   }
-  fs.cpSync(lumeSite, dest, { recursive: true });
+  fs.cpSync(lumeSite, path.join(distDir, edition.id), { recursive: true });
   console.log(`[assemble-dist] ${edition.id}: Lume -> dist/${edition.id}/`);
+}
+
+// Nextra comparison build (site-draft-nextra) — not a listed edition; deploy at
+// /draft-nextra/ when its static export is present (`pnpm build:nextra`).
+const nextraOut = path.join(packagesDir, "site-draft-nextra", "out");
+if (fs.existsSync(nextraOut)) {
+  fs.cpSync(nextraOut, path.join(distDir, "draft-nextra"), { recursive: true });
+  console.log(
+    "[assemble-dist] draft-nextra: Nextra out/ -> dist/draft-nextra/",
+  );
+} else {
+  console.log(
+    "[assemble-dist] draft-nextra: no out/, skipping comparison build",
+  );
 }
 
 const escape = (s) =>
