@@ -203,13 +203,14 @@ writeArticle(
   <ol class="flow">
     <li><strong>Vendor</strong><span>spec.html (ecmarkup source) per edition: draft as a git submodule, ES2024/25/26 as pinned snapshots</span></li>
     <li><strong>Split</strong><span>each top-level emu-clause/annex/intro becomes a page; nested clauses become Markdown headings with their bodies injected as HTML</span></li>
-    <li><strong>Resolve &amp; transform</strong><span>two numbering passes feed a chain of per-tag rewrites (xref, prodref, grammar, alg, structured header, inline)</span></li>
-    <li><strong>Render</strong><span>Next.js + Nextra inject the HTML and apply ecma-spec.css; Pagefind builds the search index</span></li>
-    <li><strong>Assemble</strong><span>every edition is combined into one static site</span></li>
+    <li><strong>Resolve &amp; transform</strong><span>two numbering passes feed a chain of per-tag rewrites (xref, prodref, grammar, alg, structured header, inline, autolinks)</span></li>
+    <li><strong>Adapt for Lume</strong><span>build-pages.ts wraps each chapter as a Lume page (front matter + local <code>&lt;Sec&gt;</code> import) for one edition (EDITION + BASE_PATH), and emits the sidebar list</span></li>
+    <li><strong>Render</strong><span>Lume (Deno; ssx + mdx) injects the HTML and applies styles.css; Pagefind builds the search index</span></li>
+    <li><strong>Assemble</strong><span>each edition is built with Lume and combined into one static site</span></li>
   </ol>
 
   <h2>Splitting into pages</h2>
-  <p>The build splits each top-level <code>&lt;emu-clause&gt;</code> / <code>&lt;emu-annex&gt;</code> / <code>&lt;emu-intro&gt;</code> into its own page, then walks the nested clauses. Every clause's <code>&lt;h1&gt;</code> is emitted as a Markdown heading carrying its section number and an id anchor, so Nextra builds the sidebar and table of contents from it. The clause body is emitted separately and injected as pre-transformed HTML between the headings.</p>
+  <p>The build splits each top-level <code>&lt;emu-clause&gt;</code> / <code>&lt;emu-annex&gt;</code> / <code>&lt;emu-intro&gt;</code> into its own page, then walks the nested clauses. Every clause's <code>&lt;h1&gt;</code> is emitted as a Markdown heading carrying its section number and an id anchor; the clause body is emitted separately and injected as pre-transformed HTML between the headings. Lume's mdx plugin parses the result, and a post-render pass in <code>_config.ts</code> walks the <code>&lt;emu-clause id&gt;</code> tree to build the on-this-page table of contents. The left sidebar comes from a chapter list (slug + title) that <code>build-pages.ts</code> emits alongside the pages.</p>
 
   <h2>Cross-references and numbering</h2>
   <p>ecmarkup fills empty reference tags with text at build time; the source leaves them empty (e.g. <code>&lt;emu-xref href="#sec-foo"&gt;&lt;/emu-xref&gt;</code>). We resolve them in two passes. <strong>Pass 1</strong> walks every chapter in document order and records, per anchor id, the label a reference should show:</p>
@@ -270,17 +271,25 @@ Record is being returned. It performs the following steps when called:&lt;/p&gt;
   </table>
 
   <h2>The transform chain</h2>
-  <p>For each section the rewrites run inner to outer, so later passes see the output of earlier ones:</p>
-  <pre>applyNoteNum  &rarr;  applyFloatNum  &rarr;  applyAlgSubst  &rarr;  applyGrammarSubst
-  &rarr;  applyProdrefSubst  &rarr;  applyXrefSubst  &rarr;  applyInlineMarkup</pre>
+  <p>For each section the rewrites run inner to outer, so later passes see the output of earlier ones (the two autolink passes run last, so they can skip text that an earlier pass already turned into a link):</p>
+  <pre>applyNoteNum  &rarr;  applyFloatNum  &rarr;  applyHljsSubst  &rarr;  applyAlgSubst
+  &rarr;  applyGrammarSubst  &rarr;  applyEqnInlineSubst  &rarr;  applyProdrefSubst
+  &rarr;  applyXrefSubst  &rarr;  applyInlineMarkup  &rarr;  applyDfnLinkSubst  &rarr;  applyAoLinkSubst</pre>
+
+  <h2>Autolinking</h2>
+  <p>ecmarkup also turns bare prose mentions into links. We build two target maps up front and apply them in the last two passes:</p>
+  <ul>
+    <li><strong>Defined terms</strong> — every <code>&lt;dfn&gt;</code> (and its <code>variants</code>) maps to its anchor; <code>applyDfnLinkSubst()</code> links matching prose. Matching is case-sensitive except a lowercase-defined term may also match a sentence-start capital (so "List" links "List" but not the common word "list"). A term is left plain inside the clause its link points at, and inside code / grammar / headings / existing links.</li>
+    <li><strong>Abstract operations</strong> — every clause whose <code>type</code> is an operation kind (abstract operation, sdo, numeric method, …), plus any explicit <code>aoid=</code>, maps its name to its definition; <code>applyAoLinkSubst()</code> wraps occurrences (e.g. <code>ThrowCompletion</code>, <code>floor</code>) in <code>&lt;emu-xref aoid&gt;</code>. Very common words (<code>Call</code>, <code>Set</code>, <code>Type</code>, …) link only when written as a call (<code>(</code> next).</li>
+  </ul>
 
   <h2>Rendering and styling</h2>
-  <p>The transformed HTML is injected into <code>&lt;div class="ecma-spec"&gt;</code> and rendered inside the Nextra docs theme. A shared stylesheet, <code>ecma-spec.css</code>, supplies the ecmarkup look the theme lacks: note callouts, grammar token colours, math-font equations (<code>&lt;emu-eqn&gt;</code>), small-caps enums, the algorithm decimal / alpha / roman list cycle, and table / figure captions. Pagefind indexes the built pages so the search box works on the static deploy.</p>
+  <p>The transformed HTML is injected (via <code>dangerouslySetInnerHTML</code>) into <code>&lt;div class="ecma-spec"&gt;</code> and rendered by Lume's ssx/mdx pipeline. The page chrome — sidebar, on-this-page TOC, header, footer, version switcher, dark-mode toggle — is a small set of hand-written ssx components in <code>lume/_includes/</code>. A single stylesheet, <code>styles.css</code> (the ecmarkup look the framework lacks: note callouts, grammar token colours, math-font equations (<code>&lt;emu-eqn&gt;</code>), small-caps enums, the algorithm decimal / alpha / roman list cycle, and table / figure captions), is copied in verbatim. Pagefind indexes the built pages so the search box works on the static deploy.</p>
 
   <h2>Known limitations</h2>
   <ul>
     <li><strong>Unicode property tables</strong> (e.g. <code>table-binary-unicode-properties</code>) are generated by ecmarkup from the Unicode database and are absent from the vendored snapshot, so a few references to them stay unresolved and some later table numbers differ from the official by a small offset.</li>
-    <li><strong>Term autolinking</strong> (turning prose mentions such as "Completion Record" into links) is not replicated; only explicit <code>&lt;emu-xref&gt;</code> links resolve.</li>
+    <li><strong>Autolink coverage</strong> — defined terms and abstract operations link (see above), but built-in functions and internal / concrete methods are not yet autolinked the way ecmarkup links them.</li>
     <li><strong>Editorial diff markup</strong> (<code>&lt;ins&gt;</code> / <code>&lt;del&gt;</code> inside headers) is not handled; published snapshots do not use it.</li>
   </ul>`,
 );
