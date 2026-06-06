@@ -1673,6 +1673,9 @@ html.dark .ecma-spec .hljs-string {
    targets `tbody tr`. */
 .ecma-spec emu-table table {
   border-collapse: collapse;
+  /* Centre the table within the (full-width) emu-table block, like tc39's
+     `emu-table table { margin: 0 auto }`. */
+  margin-inline: auto;
 }
 .ecma-spec emu-table th,
 .ecma-spec emu-table td {
