@@ -1664,6 +1664,36 @@ html.dark .ecma-spec .hljs-string {
 .ecma-spec emu-table:not(.code) td code {
   white-space: normal;
 }
+
+/* In-body tables — Nextra's docs treatment rather than tc39's heavier grid:
+   a full 1px cell grid (the divider colour), padded cells (px-4 py-2), a
+   bold-but-unshaded header row, and zebra striping on even body rows. (tc39
+   instead shades the header and centres the table; we keep the lighter docs
+   look here.) Bare <tr>s under <table> get an implicit <tbody>, so the stripe
+   targets `tbody tr`. */
+.ecma-spec emu-table table {
+  border-collapse: collapse;
+}
+.ecma-spec emu-table th,
+.ecma-spec emu-table td {
+  border: 1px solid var(--rule);
+  padding: 0.5rem 1rem; /* Nextra py-2 px-4 */
+  vertical-align: baseline;
+}
+.ecma-spec emu-table th {
+  font-weight: 600;
+}
+/* Multi-column header/data cells centre their span (ecmarkup parity). */
+.ecma-spec emu-table td[colspan]:not([colspan="1"]),
+.ecma-spec emu-table th[colspan]:not([colspan="1"]) {
+  text-align: center;
+}
+.ecma-spec emu-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.025);
+}
+html.dark .ecma-spec emu-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.035);
+}
 /* tc39.es captions are bold (ecmarkup.css `figure figcaption {
    font-weight: 700 }`). */
 .ecma-spec figcaption {
