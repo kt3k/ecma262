@@ -38,13 +38,13 @@ jobs:
           deno-version: v2.x
       - name: Build Lume draft site
         # The `draft` edition is rendered by Lume (lume-poc); assemble-dist.mjs
-        # folds lume-poc/_site/ into dist/draft/. BASE_PATH prefixes the
-        # layout's asset/nav hrefs (page.tsx), the content cross-page links
+        # folds lume/_site/ into dist/draft/. BASE_PATH prefixes the layout's
+        # asset/nav hrefs (page.tsx), the content cross-page links
         # (build-pages.ts -> build-chapters --base-path) and Pagefind's
         # bundlePath, so everything resolves under the gh-pages /ecma262/draft.
         # `deno task pages` regenerates the chapter components with that base
         # before the build.
-        working-directory: lume-poc
+        working-directory: lume
         env:
           BASE_PATH: /ecma262/draft
         run: deno task pages && deno task build && deno task pagefind

@@ -27,10 +27,10 @@ export function readEditions(root) {
       };
     });
 
-  // The `draft` edition is rendered by the Lume build (lume-poc), not a
+  // The `draft` edition is rendered by the Lume build (lume/), not a
   // packages/site-* app, so it isn't discovered above. Inject it (unless a
   // packages/site-draft re-appears) so the landing redirect, version switcher
-  // and footer still list it. assemble-dist copies lume-poc/_site -> dist/draft.
+  // and footer still list it. assemble-dist copies lume/_site -> dist/draft.
   if (!editions.some((e) => e.id === "draft")) {
     editions.push({
       id: "draft",

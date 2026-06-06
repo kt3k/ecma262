@@ -11,14 +11,12 @@ import PrevNext from "./prev-next.tsx";
 // empty here; a post-render processor in _config.ts walks the document
 // for <emu-clause id=…> and fills it in.
 //
-// BASE_PATH lets the same build target both `localhost/` (empty prefix) and
-// `kt3k.github.io/ecma262/lume-poc/` (non-empty prefix). fallbackBase is the
-// gh-pages path to the still-Nextra-rendered chapters so the sidebar links
-// don't die for chapters that haven't been ported to Lume yet. deployBase is
-// the parent of the per-edition sites (es2024/, es2025/, …) the
+// BASE_PATH lets the same build target both `localhost/` (empty prefix) and the
+// gh-pages deploy, e.g. `kt3k.github.io/ecma262/draft/` (non-empty prefix);
+// every chapter is rendered locally so there's no cross-site fallback. deployBase
+// is the parent of the per-edition sites (es2024/, es2025/, …) the
 // VersionSwitcher dropdown points at.
 const basePath = Deno.env.get("BASE_PATH") ?? "";
-const fallbackBase = "/ecma262/draft";
 const deployBase = "/ecma262";
 
 export default function Page(
@@ -95,7 +93,6 @@ export default function Page(
           <Sidebar
             basePath={basePath}
             currentSlug={slug ?? ""}
-            fallbackBase={fallbackBase}
           />
           {
             /* data-pagefind-body marks the indexable region for Pagefind
@@ -111,7 +108,6 @@ export default function Page(
             <PrevNext
               basePath={basePath}
               currentSlug={slug ?? ""}
-              fallbackBase={fallbackBase}
             />
           </main>
           <aside class="toc">

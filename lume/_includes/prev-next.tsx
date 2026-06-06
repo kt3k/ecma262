@@ -9,10 +9,9 @@ import chapters from "./chapters.ts";
 // Lookup is by slug position in the chapters array; every chapter is now
 // Lume-rendered (scripts/build-pages.ts), so links point at the local pages.
 export default function PrevNext(
-  { basePath, currentSlug, fallbackBase: _fallbackBase }: {
+  { basePath, currentSlug }: {
     basePath: string;
     currentSlug: string;
-    fallbackBase: string;
   },
 ) {
   const idx = chapters.findIndex((c) => c.slug === currentSlug);

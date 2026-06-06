@@ -37,7 +37,7 @@ done
 
 ## TODO
 
-- [ ] **(1) `lume-poc` → `lume` リネーム + 版パラメータ化**
+- [x] **(1) `lume-poc` → `lume` リネーム + 版パラメータ化**
   - `lume-poc` を `lume` に改名(参照する `assemble-dist.mjs` /
     `.github/workflows/nextjs.yml` / README のパスも追従)
   - `scripts/build-pages.ts`: `EDITION` env → `ecma262/<id>/spec.html` を入力に

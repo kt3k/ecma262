@@ -4,14 +4,12 @@ import chapters from "./chapters.ts";
 // The list scrolls; the footer area doesn't — same affordance Nextra's
 // `<div class="nextra-sidebar-footer">` provides.
 //
-// Every chapter is now Lume-rendered (see scripts/build-pages.ts), so all
-// entries link to their local page; `fallbackBase` is kept only as the target
-// for any slug not yet generated.
+// Every chapter is Lume-rendered (see scripts/build-pages.ts), so all entries
+// link to their local page under basePath.
 export default function Sidebar(
-  { basePath, currentSlug, fallbackBase: _fallbackBase }: {
+  { basePath, currentSlug }: {
     basePath: string;
     currentSlug: string;
-    fallbackBase: string;
   },
 ) {
   return (

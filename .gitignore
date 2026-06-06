@@ -13,4 +13,11 @@ scheduled_tasks.lock
 packages/*/content/
 packages/*/lib/spec/
 packages/*/public/img/
-lume-poc/_site/
+
+# Lume site build + per-edition generated content (scripts/build-pages.ts);
+# regenerated for whichever EDITION is built, so not committed.
+lume/_site/
+lume/lib/
+lume/img/
+lume/*.mdx
+lume/_includes/chapters.json

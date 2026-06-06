@@ -17,10 +17,12 @@ const editions: Edition[] = [
   { id: "es2024", title: "ECMA-262, 15th, ES2024" },
 ];
 
-// The single edition this PoC renders. In Nextra each `packages/site-*/`
-// fixes its own title in `app/layout.jsx`; the equivalent here is one constant
-// the header / <title> / VersionSwitcher all read.
-export const currentEditionId = "draft";
+// The edition this build renders, from the EDITION env var (default "draft").
+// scripts/build-pages.ts reads the same var to pick the spec source, so the
+// chrome (header / <title> / VersionSwitcher) and the content stay in sync.
+// In Nextra each `packages/site-*/` fixed its own title in `app/layout.jsx`;
+// here one env var drives it.
+export const currentEditionId = Deno.env.get("EDITION") ?? "draft";
 
 // Header title parts: bold main string + dotted-underline status link
 // ("draft" / "candidate"). Matches the parsing in

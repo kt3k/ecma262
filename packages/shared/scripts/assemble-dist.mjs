@@ -6,6 +6,7 @@
 // Run from anywhere after `pnpm build:all`; paths resolve off the repo root.
 import fs from "node:fs";
 import path from "node:path";
+import process from "node:process";
 import { readEditions } from "./editions.mjs";
 
 const root = path.resolve(import.meta.dirname, "../../..");
@@ -24,13 +25,13 @@ fs.mkdirSync(distDir, { recursive: true });
 
 // The `draft` edition is rendered by the Lume build (lume-poc/_site); every
 // other edition is a packages/site-<id> static export.
-const lumeOut = path.join(root, "lume-poc", "_site");
+const lumeOut = path.join(root, "lume", "_site");
 for (const edition of editions) {
   if (edition.id === "draft") {
     if (!fs.existsSync(lumeOut)) {
       console.error(
         `[assemble-dist] missing Lume build: ${lumeOut}\n` +
-          "  run `deno task build` in lume-poc/ first",
+          "  run `deno task build` in lume/ first",
       );
       process.exit(1);
     }
