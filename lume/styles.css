@@ -1340,7 +1340,7 @@ h1 .secnum:empty {
 .ecma-spec emu-annex {
   display: grid;
   grid-template-columns:
-    [main-start] minmax(0, var(--ecma-measure, 45rem)) [main-end]
+    [main-start] minmax(0, var(--ecma-measure, 48rem)) [main-end]
     minmax(0, 1fr) [wide-end];
 }
 
@@ -1426,7 +1426,7 @@ h1 .secnum:empty {
    line-height, the measure exposed as a variable, and an em-based heading
    scale so headings track the body size. */
 main[data-pagefind-body] {
-  --ecma-measure: 45rem;
+  --ecma-measure: 48rem;
   /* 18px, matching tc39.es's `body { font-size: 18px }` (ecmarkup.css).
      line-height ratio stays 1.65 (tc39 uses 1.5 — we keep the slightly
      airier measure deliberately). */
