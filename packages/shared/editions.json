@@ -4,5 +4,6 @@
   { "id": "es2025", "title": "ECMA-262, 16th, ES2025" },
   { "id": "es2024", "title": "ECMA-262, 15th, ES2024" },
   { "id": "es2023", "title": "ECMA-262, 14th, ES2023" },
-  { "id": "es2022", "title": "ECMA-262, 13th, ES2022" }
+  { "id": "es2022", "title": "ECMA-262, 13th, ES2022" },
+  { "id": "es2021", "title": "ECMA-262, 12th, ES2021" }
 ]
