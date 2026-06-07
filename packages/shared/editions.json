@@ -10,5 +10,6 @@
   { "id": "es2019", "title": "ECMA-262, 10th, ES2019" },
   { "id": "es2018", "title": "ECMA-262, 9th, ES2018" },
   { "id": "es2017", "title": "ECMA-262, 8th, ES2017" },
-  { "id": "es2016", "title": "ECMA-262, 7th, ES2016" }
+  { "id": "es2016", "title": "ECMA-262, 7th, ES2016" },
+  { "id": "es2015", "title": "ECMA-262, 6th, ES2015" }
 ]

@@ -28,14 +28,28 @@ const BASE_PATH = values["base-path"];
 
 const src = fs.readFileSync(SPEC_FILE, "utf8");
 
-// Find top-level chapters: <emu-intro>, <emu-clause>, <emu-annex> opening at column 0.
-const startRe = /^<(emu-(?:intro|clause|annex))\b([^>]*)>$/gm;
-const starts = [];
+// Find top-level chapters: <emu-intro>, <emu-clause>, <emu-annex> opening on
+// their own line. Modern (es2016+) specs put these at column 0; the ES2015
+// ecmarkup import indents the whole spec under <html><body>, so its top-level
+// clauses sit at 4 spaces while nested ones go deeper. Capture the leading
+// indent and keep only the shallowest-indented openings as the chapter
+// boundaries — that unifies both layouts (min indent = 0 for es2016+, 4 for
+// es2015) without special-casing either. `offset` points past the indent at
+// the `<` so the block slices/close-tag checks below stay indent-agnostic.
+const startRe = /^([ \t]*)<(emu-(?:intro|clause|annex))\b([^>]*)>[ \t]*$/gm;
+const allStarts = [];
 let m;
 while ((m = startRe.exec(src)) !== null) {
-  starts.push({ tag: m[1], attrs: m[2], offset: m.index });
+  allStarts.push({
+    indent: m[1].length,
+    tag: m[2],
+    attrs: m[3],
+    offset: m.index + m[1].length,
+  });
 }
-if (starts.length === 0) throw new Error("No top-level chapters found");
+if (allStarts.length === 0) throw new Error("No top-level chapters found");
+const minIndent = Math.min(...allStarts.map((s) => s.indent));
+const starts = allStarts.filter((s) => s.indent === minIndent);
 
 const bodyClose = src.lastIndexOf("</body>");
 const tailEnd = bodyClose >= 0 ? bodyClose : src.length;
@@ -44,15 +58,20 @@ const chapters = [];
 for (let i = 0; i < starts.length; i++) {
   const s = starts[i];
   const e = i + 1 < starts.length ? starts[i + 1].offset : tailEnd;
-  // ES2016/2017-era specs prefix each top-level clause with a legacy
-  // `<!-- es6num="N" -->` comment. It lands at the tail of the *previous*
-  // chapter's block (between its close tag and the next start) and would
-  // defeat the close-tag check below. Strip any trailing HTML comments
-  // (and whitespace) so the block ends at its own close tag. The comment
-  // body uses `(?!-->)` so a single comment can't backtrack across `-->`
-  // and swallow the nested clauses that sit between two such comments.
+  // Strip trailing non-chapter siblings that sit between this chapter's close
+  // tag and the next chapter's start, so the close-tag check below sees the
+  // block ending at its own close tag:
+  //   - ES2016/2017 prefix each top-level clause with a legacy
+  //     `<!-- es6num="N" -->` comment (lands at the previous block's tail).
+  //   - ES2015 interleaves `<emu-placeholder for="…">` nodes (e.g. inner-title
+  //     between the intro and the first clause).
+  // The comment body uses `(?!-->)` so a single comment can't backtrack across
+  // `-->` and swallow the nested clauses that sit between two such comments.
   const block = src.slice(s.offset, e).trimEnd()
-    .replace(/(?:\s*<!--(?:(?!-->)[\s\S])*-->\s*)+$/, "");
+    .replace(
+      /(?:\s*(?:<!--(?:(?!-->)[\s\S])*-->|<emu-placeholder\b[^>]*>(?:<\/emu-placeholder>)?)\s*)+$/,
+      "",
+    );
   const open = block.match(/^<emu-(?:intro|clause|annex)\b[^>]*>/);
   const close = block.match(/<\/emu-(?:intro|clause|annex)>\s*$/);
   if (!open || !close) {
