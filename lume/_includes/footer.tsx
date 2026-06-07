@@ -1,7 +1,9 @@
 import editions from "./editions.ts";
 
-// Page footer — two columns side-by-side: About / Pipeline / copyright
-// (left) and full edition list (right). Matches what
+// Page footer — three columns side-by-side: About / Pipeline / copyright
+// (left), then the full edition list split across two columns (newest half
+// then older half) so the long list doesn't run as one tall column. Matches
+// what
 // `packages/shared/components/spec-layout.jsx` renders today: no background,
 // no border, just centred grey text with `gap: 4rem` between columns and
 // `gap: 0.4rem` between rows inside each column. The deploy root
@@ -22,6 +24,9 @@ import editions from "./editions.ts";
 const deployBase = "/ecma262";
 
 export default function Footer() {
+  // Split the edition list into two roughly-equal columns, newest half first.
+  const half = Math.ceil(editions.length / 2);
+  const editionCols = [editions.slice(0, half), editions.slice(half)];
   return (
     <div class="site-footer-wrap">
       <hr class="site-footer-divider" />
@@ -41,11 +46,11 @@ export default function Footer() {
               </a>
             </span>
           </div>
-          <div class="footer-col">
-            {editions.map((e) => (
-              <a href={`${deployBase}/${e.id}/`}>{e.title}</a>
-            ))}
-          </div>
+          {editionCols.map((col) => (
+            <div class="footer-col">
+              {col.map((e) => <a href={`${deployBase}/${e.id}/`}>{e.title}</a>)}
+            </div>
+          ))}
         </div>
       </footer>
     </div>
