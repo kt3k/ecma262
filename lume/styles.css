@@ -2122,11 +2122,15 @@ html.show-early-exits
   content: attr(caption);
   display: block;
   margin-bottom: 0.5em;
-  font-size: 0.875em;
-  color: var(--ecma-text-body);
-  opacity: 0.75;
-  font-style: italic;
+  /* Match tc39's `figure figcaption`: bold, upright, full body size, in the
+     dedicated caption grey (ecmarkup --caption-foreground-color #555 / dark
+     #b0b0b0) — not the small italic sub-text we used before. */
+  font-weight: 700;
+  color: #555555;
   text-align: center;
+}
+html.dark .ecma-spec emu-table::before {
+  color: #b0b0b0;
 }
 .ecma-spec emu-table[data-num]::before {
   content: "Table " attr(data-num) ": " attr(caption);
