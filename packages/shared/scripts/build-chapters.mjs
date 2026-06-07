@@ -44,7 +44,15 @@ const chapters = [];
 for (let i = 0; i < starts.length; i++) {
   const s = starts[i];
   const e = i + 1 < starts.length ? starts[i + 1].offset : tailEnd;
-  const block = src.slice(s.offset, e).trimEnd();
+  // ES2016/2017-era specs prefix each top-level clause with a legacy
+  // `<!-- es6num="N" -->` comment. It lands at the tail of the *previous*
+  // chapter's block (between its close tag and the next start) and would
+  // defeat the close-tag check below. Strip any trailing HTML comments
+  // (and whitespace) so the block ends at its own close tag. The comment
+  // body uses `(?!-->)` so a single comment can't backtrack across `-->`
+  // and swallow the nested clauses that sit between two such comments.
+  const block = src.slice(s.offset, e).trimEnd()
+    .replace(/(?:\s*<!--(?:(?!-->)[\s\S])*-->\s*)+$/, "");
   const open = block.match(/^<emu-(?:intro|clause|annex)\b[^>]*>/);
   const close = block.match(/<\/emu-(?:intro|clause|annex)>\s*$/);
   if (!open || !close) {
