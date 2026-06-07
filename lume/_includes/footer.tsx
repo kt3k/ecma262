@@ -1,7 +1,7 @@
 import editions from "./editions.ts";
 
-// Page footer — two columns side-by-side: full edition list (left) and
-// About / Pipeline / copyright (right). Matches what
+// Page footer — two columns side-by-side: About / Pipeline / copyright
+// (left) and full edition list (right). Matches what
 // `packages/shared/components/spec-layout.jsx` renders today: no background,
 // no border, just centred grey text with `gap: 4rem` between columns and
 // `gap: 0.4rem` between rows inside each column. The deploy root
@@ -28,11 +28,6 @@ export default function Footer() {
       <footer class="site-footer">
         <div class="footer-cols">
           <div class="footer-col">
-            {editions.map((e) => (
-              <a href={`${deployBase}/${e.id}/`}>{e.title}</a>
-            ))}
-          </div>
-          <div class="footer-col">
             <a href={`${deployBase}/about/`}>About</a>
             <a href={`${deployBase}/pipeline/`}>How it's built</a>
             <span class="copyright">
@@ -45,6 +40,11 @@ export default function Footer() {
                 ECMA-262 Restyled
               </a>
             </span>
+          </div>
+          <div class="footer-col">
+            {editions.map((e) => (
+              <a href={`${deployBase}/${e.id}/`}>{e.title}</a>
+            ))}
           </div>
         </div>
       </footer>
