@@ -1,13 +1,14 @@
 // Build every edition into a single dist/ for GitHub Pages.
 //
 //   editions (draft, es20xx)  ->  built per edition with Lume, dist/<id>/
-//   site-draft-nextra/out/    ->  dist/draft-nextra/ (comparison, if built)
+//   nextra-poc/ (vendored)    ->  dist/nextra-poc/ (Nextra comparison, prebuilt)
 //   dist/index.html           <-  redirect to the editor's draft
 //
 // Each edition is (re)built here: run lume's pages/build/pagefind tasks with
 // EDITION + BASE_PATH set, then copy lume/_site -> dist/<id>. The Nextra
-// comparison build is copied from its static export when present. Paths resolve
-// off the repo root.
+// comparison site is no longer built in CI — its static export is vendored
+// under nextra-poc/ (regenerate with `pnpm vendor:nextra`) and copied in
+// verbatim. Paths resolve off the repo root.
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -15,7 +16,6 @@ import { execFileSync } from "node:child_process";
 import { readEditions } from "./editions.mjs";
 
 const root = path.resolve(import.meta.dirname, "../../..");
-const packagesDir = path.join(root, "packages");
 const distDir = path.join(root, "dist");
 const lumeDir = path.join(root, "lume");
 
@@ -49,17 +49,20 @@ for (const edition of editions) {
   console.log(`[assemble-dist] ${edition.id}: Lume -> dist/${edition.id}/`);
 }
 
-// Nextra comparison build (site-draft-nextra) — not a listed edition; deploy at
-// /draft-nextra/ when its static export is present (`pnpm build:nextra`).
-const nextraOut = path.join(packagesDir, "site-draft-nextra", "out");
-if (fs.existsSync(nextraOut)) {
-  fs.cpSync(nextraOut, path.join(distDir, "draft-nextra"), { recursive: true });
+// Nextra comparison site — not a listed edition; deployed at /nextra-poc/ from
+// the vendored static export (built once with BASE_PATH=/ecma262/nextra-poc and
+// committed under nextra-poc/, so CI doesn't need the Next.js toolchain).
+const nextraVendored = path.join(root, "nextra-poc");
+if (fs.existsSync(nextraVendored)) {
+  fs.cpSync(nextraVendored, path.join(distDir, "nextra-poc"), {
+    recursive: true,
+  });
   console.log(
-    "[assemble-dist] draft-nextra: Nextra out/ -> dist/draft-nextra/",
+    "[assemble-dist] nextra-poc: vendored export -> dist/nextra-poc/",
   );
 } else {
   console.log(
-    "[assemble-dist] draft-nextra: no out/, skipping comparison build",
+    "[assemble-dist] nextra-poc: no vendored export, skipping",
   );
 }
 

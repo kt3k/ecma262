@@ -34,14 +34,12 @@ jobs:
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Build Nextra comparison site(s)
-        # Only the Nextra editions kept for comparison (draft-nextra) need their
-        # static export; the real editions are built by Lume in assemble.
-        run: pnpm build:nextra
       - name: Assemble combined dist/
         # Builds each Lume edition (pages/build/pagefind with EDITION +
-        # BASE_PATH=/ecma262/<id>) into dist/<id>/, copies the Nextra
-        # comparison out/ into dist/<id>/, and writes the landing page.
+        # BASE_PATH=/ecma262/<id>) into dist/<id>/, copies the vendored Nextra
+        # comparison export (nextra-poc/) into dist/nextra-poc/, and writes the
+        # landing page. The Nextra site is prebuilt and committed, so CI no
+        # longer runs the Next.js build.
         run: pnpm assemble
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "build:nextra": "pnpm --filter site-draft-nextra build",
+    "vendor:nextra": "pnpm build:nextra && rm -rf nextra-poc && cp -r packages/site-draft-nextra/out nextra-poc",
     "assemble": "node packages/shared/scripts/assemble-dist.mjs",
-    "build": "pnpm build:nextra && pnpm assemble",
+    "build": "pnpm assemble",
     "dev": "pnpm --filter site-draft-nextra dev"
   }
 }

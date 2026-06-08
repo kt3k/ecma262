@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm build:chapters && next dev",
-    "build": "BASE_PATH=/ecma262/draft-nextra pnpm build:chapters && BASE_PATH=/ecma262/draft-nextra next build && pagefind --site out --output-subdir _pagefind",
+    "build": "BASE_PATH=/ecma262/nextra-poc pnpm build:chapters && BASE_PATH=/ecma262/nextra-poc next build && pagefind --site out --output-subdir _pagefind",
     "start": "next start",
     "build:chapters": "node ../shared/scripts/build-chapters.mjs --input ../../ecma262/draft/spec.html --base-path \"${BASE_PATH:-}\"",
     "postinstall": "node ../shared/scripts/patch-nextra-theme.mjs"

@@ -1,0 +1,22 @@
+1:"$Sreact.fragment"
+2:I[97679,["/ecma262/nextra-poc/_next/static/chunks/0axw5s_lb~h2l.js","/ecma262/nextra-poc/_next/static/chunks/0-1-6s-~txma3.js","/ecma262/nextra-poc/_next/static/chunks/0f5x97f0pzw0n.js","/ecma262/nextra-poc/_next/static/chunks/09mzkwykgmgkt.js","/ecma262/nextra-poc/_next/static/chunks/0sx~uvng58x.e.js"],"TOCProvider"]
+3:I[14668,["/ecma262/nextra-poc/_next/static/chunks/0axw5s_lb~h2l.js","/ecma262/nextra-poc/_next/static/chunks/0-1-6s-~txma3.js","/ecma262/nextra-poc/_next/static/chunks/0f5x97f0pzw0n.js","/ecma262/nextra-poc/_next/static/chunks/09mzkwykgmgkt.js","/ecma262/nextra-poc/_next/static/chunks/0sx~uvng58x.e.js"],"Sidebar"]
+4:I[53612,["/ecma262/nextra-poc/_next/static/chunks/0axw5s_lb~h2l.js","/ecma262/nextra-poc/_next/static/chunks/0-1-6s-~txma3.js","/ecma262/nextra-poc/_next/static/chunks/0f5x97f0pzw0n.js","/ecma262/nextra-poc/_next/static/chunks/09mzkwykgmgkt.js","/ecma262/nextra-poc/_next/static/chunks/0sx~uvng58x.e.js"],"ClientWrapper"]
+6:I[99674,["/ecma262/nextra-poc/_next/static/chunks/0axw5s_lb~h2l.js","/ecma262/nextra-poc/_next/static/chunks/0-1-6s-~txma3.js","/ecma262/nextra-poc/_next/static/chunks/0f5x97f0pzw0n.js","/ecma262/nextra-poc/_next/static/chunks/09mzkwykgmgkt.js","/ecma262/nextra-poc/_next/static/chunks/0sx~uvng58x.e.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+5:T5b4,<p>The following referenced documents are indispensable for the application of this document. For dated references, only the edition cited applies. For undated references, the latest edition of the referenced document (including any amendments) applies.</p>
+  <p><emu-xref href="/ecma262/nextra-poc/bibliography#sec-bibliography"><a href="/ecma262/nextra-poc/bibliography#sec-bibliography">IEEE 754-2019</a></emu-xref>, <i>IEEE Standard for Floating-Point Arithmetic</i>.</p>
+  <p>
+    The Unicode Standard.<br>
+    <a href="https://unicode.org/versions/latest">https://unicode.org/versions/latest</a>
+  </p>
+  <p>ISO/IEC 10646, <i>Information Technology — Universal Multiple-Octet Coded Character Set (UCS)</i> plus Amendment 1:2005, Amendment 2:2006, Amendment 3:2008, Amendment 4:2008, and additional amendments and corrigenda, or successor.</p>
+  <p>
+    ECMA-402, <i>ECMAScript Internationalization API Specification</i>, specifically the annual edition corresponding to this edition of this specification.<br>
+    <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-402/">https://www.ecma-international.org/publications-and-standards/standards/ecma-402/</a>
+  </p>
+  <p>
+    ECMA-404, <i>The JSON Data Interchange Format</i>.<br>
+    <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-404/">https://www.ecma-international.org/publications-and-standards/standards/ecma-404/</a>
+  </p>0:{"rsc":["$","$1","c",{"children":[["$","div",null,{"className":"x:mx-auto x:flex x:max-w-(--nextra-content-width)","children":["$","$L2",null,{"value":[],"children":[["$","$L3",null,{}],["$","$L4",null,{"metadata":{"title":"3 Normative References","filePath":"content/normative-references.mdx"},"children":[["$","div",null,{"id":"nextra-skip-nav"}],["$","main",null,{"data-pagefind-body":true,"children":["$","div",null,{"id":"spec-container","className":"ecma-spec","children":["$","emu-clause",null,{"id":"sec-normative-references","children":[["$","h1",null,{"className":"x:tracking-tight x:text-slate-900 x:dark:text-slate-100 x:font-bold x:mt-2 x:text-4xl","children":[[["$","span",null,{"className":"secnum","children":"3"}]," Normative References"],"$undefined"]}],["$","div",null,{"dangerouslySetInnerHTML":{"__html":"$5"}}]]}]}]}]]}]]}]}],null,["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"KcGqsJjx100DGpTAhKIC8"}
+8:null

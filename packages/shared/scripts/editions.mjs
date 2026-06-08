@@ -3,9 +3,9 @@
 // switcher (via NEXT_PUBLIC_EDITIONS), and the Lume build
 // (lume/_includes/editions.ts imports the same editions.json).
 //
-// All editions are rendered by the Lume build. The Nextra comparison build
-// (site-draft-nextra, deployed at /draft-nextra) is intentionally NOT listed
-// here — it's reachable by direct URL only.
+// All editions are rendered by the Lume build. The Nextra comparison site
+// (vendored under nextra-poc/, deployed at /nextra-poc) is intentionally NOT
+// listed here — it's reachable by direct URL only.
 import fs from "node:fs";
 import path from "node:path";
 import { readSpecSource } from "./spec-source.mjs";
