@@ -97,6 +97,67 @@ for (const s of chosen) {
   stack.push(node);
 }
 
+// Front matter → the edition root (index) page, and the two informative
+// annexes (Grammar Summary / Compatibility). These live outside the numbered
+// <dt> list: the intro is an <h2>-bounded block, and each annex is its own
+// <dl> whose subsections carry no anchors, so each becomes a single page.
+// Skipped in --only debug mode.
+const leaf = (id, slug, title, body) => ({
+  id,
+  slug,
+  num: "",
+  title,
+  body: body.trim(),
+  children: [],
+});
+const frontMatter = () => {
+  const bh = src.indexOf("Brief History");
+  if (bh < 0) return null;
+  const start = src.indexOf("</h2>", bh) + 5;
+  const next = src.indexOf("<h2", start);
+  const note =
+    '<p><em>This is the <a href="https://bclary.com/2004/11/07/ecma-262.html">' +
+    "bclary.com</a> community HTML rendering of the 3rd Edition — not the " +
+    "official ECMA text (which exists only as a PDF). It is not normative.</em></p>";
+  return leaf(
+    "index",
+    "index",
+    "Introduction",
+    note + src.slice(start, next < 0 ? src.length : next),
+  );
+};
+const annex = (letter, id, endPos) => {
+  const open = new RegExp(
+    `<dt>\\s*<a\\s+name="${id}"[\\s\\S]*?</dt>\\s*<dd>\\(informative\\)</dd>`,
+    "i",
+  );
+  const mm = open.exec(src);
+  if (!mm) return null;
+  const region = src.slice(mm.index + mm[0].length, endPos);
+  const tm = region.match(/^\s*(?:<\/dl>\s*<dl>\s*)?<dt>([\s\S]*?)<\/dt>/i);
+  const titleText = tm ? plain(tm[1]) : "";
+  const body = tm ? region.slice(tm[0].length) : region;
+  return leaf(
+    id,
+    slugify(titleText) || `annex-${letter.toLowerCase()}`,
+    `Annex ${letter} (informative): ${titleText}`,
+    body,
+  );
+};
+
+let pages = roots;
+if (!ONLY) {
+  const annexBPos = src.search(/<dt>\s*<a\s+name="annex-b"/);
+  const metabottom = src.indexOf('class="metabottom"');
+  const end = (n) => (n >= 0 ? n : src.length);
+  pages = [
+    frontMatter(),
+    ...roots,
+    annex("A", "annex-a", end(annexBPos >= 0 ? annexBPos : metabottom)),
+    annex("B", "annex-b", end(metabottom)),
+  ].filter(Boolean);
+}
+
 // --- re-skin pipeline (shared shape with build-chapters-es51.mjs) ------------
 const pathFor = (slug) => `${BASE_PATH}${slug === "index" ? "" : `/${slug}`}`;
 const idToSlug = {}; // filled once chapter slugs are known
@@ -128,8 +189,8 @@ const reskin = (html) => imgPaths(themeColors(rewriteXrefs(html)));
 const secnumSpan = (n) => (n ? `<span className="secnum">${n}</span> ` : "");
 
 // --- assign chapter slugs + global id→slug map -------------------------------
-for (const c of roots) {
-  c.slug = slugify(c.title) || `section-${c.num}`;
+for (const c of pages) {
+  c.slug = c.slug || slugify(c.title) || `section-${c.num}`;
   (function map(n) {
     idToSlug[n.id] = c.slug;
     n.children.forEach(map);
@@ -138,7 +199,7 @@ for (const c of roots) {
 
 // --- emit each chapter to the scratch contract -------------------------------
 const meta = {};
-for (const chapter of roots) {
+for (const chapter of pages) {
   const slug = chapter.slug;
   const secMap = {};
   (function collect(n) {
@@ -180,7 +241,9 @@ for (const chapter of roots) {
   );
   fs.writeFileSync(path.join(CONTENT_DIR, `${slug}.mdx`), mdx);
 
-  meta[slug] = `${chapter.num} ${plain(chapter.title)}`;
+  meta[slug] = chapter.num
+    ? `${chapter.num} ${plain(chapter.title)}`
+    : plain(chapter.title);
 }
 
 fs.writeFileSync(
