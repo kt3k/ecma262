@@ -23,7 +23,13 @@ const edition = Deno.env.get("EDITION") ?? "draft";
 const basePath = Deno.env.get("BASE_PATH") ?? "";
 
 const scratch = await Deno.makeTempDir({ prefix: "lume-pages-" });
-const buildChapters = `${repoRoot}packages/shared/scripts/build-chapters.mjs`;
+// ES5.1 predates ecmarkup: its spec.html is already-rendered HTML, so it goes
+// through the re-skin ingester instead of the ecmarkup resolver. See
+// docs/es5.1-plan.md. Other editions use the standard generator.
+const isRendered = edition === "es5.1";
+const buildChapters = isRendered
+  ? `${repoRoot}packages/shared/scripts/build-chapters-es51.mjs`
+  : `${repoRoot}packages/shared/scripts/build-chapters.mjs`;
 
 console.log(`• building edition "${edition}" (base "${basePath || "/"}")`);
 const run = new Deno.Command("node", {

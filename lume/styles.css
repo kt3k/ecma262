@@ -2281,3 +2281,70 @@ main[data-pagefind-body] :is(b, strong) {
   font-weight: 600;
   color: var(--accent);
 }
+
+/* --- ES5.1 re-skin add-on (Approach A, see docs/es5.1-plan.md) ---------------
+   The ES5.1 edition is the official already-rendered HTML, which uses its own
+   class vocabulary (.proc, .prod, .note, .nt …) rather than the emu-* elements
+   the rest of styles.css targets. Map those classes to the same look so ES5.1
+   matches the modern editions without rewriting the source markup. */
+
+/* Algorithms: ol.proc with the same decimal → lower-alpha → lower-roman cycle
+   ecmarkup uses for emu-alg. */
+.ecma-spec ol.proc {
+  list-style-type: decimal;
+  padding-inline-start: 40px;
+}
+.ecma-spec ol.proc ol.proc {
+  list-style-type: lower-alpha;
+}
+.ecma-spec ol.proc ol.proc ol.proc {
+  list-style-type: lower-roman;
+}
+.ecma-spec ol.proc ol.proc ol.proc ol.proc {
+  list-style-type: decimal;
+}
+.ecma-spec ol.proc ol.proc ol.proc ol.proc ol.proc {
+  list-style-type: lower-alpha;
+}
+.ecma-spec ol.proc > li {
+  margin: 0.25em 0;
+}
+
+/* Grammar: nonterminals italic, terminals monospace, productions block-laid. */
+.ecma-spec .nt {
+  font-style: italic;
+}
+.ecma-spec .t,
+.ecma-spec .gp .t {
+  font-family: var(--ecma-font-mono, ui-monospace, monospace);
+  font-style: normal;
+}
+.ecma-spec .prod {
+  display: block;
+  margin: 0.5em 0;
+  padding-inline-start: 2em;
+  text-indent: -2em;
+}
+.ecma-spec .prod .lhs {
+  font-style: italic;
+}
+.ecma-spec .prod .geq {
+  margin: 0 0.4em;
+}
+.ecma-spec .grhsmod,
+.ecma-spec .grhsannot {
+  font-style: italic;
+  color: var(--ecma-text-muted, #6b7280);
+}
+
+/* Notes: .nh is the "NOTE" label, .note its body — match the emu-note callout. */
+.ecma-spec p.note {
+  margin: 1em 0;
+  padding: 0.5em 0.75em;
+  border-inline-start: 3px solid var(--ecma-border, #d1d5db);
+  background: var(--ecma-note-bg, #f9fafb);
+}
+.ecma-spec .nh {
+  font-weight: 700;
+  margin-inline-end: 0.5em;
+}
