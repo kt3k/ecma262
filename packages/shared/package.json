@@ -2,16 +2,6 @@
   "name": "shared",
   "version": "0.1.0",
   "private": true,
-  "exports": {
-    "./ecma-spec.css": "./templates/ecma-spec.css",
-    "./components/spec-layout": "./components/spec-layout.jsx"
-  },
-  "peerDependencies": {
-    "nextra": "*",
-    "nextra-theme-docs": "*",
-    "react": "*",
-    "react-dom": "*"
-  },
   "dependencies": {
     "highlight.js": "^11.11.1"
   }

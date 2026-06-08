@@ -3,10 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:nextra": "pnpm --filter site-draft-nextra build",
-    "vendor:nextra": "pnpm build:nextra && rm -rf nextra-poc && cp -r packages/site-draft-nextra/out nextra-poc",
     "assemble": "node packages/shared/scripts/assemble-dist.mjs",
-    "build": "pnpm assemble",
-    "dev": "pnpm --filter site-draft-nextra dev"
+    "build": "pnpm assemble"
   }
 }
