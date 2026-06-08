@@ -46,8 +46,6 @@ deno task build      # → dist/
 │   ├── editions.json            #   single source of truth: id + title, newest-first
 │   ├── build-chapters.mjs       #   ecmarkup spec.html → per-chapter <Sec> JSX
 │   ├── build-chapters-es51.mjs  #   ES5.1 rendered-HTML re-skin ingester
-│   ├── editions.mjs             #   reads editions.json (+ spec-source metadata)
-│   ├── spec-source.mjs          #   upstream commit info per edition
 │   └── assemble-dist.mjs        #   build every edition → dist/
 │
 ├── lume/                        # the Lume (Deno) static site

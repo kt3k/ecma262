@@ -13,13 +13,18 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { execFileSync } from "node:child_process";
-import { readEditions } from "./editions.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const distDir = path.join(root, "dist");
 const lumeDir = path.join(root, "lume");
 
-const editions = readEditions(root);
+// The published editions, newest first — the single source of truth shared with
+// the Lume build (lume/_includes/editions.ts imports the same JSON). Only id +
+// title are needed here. (The Nextra comparison site under nextra-poc/ is not
+// listed; it's reachable by direct URL only.)
+const editions = JSON.parse(
+  fs.readFileSync(path.join(import.meta.dirname, "editions.json"), "utf8"),
+);
 
 if (editions.length === 0) {
   console.error("[assemble-dist] no editions in src/editions.json");
