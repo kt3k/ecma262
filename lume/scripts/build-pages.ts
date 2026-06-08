@@ -36,6 +36,11 @@ const run = new Deno.Command("deno", {
   args: [
     "run",
     "-A",
+    // Use the repo-root config so build-chapters.mjs resolves its bare
+    // "highlight.js" import via the root deno.json import map (the spawn
+    // inherits lume/ as cwd, whose deno.json doesn't declare it).
+    "--config",
+    `${repoRoot}deno.json`,
     buildChapters,
     "--input",
     `${repoRoot}ecma262/${edition}/spec.html`,

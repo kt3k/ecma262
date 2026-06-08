@@ -205,7 +205,16 @@ const themeColors = (html) =>
 // from numeric subscripts without a class).
 const tagOpt = (html) =>
   html.replace(/<sub>opt<\/sub>/g, '<sub class="g-opt">opt</sub>');
-const reskin = (html) => tagOpt(themeColors(rewriteXrefs(html)));
+// The official HTML references figures by bare filename (e.g.
+// <object data="figure-1.svg">, <img src="figure-1.png">). Point them at the
+// per-edition img/ dir under the deploy basePath so they resolve from any
+// /<base>/<slug>/ page.
+const imgPaths = (html) =>
+  html.replace(
+    /\b(src|data)="([^"/]+\.(?:svg|png|jpe?g|gif))"/gi,
+    (_m, attr, file) => `${attr}="${BASE_PATH}/img/${file}"`,
+  );
+const reskin = (html) => tagOpt(imgPaths(themeColors(rewriteXrefs(html))));
 
 const wanted = ONLY ? chapters.filter((c) => c.node.id === ONLY) : chapters;
 if (wanted.length === 0) throw new Error(`no chapters matched (only=${ONLY})`);

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { parseArgs } from "node:util";
-import hljs from "npm:highlight.js@^11.11.1";
+import hljs from "highlight.js";
 
 const { values } = parseArgs({
   options: {
@@ -26,7 +26,13 @@ const PUBLIC_IMG_DIR = path.resolve(values["public-img-dir"]);
 // relative), '/ecma262/draft' / '/ecma262/es2025' / … in CI per site.
 const BASE_PATH = values["base-path"];
 
-const src = fs.readFileSync(SPEC_FILE, "utf8");
+let src = fs.readFileSync(SPEC_FILE, "utf8");
+
+// Spec images (`<img src="img/…">`, `<object data="img/…">`) use root-relative
+// paths in the source. Chapter pages render one level below the edition root
+// (/<base>/<slug>/), so a bare "img/…" would resolve to /<slug>/img/… and 404.
+// Bake the deploy basePath in, the same way xref hrefs do (see pathFor).
+src = src.replace(/\b(src|data)="img\//g, `$1="${BASE_PATH}/img/`);
 
 // Find top-level chapters: <emu-intro>, <emu-clause>, <emu-annex> opening on
 // their own line. Modern (es2016+) specs put these at column 0; the ES2015

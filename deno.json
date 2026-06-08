@@ -2,6 +2,9 @@
   "tasks": {
     "build": "deno run -A src/assemble-dist.mjs"
   },
+  "imports": {
+    "highlight.js": "npm:highlight.js@^11.11.1"
+  },
   "fmt": {
     "exclude": [
       "dist",

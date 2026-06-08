@@ -7,5 +7,10 @@
     "highlight.js@11.11.1": {
       "integrity": "sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w=="
     }
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:highlight.js@^11.11.1"
+    ]
   }
 }
