@@ -2390,3 +2390,55 @@ main[data-pagefind-body] :is(b, strong) {
   opacity: 0.7;
   margin-inline-end: 0.5em;
 }
+
+/* --- ES3 (bclary HTML) re-skin add-on (see docs/es3-plan.md) -----------------
+   The 3rd-edition source is Bob Clary's HTML. It has no hardcoded colours (so
+   dark mode needs no neutralisation) but its own sparse markup: grammar is a
+   <dl class="grammar"> with <i> nonterminals and <b><tt> terminals, "See clause
+   N" refs are .gsee, and content tables are bare <table> (no class). These
+   classes are ES3-only, so they're styled globally; the bare tables are scoped
+   to .ecma-es3 so they can't touch other editions' emu-table / .real-table. */
+
+/* Grammar productions: <dl class="grammar"> — LHS in <dt>, each RHS in a <dd>.
+   The source already carries italic nonterminals / monospace terminals via
+   <i>/<b><tt>, so this only supplies the production layout. */
+.ecma-spec dl.grammar {
+  margin: 1em 0 1em 5ex;
+}
+.ecma-spec dl.grammar > dt {
+  font-style: italic;
+}
+.ecma-spec dl.grammar > dd {
+  margin: 0.15em 0 0.15em 5ex;
+}
+.ecma-spec .nonterminal {
+  font-style: italic;
+}
+/* "See clause N" grammar-summary reference — muted, like the modern xref. */
+.ecma-spec .gsee {
+  font-size: 0.85em;
+  color: var(--muted);
+}
+
+/* ES3 content tables are bare <table> (no class); give them the same bordered,
+   theme-aware look as emu-table. Scoped to .ecma-es3. */
+.ecma-es3 table {
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+.ecma-es3 table th,
+.ecma-es3 table td {
+  border: 1px solid var(--rule);
+  padding: 0.5rem 1rem;
+  vertical-align: baseline;
+  text-align: left;
+}
+.ecma-es3 table th {
+  font-weight: 600;
+}
+.ecma-es3 table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.025);
+}
+html.dark .ecma-es3 table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.035);
+}

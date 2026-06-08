@@ -221,7 +221,7 @@ for (const chapter of pages) {
   const mdxLines = [
     `import { Sec } from '../lib/spec/${slug}'`,
     "",
-    `<div id="spec-container" className="ecma-spec">`,
+    `<div id="spec-container" className="ecma-spec ecma-es3">`,
     "",
   ];
   (function emit(n, level) {
