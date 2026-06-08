@@ -1,8 +1,0 @@
-{
-  "name": "ecma262",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "highlight.js": "^11.11.1"
-  }
-}

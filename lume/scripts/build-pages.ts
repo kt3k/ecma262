@@ -32,8 +32,10 @@ const buildChapters = isRendered
   : `${repoRoot}src/build-chapters.mjs`;
 
 console.log(`• building edition "${edition}" (base "${basePath || "/"}")`);
-const run = new Deno.Command("node", {
+const run = new Deno.Command("deno", {
   args: [
+    "run",
+    "-A",
     buildChapters,
     "--input",
     `${repoRoot}ecma262/${edition}/spec.html`,

@@ -5,7 +5,6 @@
       "dist",
       "ecma262",
       "nextra-poc",
-      "pnpm-lock.yaml",
       "**/*.svg"
     ]
   }

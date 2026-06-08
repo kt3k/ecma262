@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { parseArgs } from "node:util";
-import hljs from "highlight.js";
+import hljs from "npm:highlight.js@^11.11.1";
 
 const { values } = parseArgs({
   options: {

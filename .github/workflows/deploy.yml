@@ -18,19 +18,11 @@ jobs:
         uses: actions/checkout@v6
         with:
           submodules: true
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 9
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
       - name: Setup Deno
-        # The editions are rendered by Lume (Deno) in the assemble step.
+        # The whole build runs on Deno: assemble-dist.mjs and the build-chapters
+        # scripts run via `deno run`, the editions render with Lume, and the one
+        # npm dependency (highlight.js) is pulled via an npm: specifier — so no
+        # Node or pnpm toolchain is needed.
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
@@ -38,9 +30,8 @@ jobs:
         # Builds each Lume edition (pages/build/pagefind with EDITION +
         # BASE_PATH=/ecma262/<id>) into dist/<id>/, copies the vendored Nextra
         # comparison export (nextra-poc/) into dist/nextra-poc/, and writes the
-        # landing page. The Nextra site is prebuilt and committed, so CI no
-        # longer runs the Next.js build.
-        run: node src/assemble-dist.mjs
+        # landing page.
+        run: deno run -A src/assemble-dist.mjs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
