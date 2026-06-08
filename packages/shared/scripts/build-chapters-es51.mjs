@@ -1,4 +1,4 @@
-// ES5.1 re-skin ingester — PROTOTYPE (Approach A, phase P0).
+// ES5.1 re-skin ingester (Approach A, phase P1).
 //
 // ES5.1 predates ecmarkup, so unlike build-chapters.mjs (which *resolves*
 // ecmarkup source) this script *consumes* the official, already-rendered HTML
@@ -8,13 +8,14 @@
 // into chapters/headings and emit the same scratch contract build-pages.ts
 // already consumes (lib/<slug>.jsx + content/<slug>.mdx + content/_meta.js).
 //
-// See docs/es5.1-plan.md. This prototype converts ONE chapter (default sec-9);
-// run it through `EDITION=es5.1 deno task pages && deno task build` to render.
+// See docs/es5.1-plan.md. Converts every top-level chapter (sec-1…sec-16),
+// annex (sec-A…sec-F), and the Introduction / Bibliography front/back matter.
+// Run via `EDITION=es5.1 deno task pages && deno task build`.
 //
 // Usage:
 //   node build-chapters-es51.mjs --input ecma262/es5.1/spec.html \
 //     --lib-dir <dir> --content-dir <dir> --public-img-dir <dir> \
-//     --base-path "" [--only sec-9]
+//     --base-path "" [--only sec-9]   # --only restricts to one chapter (debug)
 
 import fs from "node:fs";
 import path from "node:path";
@@ -27,7 +28,7 @@ const { values } = parseArgs({
     "content-dir": { type: "string" },
     "public-img-dir": { type: "string" },
     "base-path": { type: "string", default: "" },
-    only: { type: "string", default: "sec-9" }, // prototype: one chapter
+    only: { type: "string" }, // optional: restrict to one chapter id (debug)
   },
 });
 
@@ -35,6 +36,7 @@ const INPUT = values.input;
 const LIB_DIR = values["lib-dir"];
 const CONTENT_DIR = values["content-dir"];
 const PUBLIC_IMG_DIR = values["public-img-dir"];
+const BASE_PATH = values["base-path"] ?? "";
 const ONLY = values.only;
 
 for (const [k, v] of Object.entries({ INPUT, LIB_DIR, CONTENT_DIR })) {
@@ -125,72 +127,119 @@ const slugify = (title) =>
     "",
   );
 
-// --- convert one chapter ------------------------------------------------------
+// --- classify the top-level sections -----------------------------------------
 const root = parseSections(src);
-// Top-level chapters are <section id="sec-…"> directly under <body> (root here).
-const chapter = root.children.find((c) => c.id === ONLY);
-if (!chapter) {
-  throw new Error(`chapter ${ONLY} not found in ${INPUT}`);
+const secnumSpan = (n) => (n ? `<span className="secnum">${n}</span> ` : "");
+// Strip a leading "(informative)"/"(normative)" status word so annex slugs read
+// from the real title ("Grammar Summary"), not the status.
+const titleForSlug = (titlePlain) =>
+  titlePlain.replace(/^\(\w+\)\s*/, "").trim();
+
+// Front-matter sections that are page furniture, not content.
+const SKIP = new Set(["Copyright notice", "Contents"]);
+
+// Pick the top-level content sections in document order: the numbered chapters
+// (sec-1…sec-16), the lettered annexes (sec-A…sec-F), and the unnumbered
+// Introduction / Bibliography front/back matter.
+const chapters = [];
+for (const node of root.children) {
+  const h = splitHeading(node.inner);
+  const titlePlain = plain(h.title);
+  if (node.id === "contents" || SKIP.has(titlePlain)) continue;
+  if (!titlePlain && !node.id) continue;
+  chapters.push({ node, head: h, titlePlain });
+}
+// Assign a unique slug + synthetic chapter id to every content chapter up front
+// (document order), so the global id→slug map is complete before we rewrite any
+// cross-chapter link.
+const usedSlugs = new Set();
+for (const c of chapters) {
+  let slug = slugify(titleForSlug(c.titlePlain)) || "section";
+  while (usedSlugs.has(slug)) slug += "-x";
+  usedSlugs.add(slug);
+  c.slug = slug;
+  c.chapterId = c.node.id ?? `sec-${slug}`;
 }
 
-const head = splitHeading(chapter.inner);
-const slug = slugify(head.title);
-const sections = {}; // id -> own body HTML
-const headings = []; // { id, num, title, level }
+// Global map: every section id (at any depth) → the slug of the page it lives
+// on. ES5.1's baked-in cross-references are bare same-page #sec-X.Y anchors;
+// once the single document is split into per-chapter pages they must point at
+// the right page. Mirrors how build-chapters.mjs bakes basePath into xrefs.
+const idToSlug = {};
+for (const c of chapters) {
+  (function collect(n, fb, i) {
+    const id = n.id ?? `${fb}-${i}`;
+    idToSlug[id] = c.slug;
+    n.children.forEach((child, ci) => collect(child, id, ci));
+  })(c.node, c.chapterId, 0);
+}
+const rewriteXrefs = (html) =>
+  html.replace(/href="#(sec-[^"]+)"/g, (m, id) => {
+    const slug = idToSlug[id];
+    return slug ? `href="${BASE_PATH}/${slug}#${id}"` : m;
+  });
 
-// Walk the section subtree, recording each node's heading + own body.
-(function walk(node, level) {
-  const h = splitHeading(node.inner);
-  const id = node.id ?? `sec-${slug}-${headings.length}`;
-  sections[id] = ownBody(node);
-  headings.push({ id, num: h.num, title: h.title, level });
-  for (const child of node.children) walk(child, level + 1);
-})(chapter, 1);
+const wanted = ONLY ? chapters.filter((c) => c.node.id === ONLY) : chapters;
+if (wanted.length === 0) throw new Error(`no chapters matched (only=${ONLY})`);
 
-// --- emit the scratch contract ------------------------------------------------
-const secnumSpan = (n) => (n ? `<span className="secnum">${n}</span> ` : "");
+// --- convert each chapter to the scratch contract ----------------------------
+const meta = {}; // slug -> display title, in document order
 
-// lib/<slug>.jsx — the Sec component holding every section's body HTML.
-const componentSrc = [
-  "// Generated from ecma262/es5.1/spec.html (re-skin) — do not edit by hand.",
-  `const sections = ${JSON.stringify(sections)};`,
-  "export function Sec({ id }) {",
-  "  const html = sections[id] ?? '';",
-  "  return <div dangerouslySetInnerHTML={{ __html: html }} />;",
-  "}",
-  "",
-].join("\n");
-fs.writeFileSync(path.join(LIB_DIR, `${slug}.jsx`), componentSrc);
+for (const { node, head, titlePlain, slug, chapterId } of wanted) {
+  // Walk the subtree → { id: own body HTML }, rewriting cross-page links.
+  const sections = {};
+  (function walk(n, fallbackBase, i) {
+    const id = n.id ?? `${fallbackBase}-${i}`;
+    sections[id] = rewriteXrefs(ownBody(n));
+    n.children.forEach((child, ci) => walk(child, id, ci));
+  })(node, chapterId, 0);
 
-// content/<slug>.mdx — each section becomes a nested <emu-clause id="…"> with
-// its heading + <Sec> body, mirroring the modern build's renderMdxTree. The
-// emu-clause carries the id so ES5.1's baked-in cross-references (#sec-9.x)
-// resolve and depth-based heading CSS / the on-this-page TOC work.
-const mdxLines = [
-  `import { Sec } from '../lib/spec/${slug}'`,
-  "",
-  `<div id="spec-container" className="ecma-spec">`,
-  "",
-];
-(function emitClause(node, level) {
-  const h = splitHeading(node.inner);
-  const id = node.id;
-  const hashes = "#".repeat(Math.min(level, 6));
-  mdxLines.push(`<emu-clause id="${id}">`, "");
-  mdxLines.push(`${hashes} ${secnumSpan(h.num)}${h.title}`, "");
-  mdxLines.push(`<Sec id="${id}" />`, "");
-  for (const child of node.children) emitClause(child, level + 1);
-  mdxLines.push(`</emu-clause>`, "");
-})(chapter, 1);
-mdxLines.push(`</div>`);
-const mdx = mdxLines.join("\n").replace(/\n{3,}/g, "\n\n").replace(
-  /\n*$/,
-  "\n",
-);
-fs.writeFileSync(path.join(CONTENT_DIR, `${slug}.mdx`), mdx);
+  // lib/<slug>.jsx — the Sec component holding every section's body HTML.
+  const componentSrc = [
+    "// Generated from ecma262/es5.1/spec.html (re-skin) — do not edit by hand.",
+    `const sections = ${JSON.stringify(sections)};`,
+    "export function Sec({ id }) {",
+    "  const html = sections[id] ?? '';",
+    "  return <div dangerouslySetInnerHTML={{ __html: html }} />;",
+    "}",
+    "",
+  ].join("\n");
+  fs.writeFileSync(path.join(LIB_DIR, `${slug}.jsx`), componentSrc);
 
-// content/_meta.js — slug -> display title.
-const meta = { [slug]: `${head.num} ${plain(head.title)}` };
+  // content/<slug>.mdx — each section is a nested <emu-clause id="…"> with its
+  // heading + <Sec> body, mirroring the modern build's renderMdxTree. All wraps
+  // are emu-clause so _config.ts's depth-by-emu-clause TOC works for chapters
+  // and annexes alike; the emu-clause id makes ES5.1's baked-in #sec-X.Y links
+  // resolve. Unnumbered intro/biblio simply have an empty secnum (no number).
+  const mdxLines = [
+    `import { Sec } from '../lib/spec/${slug}'`,
+    "",
+    `<div id="spec-container" className="ecma-spec">`,
+    "",
+  ];
+  (function emitClause(n, level, fallbackBase, i) {
+    const h = splitHeading(n.inner);
+    const id = n.id ?? `${fallbackBase}-${i}`;
+    const hashes = "#".repeat(Math.min(level, 6));
+    mdxLines.push(`<emu-clause id="${id}">`, "");
+    mdxLines.push(`${hashes} ${secnumSpan(h.num)}${h.title}`, "");
+    mdxLines.push(`<Sec id="${id}" />`, "");
+    n.children.forEach((child, ci) => emitClause(child, level + 1, id, ci));
+    mdxLines.push(`</emu-clause>`, "");
+  })(node, 1, chapterId, 0);
+  mdxLines.push(`</div>`);
+  const mdx = mdxLines.join("\n").replace(/\n{3,}/g, "\n\n").replace(
+    /\n*$/,
+    "\n",
+  );
+  fs.writeFileSync(path.join(CONTENT_DIR, `${slug}.mdx`), mdx);
+
+  // Sidebar/page label: "9 Type Conversion…", "Annex A (informative) …", or the
+  // bare title for unnumbered front matter.
+  meta[slug] = head.num ? `${head.num} ${titlePlain}` : titlePlain;
+}
+
+// content/_meta.js — slug -> display title, in document order.
 fs.writeFileSync(
   path.join(CONTENT_DIR, "_meta.js"),
   `export default ${JSON.stringify(meta, null, 2)}\n`,
@@ -208,6 +257,7 @@ if (PUBLIC_IMG_DIR) {
 }
 
 console.log(
-  `[es5.1] chapter ${ONLY} → slug "${slug}", ${headings.length} sections, ` +
-    `${componentSrc.length + mdx.length} bytes`,
+  `[es5.1] converted ${Object.keys(meta).length} chapters: ${
+    Object.keys(meta).join(", ")
+  }`,
 );
