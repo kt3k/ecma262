@@ -186,6 +186,22 @@ const rewriteXrefs = (html) =>
     return slug ? `href="${pathFor(slug)}#${id}"` : m;
   });
 
+// The official HTML hardcodes colours in inline style="…" attributes — black
+// table borders (#000000 / black) and a light-grey cell shade (#C0C0C0) — which
+// vanish or clash in dark mode. Neutralise them *only inside style attributes*
+// (never touching prose): black → currentColor (follows the theme text colour),
+// the grey shade → a translucent grey that reads on either background. High
+// inline specificity means CSS can't override these, so we rewrite at the source.
+const themeColors = (html) =>
+  html.replace(/style="([^"]*)"/g, (_m, css) =>
+    `style="${
+      css
+        .replace(/#000000\b/gi, "currentColor")
+        .replace(/\bblack\b/gi, "currentColor")
+        .replace(/#c0c0c0\b/gi, "rgba(128, 128, 128, 0.25)")
+    }"`);
+const reskin = (html) => themeColors(rewriteXrefs(html));
+
 const wanted = ONLY ? chapters.filter((c) => c.node.id === ONLY) : chapters;
 if (wanted.length === 0) throw new Error(`no chapters matched (only=${ONLY})`);
 
@@ -197,7 +213,7 @@ for (const { node, head, titlePlain, slug, chapterId } of wanted) {
   const sections = {};
   (function walk(n, fallbackBase, i) {
     const id = n.id ?? `${fallbackBase}-${i}`;
-    sections[id] = rewriteXrefs(ownBody(n));
+    sections[id] = reskin(ownBody(n));
     n.children.forEach((child, ci) => walk(child, id, ci));
   })(node, chapterId, 0);
 
@@ -229,7 +245,7 @@ for (const { node, head, titlePlain, slug, chapterId } of wanted) {
     const id = n.id ?? `${fallbackBase}-${i}`;
     const hashes = "#".repeat(Math.min(level, 6));
     mdxLines.push(`<emu-clause id="${id}">`, "");
-    mdxLines.push(`${hashes} ${secnumSpan(h.num)}${h.title}`, "");
+    mdxLines.push(`${hashes} ${secnumSpan(h.num)}${themeColors(h.title)}`, "");
     mdxLines.push(`<Sec id="${id}" />`, "");
     n.children.forEach((child, ci) => emitClause(child, level + 1, id, ci));
     mdxLines.push(`</emu-clause>`, "");
