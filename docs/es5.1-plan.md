@@ -105,8 +105,8 @@ generator and adapts it into the Lume site. The ES5.1 ingester must emit the
 
 ## 5. Architecture
 
-New script `packages/shared/scripts/build-chapters-es51.mjs`, same CLI surface
-as `build-chapters.mjs`
+New script `src/scripts/build-chapters-es51.mjs`, same CLI surface as
+`build-chapters.mjs`
 (`--input --lib-dir --content-dir --public-img-dir
 --base-path`).
 `build-pages.ts` selects it when the edition's source is rendered HTML rather
@@ -154,7 +154,7 @@ Two options; **start with (a)** for the prototype, optionally converge to (b).
 
 ## 8. Integration checklist
 
-- `packages/shared/editions.json`: append
+- `src/editions.json`: append
   `{ "id": "es5.1", "title": "ECMA-262, 5.1 Edition, June 2011" }`.
 - Vendor: save the official HTML as `ecma262/es5.1/spec.html` and the 2 images
   under `ecma262/es5.1/img/` (rename `<img src>` accordingly).

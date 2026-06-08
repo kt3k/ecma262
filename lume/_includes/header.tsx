@@ -7,7 +7,7 @@ import { specCommitUrl, titleMain, titleQual } from "./editions.ts";
 // UI hooks into; the index itself is generated post-build (see
 // deno task pagefind / the CI step).
 //
-// Title shape mirrors packages/shared/components/spec-layout.jsx:
+// Title shape (mirrors the former Nextra spec-layout):
 //   <b>ECMA-262, 18th, ES2027</b>  <a class="qual-link"><b>draft</b></a>
 // — bold main title links home, "draft" is a dotted-underline link to the
 // tc39/ecma262 commit. The version-switcher chevron sits beside the title.

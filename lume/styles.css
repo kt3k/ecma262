@@ -314,8 +314,8 @@ html:not(:has(*:focus)) {
     max(env(safe-area-inset-right), 1.5rem);
 }
 /* Title cluster: bold main title + dotted-underline status badge link +
-   VersionSwitcher chevron, all on one baseline. Mirrors the navbar logo in
-   packages/shared/components/spec-layout.jsx so the visual hierarchy is
+   VersionSwitcher chevron, all on one baseline. Mirrors the navbar logo of
+   the former Nextra spec-layout so the visual hierarchy is
    identical to the Nextra deploys. */
 .site-header .site-title-group {
   /* margin-inline-end: auto mirrors Nextra's logo wrapper class
@@ -1048,7 +1048,7 @@ aside.toc .toc-feedback-arrow {
   flex-shrink: 0;
 }
 
-/* Footer matches packages/shared/components/spec-layout.jsx: two centred
+/* Footer matches the former Nextra spec-layout: two centred
    columns of grey text. Outer flex centres the columns; each column is a
    top-aligned stack with 0.4rem between rows (Nextra's gap). py-12 = 3rem
    top/bottom; safe-area insets pad the sides so it doesn't hug the screen
@@ -2220,8 +2220,8 @@ main[data-pagefind-body] :is(h1, h2, h3, h4, h5, h6),
 main[data-pagefind-body] :is(b, strong) {
   color: var(--ecma-text-strong);
 }
-/* ── Version switcher dropdown (navbar) — port of
-   packages/shared/components/version-switcher.jsx. Uses the PoC's own theme
+/* ── Version switcher dropdown (navbar) — port of the former Nextra
+   version-switcher. Uses the PoC's own theme
    tokens (--rule / --bg / --chrome-bg / --accent / --muted / --fg) so it
    tracks light/dark via html.dark like everything else in this file. */
 .ecma-vs {

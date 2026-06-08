@@ -67,7 +67,7 @@
 
 ## 適用済みの暫定修正（CSS）
 
-`packages/shared/templates/ecma-spec.css` に追加済み（`deno fmt` 構文OK）:
+`lume/styles.css` に追加済み（`deno fmt` 構文OK）:
 
 ```css
 /* ecmarkup clause "header" list — the signature metadata (for / description /

@@ -17,8 +17,8 @@ site.use(jsx());
 // CSS rules in styles.css (`.ecma-spec emu-clause emu-clause > h1`,
 // `... > h1 { line-height: 1em }`, etc.) actually match every spec
 // heading — without this they only catch the page-top h1 and the
-// nested ones render at browser-default h2/h3/h4 sizes. Mirrors what
-// packages/site-draft-nextra/mdx-components.jsx does at the MDX
+// nested ones render at browser-default h2/h3/h4 sizes. Mirrors what the
+// former Nextra mdx-components layer did at the MDX
 // components layer (the Next.js MDX has React component substitution;
 // Lume's MDX uses rehype). The visual hierarchy comes back from the
 // <emu-clause> nesting depth, the same scheme tc39.es/ecma262 uses.

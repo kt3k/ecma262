@@ -3,8 +3,7 @@ import editions from "./editions.ts";
 // Page footer — three columns side-by-side: About / copyright
 // (left), then the full edition list split across two columns (newest half
 // then older half) so the long list doesn't run as one tall column. Matches
-// what
-// `packages/shared/components/spec-layout.jsx` renders today: no background,
+// what the former Nextra spec-layout footer rendered: no background,
 // no border, just centred grey text with `gap: 4rem` between columns and
 // `gap: 0.4rem` between rows inside each column. The deploy root
 // (`/ecma262/`) is used for the cross-edition links since they currently

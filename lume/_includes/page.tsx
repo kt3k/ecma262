@@ -260,8 +260,8 @@ export default function Page(
                 setCollapsed(!document.body.classList.contains("sidebar-collapsed"));
               });
               // Version switcher dropdown: trigger toggles the menu, outside
-              // click + Escape close it. Mirrors the React component in
-              // packages/shared/components/version-switcher.jsx.
+              // click + Escape close it. Mirrors the former Nextra
+              // version-switcher React component.
               var vsRoot=document.getElementById("version-switcher");
               var vsTrigger=document.getElementById("version-switcher-trigger");
               var vsMenu=document.getElementById("version-switcher-menu");

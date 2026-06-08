@@ -12,14 +12,13 @@ const editions = data as Edition[];
 // The edition this build renders, from the EDITION env var (default "draft").
 // scripts/build-pages.ts reads the same var to pick the spec source, so the
 // chrome (header / <title> / VersionSwitcher) and the content stay in sync.
-// In Nextra each `packages/site-*/` fixed its own title in `app/layout.jsx`;
+// In the former Nextra sites each edition fixed its own title in its layout;
 // here one env var drives it.
 export const currentEditionId = Deno.env.get("EDITION") ?? "draft";
 
 // Header title parts: bold main string + dotted-underline status link
-// ("draft" / "candidate"). Matches the parsing in
-// packages/shared/components/spec-layout.jsx so the visual hierarchy is
-// identical.
+// ("draft" / "candidate"). Matches the parsing the former Nextra spec-layout
+// used so the visual hierarchy is identical.
 const current = editions.find((e) => e.id === currentEditionId)!;
 const qualMatch = current.title.match(/\s+\(?(draft|candidate)\)?$/i);
 export const titleMain = qualMatch

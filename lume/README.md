@@ -1,9 +1,9 @@
 # lume
 
 The [Lume](https://lume.land/) site that renders the ECMA-262 spec. It replaces
-the Nextra `packages/site-draft` app and currently ships the **draft** edition
-at `/ecma262/draft/`; the same build is edition-parametrized so it can render
-es2026 / es2025 / es2024 too (see `docs/lume_multiversion_todo.md`).
+the former Nextra app and ships every edition (draft + ES2026…ES5.1) at
+`/ecma262/<id>/`; one build is edition-parametrized via `EDITION` + `BASE_PATH`
+(see `docs/lume_multiversion_todo.md`).
 
 Each chapter is produced by the shared `build-chapters.mjs` conversion: one
 `<Sec>` component (`lib/<slug>.jsx`) + one Lume page (`<slug>.mdx`) per chapter.

@@ -4,7 +4,7 @@ import editions, { currentEditionId } from "./editions.ts";
 // outside-click + Escape behaviour is wired up in page.tsx so it runs in the
 // browser; this just emits the trigger button + the (initially hidden) menu.
 //
-// Port of packages/shared/components/version-switcher.jsx — same DOM shape so
+// Port of the former Nextra version-switcher — same DOM shape so
 // the existing `.ecma-vs-*` CSS rules in styles.css carry over.
 export default function VersionSwitcher(
   { basePath, deployBase }: { basePath: string; deployBase: string },

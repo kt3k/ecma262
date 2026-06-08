@@ -1,8 +1,7 @@
 # タイポグラフィ改善提案 — Ghost "Edition" テーマからの応用
 
 `edition.ghost.io`（Ghost 公式 Edition
-テーマ）のタイポグラフィを実測・分析し、本仕様書サイト（Nextra +
-`packages/shared/templates/ecma-spec.css`）へ取り込む価値のある手法をまとめる。
+テーマ）のタイポグラフィを実測・分析し、本仕様書サイト（`lume/styles.css`）へ取り込む価値のある手法をまとめる。
 
 ## 背景
 

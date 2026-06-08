@@ -8,8 +8,7 @@ line-height / 幅** のみを比較。
 
 - Nextra: デプロイ済み HTML (`/tmp/nextra.html` 取得分) と
   `node_modules/.../nextra-theme-docs/dist/mdx-components/{heading,index}.js`
-- 共有 CSS: `packages/shared/templates/ecma-spec.css`
-  (両者がほぼコピーで持っている)
+- スペック CSS: `lume/styles.css` (両者がほぼコピーで持っている)
 - Lume PoC: `lume-poc/styles.css` の `main` および `.ecma-spec ...` 周辺
 
 両者は **同じ `ecma-spec.css` の中身を共有** していて、`<emu-clause>`

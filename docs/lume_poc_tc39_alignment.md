@@ -7,7 +7,7 @@
 参照:
 
 - tc39.es CSS: `https://tc39.es/ecma262/assets/css/ecmarkup.css`
-- Nextra 用共有 CSS: `packages/shared/templates/ecma-spec.css`
+- スペック CSS: `lume/styles.css`
 - lume-poc CSS: `lume-poc/styles.css`
 
 ## 1. font-family / font-weight (commit `4ca4be6`)
