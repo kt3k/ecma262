@@ -15,7 +15,7 @@ import process from "node:process";
 import { execFileSync } from "node:child_process";
 import { readEditions } from "./editions.mjs";
 
-const root = path.resolve(import.meta.dirname, "../..");
+const root = path.resolve(import.meta.dirname, "..");
 const distDir = path.join(root, "dist");
 const lumeDir = path.join(root, "lume");
 

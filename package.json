@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "assemble": "node src/scripts/assemble-dist.mjs",
+    "assemble": "node src/assemble-dist.mjs",
     "build": "pnpm assemble"
   },
   "dependencies": {

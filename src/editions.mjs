@@ -13,7 +13,7 @@ import { readSpecSource } from "./spec-source.mjs";
 export function readEditions(root) {
   const list = JSON.parse(
     fs.readFileSync(
-      path.join(import.meta.dirname, "..", "editions.json"),
+      path.join(import.meta.dirname, "editions.json"),
       "utf8",
     ),
   );

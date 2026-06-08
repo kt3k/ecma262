@@ -39,7 +39,7 @@ HTML を `dangerouslySetInnerHTML` で素のまま描画するため、`build-ch
 
 ## 原因
 
-`src/scripts/build-chapters.mjs` の `applyXrefSubst`:
+`src/build-chapters.mjs` の `applyXrefSubst`:
 
 ```js
 const s = idToSection.get(m[1]);

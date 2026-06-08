@@ -105,7 +105,7 @@ generator and adapts it into the Lume site. The ES5.1 ingester must emit the
 
 ## 5. Architecture
 
-New script `src/scripts/build-chapters-es51.mjs`, same CLI surface as
+New script `src/build-chapters-es51.mjs`, same CLI surface as
 `build-chapters.mjs`
 (`--input --lib-dir --content-dir --public-img-dir
 --base-path`).

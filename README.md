@@ -14,16 +14,16 @@ at `/ecma262/<id>/`.
 A single [Lume](https://lume.land/) (Deno) project renders every edition. The
 per-edition input is `ecma262/<id>/spec.html`:
 
-- **draft … ES2015** are ecmarkup _source_; `src/scripts/build-chapters.mjs`
+- **draft … ES2015** are ecmarkup _source_; `src/build-chapters.mjs`
   re-implements the subset of ecmarkup's build the site needs (numbering, xref
   resolution, grammar tokenisation, autolinking) with no ecmarkup dependency.
 - **ES5.1** predates ecmarkup, so its already-rendered official HTML goes
-  through `src/scripts/build-chapters-es51.mjs`, a re-skin ingester (see
+  through `src/build-chapters-es51.mjs`, a re-skin ingester (see
   [`docs/es5.1-plan.md`](docs/es5.1-plan.md)).
 
 `lume/scripts/build-pages.ts` adapts the generated chapters into Lume pages for
-one edition (driven by `EDITION` + `BASE_PATH`); `src/scripts/assemble-dist.mjs`
-loops over every edition and folds the results into `dist/` for GitHub Pages.
+one edition (driven by `EDITION` + `BASE_PATH`); `src/assemble-dist.mjs` loops
+over every edition and folds the results into `dist/` for GitHub Pages.
 
 ```sh
 # one edition, locally (from lume/)
@@ -44,12 +44,11 @@ pnpm assemble        # → dist/
 │
 ├── src/                         # build scripts + edition list (Node, no workspace)
 │   ├── editions.json            #   single source of truth: id + title, newest-first
-│   └── scripts/
-│       ├── build-chapters.mjs        # ecmarkup spec.html → per-chapter <Sec> JSX
-│       ├── build-chapters-es51.mjs   # ES5.1 rendered-HTML re-skin ingester
-│       ├── editions.mjs              # reads editions.json (+ spec-source metadata)
-│       ├── spec-source.mjs           # upstream commit info per edition
-│       └── assemble-dist.mjs         # build every edition → dist/
+│   ├── build-chapters.mjs       #   ecmarkup spec.html → per-chapter <Sec> JSX
+│   ├── build-chapters-es51.mjs  #   ES5.1 rendered-HTML re-skin ingester
+│   ├── editions.mjs             #   reads editions.json (+ spec-source metadata)
+│   ├── spec-source.mjs          #   upstream commit info per edition
+│   └── assemble-dist.mjs        #   build every edition → dist/
 │
 ├── lume/                        # the Lume (Deno) static site
 │   ├── _config.ts               #   plugins, static copy, on-this-page TOC
