@@ -2414,8 +2414,16 @@ main[data-pagefind-body] :is(b, strong) {
 .ecma-spec .nonterminal {
   font-style: italic;
 }
-/* "See clause N" grammar-summary reference — muted, like the modern xref. */
+/* The "::" / ":" production separator sits flush against the LHS in the
+   source; give it breathing room. */
+.ecma-spec dl.grammar > dt > b {
+  margin: 0 0.4em;
+}
+/* "See clause N" grammar-summary reference — float it to the right edge of the
+   production line (like the modern grammar xref) so the LHS stays clean. */
 .ecma-spec .gsee {
+  float: right;
+  font-style: normal;
   font-size: 0.85em;
   color: var(--muted);
 }
@@ -2441,4 +2449,11 @@ main[data-pagefind-body] :is(b, strong) {
 }
 html.dark .ecma-es3 table tbody tr:nth-child(even) {
   background: rgba(255, 255, 255, 0.035);
+}
+/* The lone figure (figure-1.gif, §4.3) is a bare <img> in a <div>; centre it. */
+.ecma-es3 img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1em auto;
 }
