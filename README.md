@@ -60,7 +60,7 @@ node src/assemble-dist.mjs   # → dist/
 ├── nextra-poc/                  # vendored Nextra comparison build (served at /nextra-poc/)
 ├── docs/                        # design & reference docs
 │
-├── .github/workflows/nextjs.yml # CI: pnpm install → assemble-dist.mjs → GitHub Pages
+├── .github/workflows/deploy.yml # CI: pnpm install → assemble-dist.mjs → GitHub Pages
 ├── package.json                 # root scripts (assemble/build) + highlight.js dep
 ├── deno.json                    # deno fmt config
 └── AGENTS.md (CLAUDE.md →)       # project instructions
