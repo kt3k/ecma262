@@ -2310,9 +2310,11 @@ main[data-pagefind-body] :is(b, strong) {
   margin: 0.25em 0;
 }
 
-/* Grammar: nonterminals italic, terminals monospace, productions block-laid.
-   Colours come from the same theme variables the rest of the spec uses, so
-   they adapt in dark mode (no hardcoded greys). */
+/* Grammar tokens: nonterminals italic, terminals monospace. Colours come from
+   the same theme variables the rest of the spec uses, so they adapt in dark
+   mode (no hardcoded greys). ES5.1 has two production shapes — inline
+   <span class="prod"> in prose (left inline) and block <div class="gp"> display
+   grammar (laid out below, like the modern emu-production). */
 .ecma-spec .nt {
   font-style: italic;
 }
@@ -2321,22 +2323,46 @@ main[data-pagefind-body] :is(b, strong) {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-style: normal;
 }
-.ecma-spec .prod {
+
+/* Block productions: indented like the modern emu-production, each RHS on its
+   own hanging-indented line with the same hover highlight to isolate one
+   alternative. */
+.ecma-spec .gp {
+  margin: 1em 0 1em 5ex;
+}
+.ecma-spec .gp .lhs {
   display: block;
-  margin: 0.5em 0;
-  padding-inline-start: 2em;
-  text-indent: -2em;
 }
-.ecma-spec .prod .lhs {
-  font-style: italic;
+.ecma-spec .gp .rhs {
+  display: block;
+  padding-left: 75px;
+  text-indent: -25px;
+  border: 0.2ex dashed transparent;
 }
-.ecma-spec .prod .geq {
-  margin: 0 0.4em;
+.ecma-spec .gp .rhs:hover {
+  border-color: var(--production-rhs-border-color);
+  background-color: var(--production-rhs-background-color);
 }
+.ecma-spec .geq {
+  margin: 0 0.5ex;
+}
+/* "one of" / "but not" modifiers and [lookahead …] annotations read as muted
+   prose, matching the modern emu-gann treatment. */
 .ecma-spec .grhsmod,
 .ecma-spec .grhsannot {
   font-style: italic;
   color: var(--muted);
+}
+/* The "See clause N" reference ecmarkup floats to the right of a summary
+   production. */
+.ecma-spec .gsumxref {
+  float: right;
+  font-size: 0.85em;
+}
+/* Optional-symbol subscript (the ingester tags <sub>opt</sub> as .g-opt) gets
+   the same gold the modern emu-opt uses. */
+.ecma-spec .g-opt {
+  color: var(--opt-foreground-color);
 }
 
 /* Tables: the official HTML draws borders with inline styles (neutralised to

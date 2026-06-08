@@ -200,7 +200,12 @@ const themeColors = (html) =>
         .replace(/\bblack\b/gi, "currentColor")
         .replace(/#c0c0c0\b/gi, "rgba(128, 128, 128, 0.25)")
     }"`);
-const reskin = (html) => themeColors(rewriteXrefs(html));
+// Tag the optional-symbol subscript so CSS can colour it like the modern
+// emu-opt (the source renders it as a bare <sub>opt</sub>, indistinguishable
+// from numeric subscripts without a class).
+const tagOpt = (html) =>
+  html.replace(/<sub>opt<\/sub>/g, '<sub class="g-opt">opt</sub>');
+const reskin = (html) => tagOpt(themeColors(rewriteXrefs(html)));
 
 const wanted = ONLY ? chapters.filter((c) => c.node.id === ONLY) : chapters;
 if (wanted.length === 0) throw new Error(`no chapters matched (only=${ONLY})`);
