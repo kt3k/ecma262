@@ -154,7 +154,11 @@ for (const node of root.children) {
 // cross-chapter link.
 const usedSlugs = new Set();
 for (const c of chapters) {
-  let slug = slugify(titleForSlug(c.titlePlain)) || "section";
+  // The Introduction is the edition root (served at /), so it takes the "index"
+  // slug build-pages.ts maps to url "/", mirroring the modern emu-intro page.
+  let slug = c.titlePlain === "Introduction"
+    ? "index"
+    : slugify(titleForSlug(c.titlePlain)) || "section";
   while (usedSlugs.has(slug)) slug += "-x";
   usedSlugs.add(slug);
   c.slug = slug;
@@ -173,10 +177,13 @@ for (const c of chapters) {
     n.children.forEach((child, ci) => collect(child, id, ci));
   })(c.node, c.chapterId, 0);
 }
+// The index page lives at the deploy root (no /slug segment); see pathFor in
+// build-chapters.mjs.
+const pathFor = (slug) => `${BASE_PATH}${slug === "index" ? "" : `/${slug}`}`;
 const rewriteXrefs = (html) =>
   html.replace(/href="#(sec-[^"]+)"/g, (m, id) => {
     const slug = idToSlug[id];
-    return slug ? `href="${BASE_PATH}/${slug}#${id}"` : m;
+    return slug ? `href="${pathFor(slug)}#${id}"` : m;
   });
 
 const wanted = ONLY ? chapters.filter((c) => c.node.id === ONLY) : chapters;
