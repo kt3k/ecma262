@@ -1827,7 +1827,7 @@ html.dark .ecma-spec emu-table tbody tr:nth-child(even) {
    body↔emu-nt contrast (~1.5:1) reads a bit too flat against our body. So the
    greys are tuned to ~1.8:1 against OUR body: #434343 → 1.79:1 on #111827,
    #aeaeae → 1.79:1 on #e5e7eb (tc39 is ~1.5:1 for reference). See
-   docs/lume_poc_tc39_deviations.md §2. Hover blue (#239dee/#80cafb) is
+   docs/tc39-deviations.md §2. Hover blue (#239dee/#80cafb) is
    unchanged and matches tc39. */
 .ecma-spec emu-nt a,
 .ecma-spec emu-nt a:visited {

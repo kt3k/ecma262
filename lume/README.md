@@ -3,7 +3,7 @@
 The [Lume](https://lume.land/) site that renders the ECMA-262 spec. It replaces
 the former Nextra app and ships every edition (draft + ES2026…ES5.1) at
 `/ecma262/<id>/`; one build is edition-parametrized via `EDITION` + `BASE_PATH`
-(see `docs/lume_multiversion_todo.md`).
+(see `docs/lume_migration_history.md` for the background).
 
 Each chapter is produced by the shared `build-chapters.mjs` conversion: one
 `<Sec>` component (`lib/<slug>.jsx`) + one Lume page (`<slug>.mdx`) per chapter.
@@ -55,5 +55,5 @@ and version switcher list editions via `src/scripts/editions.mjs`.
 ## Deviations from tc39.es
 
 Intentional typography/colour differences are logged in
-`docs/lume_poc_tc39_deviations.md`; the structural DOM matches ecmarkup's output
+`docs/tc39-deviations.md`; the structural DOM matches ecmarkup's output
 (verified against tc39's multipage build).

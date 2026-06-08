@@ -4,12 +4,14 @@ ECMA-262 Restyled のレンダリングを **Next.js + Nextra から
 [Lume](https://lume.land/)
 (Deno)へ移行**した経緯と、移行後のアーキテクチャの記録(2026-06-03〜2026-06-06)。
 
-関連: 設計判断は [`lume_migration.md`](lume_migration.md)(旧インベントリ)、
-段階計画は [`lume_multiversion_todo.md`](lume_multiversion_todo.md)(完了)、 tc39
-との意図的な差異は
-[`lume_poc_tc39_deviations.md`](lume_poc_tc39_deviations.md)。
+関連: tc39 との意図的な差異は [`tc39-deviations.md`](tc39-deviations.md)。
 
-## 現状(移行後アーキテクチャ)
+> 注: 本ドキュメントは **移行完了時点(2026-06-06)のスナップショット**。以降の
+> 変更(`packages/shared` → `src/` 移動、`draft-nextra` → ベンダリング
+> `nextra-poc`、ES2015〜ES5.1 の追加、`/pipeline` 撤去など)は反映していない。
+> 現行構成はコードを参照。
+
+## 移行完了時点のアーキテクチャ(2026-06-06)
 
 - 全エディション(draft / es2026 / es2025 / es2024)を **Lume が単一プロジェクト
   `lume/` から版パラメータ化してビルド**。

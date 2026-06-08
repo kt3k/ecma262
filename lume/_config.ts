@@ -5,7 +5,7 @@ import jsx from "lume/plugins/jsx.ts";
 // Minimal Lume PoC for the notational-conventions page.
 // Goal: prove that Lume + MDX + Preact JSX can render the same DOM that
 // Next.js + Nextra currently does, without the Nextra typography utility
-// classes fighting our CSS. See docs/lume_migration.md for the broader plan.
+// classes fighting our CSS. See docs/lume_migration_history.md for the background.
 const site = lume({
   src: ".",
   dest: "_site",
