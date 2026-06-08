@@ -6,9 +6,7 @@ settings:
 
 importers:
 
-  .: {}
-
-  packages/shared:
+  .:
     dependencies:
       highlight.js:
         specifier: ^11.11.1

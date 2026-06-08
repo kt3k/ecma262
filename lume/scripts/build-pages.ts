@@ -28,8 +28,8 @@ const scratch = await Deno.makeTempDir({ prefix: "lume-pages-" });
 // docs/es5.1-plan.md. Other editions use the standard generator.
 const isRendered = edition === "es5.1";
 const buildChapters = isRendered
-  ? `${repoRoot}packages/shared/scripts/build-chapters-es51.mjs`
-  : `${repoRoot}packages/shared/scripts/build-chapters.mjs`;
+  ? `${repoRoot}src/scripts/build-chapters-es51.mjs`
+  : `${repoRoot}src/scripts/build-chapters.mjs`;
 
 console.log(`• building edition "${edition}" (base "${basePath || "/"}")`);
 const run = new Deno.Command("node", {

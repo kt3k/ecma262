@@ -15,14 +15,14 @@ import process from "node:process";
 import { execFileSync } from "node:child_process";
 import { readEditions } from "./editions.mjs";
 
-const root = path.resolve(import.meta.dirname, "../../..");
+const root = path.resolve(import.meta.dirname, "../..");
 const distDir = path.join(root, "dist");
 const lumeDir = path.join(root, "lume");
 
 const editions = readEditions(root);
 
 if (editions.length === 0) {
-  console.error("[assemble-dist] no editions in packages/shared/editions.json");
+  console.error("[assemble-dist] no editions in src/editions.json");
   process.exit(1);
 }
 

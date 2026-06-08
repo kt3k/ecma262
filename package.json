@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "assemble": "node packages/shared/scripts/assemble-dist.mjs",
+    "assemble": "node src/scripts/assemble-dist.mjs",
     "build": "pnpm assemble"
+  },
+  "dependencies": {
+    "highlight.js": "^11.11.1"
   }
 }
