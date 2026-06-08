@@ -31,7 +31,7 @@ jobs:
         # BASE_PATH=/ecma262/<id>) into dist/<id>/, copies the vendored Nextra
         # comparison export (nextra-poc/) into dist/nextra-poc/, and writes the
         # landing page.
-        run: deno run -A src/assemble-dist.mjs
+        run: deno task build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:

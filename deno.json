@@ -1,7 +1,9 @@
 {
+  "tasks": {
+    "build": "deno run -A src/assemble-dist.mjs"
+  },
   "fmt": {
     "exclude": [
-      "node_modules",
       "dist",
       "ecma262",
       "nextra-poc",

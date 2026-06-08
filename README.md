@@ -30,7 +30,7 @@ over every edition and folds the results into `dist/` for GitHub Pages.
 EDITION=es2024 BASE_PATH= deno task pages && deno task build
 
 # the full combined site
-deno run -A src/assemble-dist.mjs   # → dist/
+deno task build      # → dist/
 ```
 
 ## Directory structure
@@ -60,8 +60,8 @@ deno run -A src/assemble-dist.mjs   # → dist/
 ├── nextra-poc/                  # vendored Nextra comparison build (served at /nextra-poc/)
 ├── docs/                        # design & reference docs
 │
-├── .github/workflows/deploy.yml # CI: setup-deno → assemble-dist.mjs → GitHub Pages
-├── deno.json                    # deno fmt config (the only toolchain — no Node/pnpm)
+├── .github/workflows/deploy.yml # CI: setup-deno → deno task build → GitHub Pages
+├── deno.json                    # deno tasks (build) + fmt config — the only toolchain
 └── AGENTS.md (CLAUDE.md →)       # project instructions
 ```
 
