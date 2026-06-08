@@ -1,6 +1,6 @@
 import editions from "./editions.ts";
 
-// Page footer — three columns side-by-side: About / Pipeline / copyright
+// Page footer — three columns side-by-side: About / copyright
 // (left), then the full edition list split across two columns (newest half
 // then older half) so the long list doesn't run as one tall column. Matches
 // what
@@ -34,7 +34,6 @@ export default function Footer() {
         <div class="footer-cols">
           <div class="footer-col">
             <a href={`${deployBase}/about/`}>About</a>
-            <a href={`${deployBase}/pipeline/`}>How it's built</a>
             <span class="copyright">
               {new Date().getFullYear()} ©{" "}
               <a
