@@ -13,5 +13,6 @@
   { "id": "es2016", "title": "ECMA-262, 7th, ES2016" },
   { "id": "es2015", "title": "ECMA-262, 6th, ES2015" },
   { "id": "es5.1", "title": "ECMA-262, 5.1 Edition, June 2011" },
-  { "id": "es3", "title": "ECMA-262, 3rd Edition, December 1999" }
+  { "id": "es3", "title": "ECMA-262, 3rd Edition, December 1999" },
+  { "id": "es2", "title": "ECMA-262, 2nd Edition, August 1998" }
 ]

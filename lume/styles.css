@@ -2494,3 +2494,69 @@ html.dark .ecma-es3 table tbody tr:nth-child(even) {
   height: auto;
   margin: 1em auto;
 }
+
+/* === ES2 (Marker re-skin) ================================================
+   ES2 has no HTML source — it's reconstructed from the PDF with Marker, with
+   grammar productions borrowed from ES3 (so it reuses the global dl.grammar /
+   .gsee styling above). Its own additions: the provenance note, bare content
+   tables (scoped like ES3), algorithm <ol>s, kept Marker "one of" labels, and
+   the flag for grammar productions that couldn't be sourced from ES3. */
+.ecma-spec .es2-source-note {
+  margin: 0 0 1.5em;
+  padding: 0.6em 1em;
+  border: 1px solid var(--rule);
+  border-radius: var(--ecma-panel-radius);
+  color: var(--muted);
+  font-size: 0.9em;
+}
+.ecma-spec .es2-source-note a {
+  color: inherit;
+  text-decoration: underline;
+}
+/* Bare <table> content tables — same bordered, theme-aware look as ES3. */
+.ecma-es2 table {
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+.ecma-es2 table th,
+.ecma-es2 table td {
+  border: 1px solid var(--rule);
+  padding: 0.5rem 1rem;
+  vertical-align: baseline;
+  text-align: left;
+}
+.ecma-es2 table th {
+  font-weight: 600;
+}
+.ecma-es2 table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.025);
+}
+html.dark .ecma-es2 table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.035);
+}
+.ecma-es2 img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1em auto;
+}
+/* Algorithm steps: Marker emits them as numbered list items; rendered as <ol>. */
+.ecma-es2 ol.ecma-alg {
+  margin: 1em 0 1em 3ex;
+  padding-left: 2ex;
+}
+.ecma-es2 ol.ecma-alg > li {
+  margin: 0.15em 0;
+}
+/* The "Nonterminal :: one of" label kept from Marker, above its terminal table. */
+.ecma-es2 .grammar-oneof {
+  margin: 1em 0 0.25em 5ex;
+  font-style: italic;
+}
+/* Grammar productions that genuinely diverged from ES3 (ch.7 lexical) and were
+   kept from Marker's flattened output — flag faintly so they're easy to find
+   and hand-correct. */
+.ecma-spec dl.grammar.es2-grammar-unmapped > dt {
+  border-left: 2px solid var(--rule);
+  padding-left: 0.6ex;
+}

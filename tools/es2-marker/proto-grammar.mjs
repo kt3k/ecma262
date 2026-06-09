@@ -27,7 +27,7 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ES3 = path.join(here, "../../ecma262/es3/spec.html");
-const ES2 = path.join(here, "out/ECMA-262-2nd/ECMA-262-2nd.html");
+const ES2 = path.join(here, "../../ecma262/es2/spec.html"); // vendored Marker HTML
 
 const es3src = fs.readFileSync(ES3, "utf8");
 const es2src = fs.readFileSync(ES2, "utf8");
