@@ -134,6 +134,74 @@ const ES2_GRAMMAR_OVERRIDE = {
     `<dl class="grammar"><dt><i>StrDecimalLiteral</i> <b>:::</b></dt>\n      <dd><b><tt>Infinity</tt></b>\n      <br /><i>DecimalDigits</i> <b><tt>.</tt></b> <i>DecimalDigits<sub>opt</sub> ExponentPart<sub>opt</sub></i>\n      <br /><b><tt>.</tt></b> <i>DecimalDigits ExponentPart<sub>opt</sub></i>\n      <br /><i>DecimalDigits ExponentPart<sub>opt</sub></i></dd>\n    </dl>`,
 };
 
+// Whole-section overrides for prose Marker mangled beyond mechanical repair.
+// Marker drops the PDF's symbol-font glyphs entirely — minus (−), times (×),
+// infinity (∞), π, ≥, ≠ — AND the superscripts around them, so e.g. §8.5's
+// "2^64 − 2^53 + 3" arrived as "2^64 253+3". §8.5 (the Number type) is the
+// densest, most prominent such section, so its body is hand-authored here from
+// the vendored PDF's text layer. Other math-heavy sections (9.x, 11.5/6, 15.8/9)
+// keep Marker's text with symbols still missing — a known residue.
+const sup = (n) => `2<sup>${n}</sup>`;
+const ES2_SECTION_OVERRIDE = {
+  "sec-8.5": [
+    `<p>The Number type has exactly 18437736874454810627 (that is, ${
+      sup(64)
+    } − ${
+      sup(53)
+    } + 3) values, representing the double-precision 64-bit format IEEE 754 values as specified in the IEEE Standard for Binary Floating-Point Arithmetic, except that the 9007199254740990 (that is, ${
+      sup(53)
+    } − 2) distinct "Not-a-Number" values of the IEEE Standard are represented in ECMAScript as a single special <b>NaN</b> value. (Note that the <b>NaN</b> value is produced by the program expression <b>NaN</b>, assuming that the globally defined variable <b>NaN</b> has not been altered by program execution.) In some implementations, external code might be able to detect a difference between various Not-a-Number values, but such behaviour is implementation-dependent; to ECMAScript code, all <b>NaN</b> values are indistinguishable from each other.</p>`,
+    `<p>There are two other special values, called <b>positive Infinity</b> and <b>negative Infinity</b>. For brevity, these values are also referred to for expository purposes by the symbols +∞ and −∞, respectively. (Note that these two infinite number values are produced by the program expressions <b>+Infinity</b> (or simply <b>Infinity</b>) and <b>-Infinity</b>, assuming that the globally defined variable <b>Infinity</b> has not been altered by program execution.)</p>`,
+    `<p>The other 18437736874454810624 (that is, ${sup(64)} − ${
+      sup(53)
+    }) values are called the finite numbers. Half of these are positive numbers and half are negative numbers; for every finite positive number there is a corresponding negative number having the same magnitude.</p>`,
+    `<p>Note that there is both a positive zero and a negative zero. For brevity, these values are also referred to for expository purposes by the symbols +0 and −0, respectively. (Note that these two zero number values are produced by the program expressions <b>+0</b> (or simply <b>0</b>) and <b>-0</b>.)</p>`,
+    `<p>The 18437736874454810622 (that is, ${sup(64)} − ${
+      sup(53)
+    } − 2) finite nonzero values are of two kinds:</p>`,
+    `<p>18428729675200069632 (that is, ${sup(64)} − ${
+      sup(54)
+    }) of them are <i>normalised</i>, having the form</p>`,
+    `<p style="text-align:center"><i>s</i> × <i>m</i> × 2<sup><i>e</i></sup></p>`,
+    `<p>where <i>s</i> is +1 or −1, <i>m</i> is a positive integer less than ${
+      sup(53)
+    } but not less than ${
+      sup(52)
+    }, and <i>e</i> is an integer ranging from −1074 to 971, inclusive.</p>`,
+    `<p>The remaining 9007199254740990 (that is, ${
+      sup(53)
+    } − 2) values are <i>denormalised</i>, having the form</p>`,
+    `<p style="text-align:center"><i>s</i> × <i>m</i> × 2<sup><i>e</i></sup></p>`,
+    `<p>where <i>s</i> is +1 or −1, <i>m</i> is a positive integer less than ${
+      sup(52)
+    }, and <i>e</i> is −1074.</p>`,
+    `<p>Note that all the positive and negative integers whose magnitude is no greater than ${
+      sup(53)
+    } are representable in the Number type (indeed, the integer 0 has two representations, <b>+0</b> and <b>-0</b>).</p>`,
+    `<p>A finite number has an <i>odd significand</i> if it is nonzero and the integer <i>m</i> used to express it (in one of the two forms shown above) is odd. Otherwise, it has an <i>even significand</i>.</p>`,
+    `<p>In this specification, the phrase "the number value for <i>x</i>" where <i>x</i> represents an exact nonzero real mathematical quantity (which might even be an irrational number such as π) means a number value chosen in the following manner. Consider the set of all finite values of the Number type, with −0 removed and with two additional values added to it that are not representable in the Number type, namely ${
+      sup(1024)
+    } (which is +1 × ${sup(53)} × ${sup(971)}) and −${
+      sup(1024)
+    } (which is −1 × ${sup(53)} × ${
+      sup(971)
+    }). Choose the member of this set that is closest in value to <i>x</i>. If two values of the set are equally close, then the one with an even significand is chosen; for this purpose, the two extra values ${
+      sup(1024)
+    } and −${sup(1024)} are considered to have even significands. Finally, if ${
+      sup(1024)
+    } was chosen, replace it with +∞; if −${
+      sup(1024)
+    } was chosen, replace it with −∞; if +0 was chosen, replace it with −0 if and only if <i>x</i> is less than zero; any other chosen value is used unchanged. The result is the number value for <i>x</i>. (This procedure corresponds exactly to the behaviour of the IEEE 754 "round to nearest" mode.)</p>`,
+    `<p>Some ECMAScript operators deal only with integers in the range −${
+      sup(31)
+    } through ${sup(31)} − 1, inclusive, or in the range 0 through ${
+      sup(32)
+    } − 1, inclusive. These operators accept any value of the Number type but first convert each such value to one of ${
+      sup(32)
+    } integer values. See the descriptions of the ToInt32 and ToUint32 operators in sections 9.5 and 9.6, respectively.</p>`,
+  ].join("\n"),
+};
+
 // ES2 spelling (American) vs bclary es3 (British): normalise borrowed markup.
 const normSpell = (html) => html.replace(/Initialiser/g, "Initializer");
 const es3Name = (es2Name) => es2Name.replace(/Initializer/g, "Initialiser");
@@ -502,7 +570,7 @@ for (const chapter of pages) {
   const slug = chapter.slug;
   const secMap = {};
   (function collect(n) {
-    secMap[n.id] = processBody(n.body);
+    secMap[n.id] = ES2_SECTION_OVERRIDE[n.id] ?? processBody(n.body);
     n.children.forEach(collect);
   })(chapter);
 
