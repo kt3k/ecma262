@@ -218,11 +218,20 @@ nonterminal rather than silently emit es3's diverged form. On ch.12 the swap is
   annexes) + index; grammar swap over every `Syntax` block; `sec-<num>` anchors;
   "see/section N.N" xrefs; build-pages.ts es2 branch; `ecma-es2` CSS; registered
   in `editions.json`. Verified `deno task pages`+`build` → 17 pages.
-- **P2 / P4** — remaining cleanup: `InputElement` (ch.7 lexical, no es3
-  equivalent) is flagged `es2-grammar-unmapped` and kept from Marker's flattened
-  text — hand-author it; restore dropped `−`/`×` math symbols; OCR typo sweep
-  ("functionlocal", "Non-a-Number", doubled punctuation); eyeball
-  grammar/tables.
+- **P2** ✅ — grammar-correctness pass. An audit ("does any emitted production
+  reference a nonterminal ES2 lacks?") caught productions ES3 _changed_ (not
+  just added) that were silently mis-swapped, now fixed via
+  `ES2_GRAMMAR_OVERRIDE` + `ES3_ONLY` additions: `PrimaryExpression` (no
+  Array/Object literals), `IdentifierName`/`IdentifierLetter`/`InputElement`
+  (ES2 identifier grammar), `FunctionDeclaration` (`Block`, not
+  `{ FunctionBody }`), `StrNumericLiteral`/ `StrDecimalLiteral` (§9.3.1). "one
+  of" lists Marker promoted to headings (then stripped) are recovered from es3
+  for the digit/operator/escape families (keyword family stays Marker). 4 OCR
+  fixes. Re-audit clean; no unmapped NTs.
+- **P4 (residue)** — math symbols (`−`, `×`) dropped by Marker in _prose_
+  (Number type formula, Math, operator sections) still need the PDF to restore
+  reliably; minor `<USP>` in WhiteSpace borrowed from es3. Eyeball pass + symbol
+  restore when worthwhile.
 
 ## Open questions / risks
 
