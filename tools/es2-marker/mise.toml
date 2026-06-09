@@ -1,7 +1,9 @@
-# Reproducible toolchain for the offline ES2 PDF → Marker conversion.
+# Reproducible toolchain for the offline ES1/ES2 PDF → Marker conversion.
 # mise bootstraps uv; uv (see pyproject.toml / uv.lock) manages Python + Marker.
 # This config is scoped to tools/es2-marker/ — it does not touch the repo's
 # Deno build. Nothing here runs in CI; only the *vendored output* is used.
+# The `convert*` tasks target ES2; the `convert:es1*` tasks target ES1 (the
+# edition ES2 editorially reissued). Output lands in out/<pdf-name>/.
 
 [tools]
 uv = "latest" # pin to a fixed version once chosen, e.g. "0.5.x"
@@ -30,6 +32,33 @@ description = "Convert with --use_llm via OpenAI (sharper tables/grammar/math; n
 # OPENAI_MODEL (default gpt-4o; must support Structured Outputs).
 run = """
 uv run marker_single ../../ecma262/es2/ECMA-262-2nd.pdf \
+  --output_format html --output_dir out \
+  --use_llm \
+  --llm_service marker.services.openai.OpenAIService \
+  --openai_model "${OPENAI_MODEL:-gpt-4o}" \
+  --openai_api_key "$OPENAI_API_KEY" \
+  --openai_image_format png
+"""
+
+[tasks."convert:es1"]
+description = "Convert the vendored ES1 PDF → HTML (downloads ML models on first run)"
+run = """
+uv run marker_single ../../ecma262/es1/ECMA-262-1st.pdf \
+  --output_format html --output_dir out
+"""
+
+[tasks."convert:es1:json"]
+description = "ES1, but Marker's structured JSON (section_hierarchy + typed blocks)"
+run = """
+uv run marker_single ../../ecma262/es1/ECMA-262-1st.pdf \
+  --output_format json --output_dir out
+"""
+
+[tasks."convert:es1:openai"]
+description = "ES1 with --use_llm via OpenAI (sharper tables/grammar/math; needs OPENAI_API_KEY)"
+# Set OPENAI_API_KEY first; override the model with OPENAI_MODEL (default gpt-4o).
+run = """
+uv run marker_single ../../ecma262/es1/ECMA-262-1st.pdf \
   --output_format html --output_dir out \
   --use_llm \
   --llm_service marker.services.openai.OpenAIService \
