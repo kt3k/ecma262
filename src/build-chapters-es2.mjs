@@ -84,6 +84,7 @@ const ES3_ONLY = new Set([
   "BackslashSequence",
   "NonTerminator",
   "FunctionExpression",
+  "FunctionBody", // ES2 function bodies are a Block, not { FunctionBody }
   "SwitchStatement",
   "CaseBlock",
   "CaseClauses",
@@ -94,7 +95,44 @@ const ES3_ONLY = new Set([
   "Catch",
   "Finally",
   "LabelledStatement",
+  // Array / object literals (initialisers) were added in ES3.
+  "ArrayLiteral",
+  "ElementList",
+  "Elision",
+  "ObjectLiteral",
+  "PropertyNameAndValueList",
+  "PropertyName",
+  // §9.3.1: ES3 factored out an unsigned production; ES2 keeps the sign in
+  // StrNumericLiteral (see the StrNumericLiteral/StrDecimalLiteral overrides).
+  "StrUnsignedDecimalLiteral",
 ]);
+
+// Productions ES3 *changed* from ES2 (not merely added) — borrowing es3's would
+// be wrong, so hand-author the ES2 form. Keyed by nonterminal; checked before
+// both the es3 swap and Marker's (often mangled) version. Markup matches es3's
+// convention: <i> nonterminals, <b><tt> terminals, <sub>opt</sub> subscripts.
+const ES2_GRAMMAR_OVERRIDE = {
+  // §7 — Marker drops the alternatives into prose; es3 has no InputElement
+  // (it split into InputElementDiv/RegExp for the regexp/division ambiguity).
+  InputElement:
+    `<dl class="grammar"><dt><i>InputElement</i> <b>::</b></dt>\n      <dd><i>WhiteSpace</i>\n      <br /><i>LineTerminator</i>\n      <br /><i>Comment</i>\n      <br /><i>Token</i></dd>\n    </dl>`,
+  // §7.5 — ES3 rebuilt identifiers on Unicode (IdentifierStart/Part); ES2 uses
+  // the simpler IdentifierLetter form.
+  IdentifierName:
+    `<dl class="grammar"><dt><i>IdentifierName</i> <b>::</b></dt>\n      <dd><i>IdentifierLetter</i>\n      <br /><i>IdentifierName IdentifierLetter</i>\n      <br /><i>IdentifierName DecimalDigit</i></dd>\n    </dl>`,
+  IdentifierLetter:
+    `<dl class="grammar"><dt><i>IdentifierLetter</i> <b>:: one of</b></dt>\n      <dd><b><tt>a b c d e f g h i j k l m n o p q r s t u v w x y z</tt></b>\n      <br /><b><tt>A B C D E F G H I J K L M N O P Q R S T U V W X Y Z _ $</tt></b></dd>\n    </dl>`,
+  // §13 — ES2 function bodies are a Block; ES3 introduced { FunctionBody }.
+  FunctionDeclaration:
+    `<dl class="grammar"><dt><i>FunctionDeclaration</i> <b>:</b></dt>\n      <dd><b><tt>function</tt></b> <i>Identifier</i> <b><tt>(</tt></b> <i>FormalParameterList<sub>opt</sub></i> <b><tt>)</tt></b> <i>Block</i></dd>\n    </dl>`,
+  // §9.3.1 — ES2 puts the sign here (ES3 moved it to StrDecimalLiteral, over an
+  // unsigned production ES2 lacks). The "−" alternative is also one Marker drops.
+  StrNumericLiteral:
+    `<dl class="grammar"><dt><i>StrNumericLiteral</i> <b>:::</b></dt>\n      <dd><i>StrDecimalLiteral</i>\n      <br /><b><tt>+</tt></b> <i>StrDecimalLiteral</i>\n      <br /><b><tt>-</tt></b> <i>StrDecimalLiteral</i>\n      <br /><i>HexIntegerLiteral</i></dd>\n    </dl>`,
+  // §9.3.1 — the unsigned decimal forms (ES3's StrUnsignedDecimalLiteral).
+  StrDecimalLiteral:
+    `<dl class="grammar"><dt><i>StrDecimalLiteral</i> <b>:::</b></dt>\n      <dd><b><tt>Infinity</tt></b>\n      <br /><i>DecimalDigits</i> <b><tt>.</tt></b> <i>DecimalDigits<sub>opt</sub> ExponentPart<sub>opt</sub></i>\n      <br /><b><tt>.</tt></b> <i>DecimalDigits ExponentPart<sub>opt</sub></i>\n      <br /><i>DecimalDigits ExponentPart<sub>opt</sub></i></dd>\n    </dl>`,
+};
 
 // ES2 spelling (American) vs bclary es3 (British): normalise borrowed markup.
 const normSpell = (html) => html.replace(/Initialiser/g, "Initializer");
@@ -190,11 +228,29 @@ const rebuildSyntax = (regionHtml) => {
       if (!isGrammarish(b)) out.push(b);
       continue;
     }
+    // Hand-authored ES2 form wins over both es3 and Marker (productions ES3
+    // changed, or that Marker mangled). Consume Marker's version that follows.
+    if (ES2_GRAMMAR_OVERRIDE[decl.name]) {
+      out.push(ES2_GRAMMAR_OVERRIDE[decl.name]);
+      while (
+        i + 1 < blocks.length && !declOf(blocks[i + 1]) &&
+        (isGrammarish(blocks[i + 1]) || blockTag(blocks[i + 1]) === "table")
+      ) i++;
+      continue;
+    }
     if (decl.oneOf) {
-      // ES2-correct terminal list from Marker: keep decl + following table(s).
-      out.push(`<p class="grammar-oneof">${plain(b)}</p>`);
-      while (i + 1 < blocks.length && blockTag(blocks[i + 1]) === "table") {
-        out.push(blocks[++i]);
+      // "one of" terminal list. The keyword family (Keyword, Punctuator, …)
+      // differs from ES3, so keep Marker's table. Others (digits, operators,
+      // escapes) are identical to ES3, so if Marker lost the table — its
+      // terminals were promoted to a heading and stripped — fall back to es3.
+      const table = blockTag(blocks[i + 1]) === "table" ? blocks[i + 1] : null;
+      const es3Only = /^(Keyword|FutureReservedWord|Punctuator|DivPunctuator)$/
+        .test(decl.name);
+      if (!table && !es3Only && renderEs2Dl(decl.name)) {
+        out.push(renderEs2Dl(decl.name));
+      } else {
+        out.push(`<p class="grammar-oneof">${plain(b)}</p>`);
+        if (table) out.push(blocks[++i]);
       }
       continue;
     }
@@ -273,6 +329,18 @@ const algoLists = (html) =>
   );
 // Drop Marker's block-type bookkeeping attributes (cosmetic).
 const dropBlockType = (html) => html.replace(/\s*block-type="[^"]*"/g, "");
+
+// Specific OCR fixes from Marker (each verified unique in the source). Dropped
+// math symbols (−, ×) in prose are NOT auto-fixed — restoring them reliably
+// needs the PDF — and remain a known residue.
+const OCR_FIXES = [
+  [/\b2n d Edition\b/g, "2nd Edition"],
+  [/\bfunctionlocal\b/g, "function-local"],
+  [/\bdoubleprecision\b/g, "double-precision"],
+  [/\bNon-a-Number\b/g, "Not-a-Number"],
+];
+const ocrFixes = (html) =>
+  OCR_FIXES.reduce((s, [re, to]) => s.replace(re, to), html);
 
 // ===========================================================================
 // Parse sections  (dotted-number headings only)
@@ -415,7 +483,7 @@ for (const c of pages) {
 
 // Full per-section transform: grammar swap → algorithms → cleanup → re-skin.
 const processBody = (body) =>
-  reskin(dropBlockType(algoLists(swapGrammar(body))));
+  ocrFixes(reskin(dropBlockType(algoLists(swapGrammar(body)))));
 
 // ===========================================================================
 // Emit the scratch contract
