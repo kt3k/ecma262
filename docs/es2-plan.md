@@ -228,10 +228,18 @@ nonterminal rather than silently emit es3's diverged form. On ch.12 the swap is
   of" lists Marker promoted to headings (then stripped) are recovered from es3
   for the digit/operator/escape families (keyword family stays Marker). 4 OCR
   fixes. Re-audit clean; no unmapped NTs.
-- **P4 (residue)** — math symbols (`−`, `×`) dropped by Marker in _prose_
-  (Number type formula, Math, operator sections) still need the PDF to restore
-  reliably; minor `<USP>` in WhiteSpace borrowed from es3. Eyeball pass + symbol
-  restore when worthwhile.
+- **P4** ◐ — math-symbol restore. Marker drops the PDF's symbol-font glyphs (`−`
+  `×` `∞` `π` `≥` `≠`) _and_ the superscripts around them, so formula prose lost
+  both. The PDF text layer encodes them as control codes (`\x01`=™ `\x02`=-
+  `\x03`=≥ `\x04`=− `\x05`=× `\x06`=∞ `\x07`=π `\x08`=≠), extractable with the
+  Marker venv's `pypdfium2`. **§8.5 (the Number type)** — the densest,
+  gate-cited section — is fully restored via a hand-authored
+  `ES2_SECTION_OVERRIDE` from that text. _Residue:_ math symbols in the other
+  dense sections (9.x ToNumber/ ToInteger, 11.5/6 operators, 15.8 Math, 15.9
+  Date — mostly inside algorithm `<ol>`s) are still dropped; the code map +
+  vendored PDF make a later pass mechanical. Also minor: `<USP>` in WhiteSpace
+  borrowed from es3, the §4.2.1 prototype-chain figure (`_page_14_Figure_5`)
+  confirmed correct.
 
 ## Open questions / risks
 
