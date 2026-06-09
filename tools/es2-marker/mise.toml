@@ -23,3 +23,17 @@ run = """
 uv run marker_single ../../ecma262/es2/ECMA-262-2nd.pdf \
   --output_format json --output_dir out
 """
+
+[tasks."convert:openai"]
+description = "Convert with --use_llm via OpenAI (sharper tables/grammar/math; needs OPENAI_API_KEY)"
+# Set OPENAI_API_KEY in the environment first. Override the model with
+# OPENAI_MODEL (default gpt-4o; must support Structured Outputs).
+run = """
+uv run marker_single ../../ecma262/es2/ECMA-262-2nd.pdf \
+  --output_format html --output_dir out \
+  --use_llm \
+  --llm_service marker.services.openai.OpenAIService \
+  --openai_model "${OPENAI_MODEL:-gpt-4o}" \
+  --openai_api_key "$OPENAI_API_KEY" \
+  --openai_image_format png
+"""
