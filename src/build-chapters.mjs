@@ -34,6 +34,27 @@ let src = fs.readFileSync(SPEC_FILE, "utf8");
 // Bake the deploy basePath in, the same way xref hrefs do (see pathFor).
 src = src.replace(/\b(src|data)="img\//g, `$1="${BASE_PATH}/img/`);
 
+// The early ecmarkup editions (ES2015/ES2016) carry hand-authored inline table
+// styling — per-cell black borders and grey header backgrounds (#A6A6A6 /
+// #BFBFBF) — that breaks in dark mode and looks unlike every later edition's
+// emu-table grid. Scoped to table cells: drop the inline borders (so emu-table
+// CSS draws a consistent grid) and make the grey shades theme-aware. A no-op
+// for ES2017+ and the draft, whose tables carry no inline styles.
+src = src.replace(
+  /<(th|td|tr|table|col|thead|tbody)\b([^>]*?)\sstyle="([^"]*)"([^>]*)>/gi,
+  (_full, tag, pre, css, post) => {
+    const fixed = css
+      .replace(/border[a-z-]*\s*:\s*[^;"]*;?/gi, "")
+      .replace(/#a6a6a6\b/gi, "rgba(128, 128, 128, 0.28)")
+      .replace(/#bfbfbf\b/gi, "rgba(128, 128, 128, 0.16)")
+      .replace(/\b(?:black|#000000)\b/gi, "currentColor")
+      .replace(/\s*;\s*/g, "; ").replace(/^[;\s]+|[;\s]+$/g, "").trim();
+    return fixed
+      ? `<${tag}${pre} style="${fixed}"${post}>`
+      : `<${tag}${pre}${post}>`;
+  },
+);
+
 // Find top-level chapters: <emu-intro>, <emu-clause>, <emu-annex> opening on
 // their own line. Modern (es2016+) specs put these at column 0; the ES2015
 // ecmarkup import indents the whole spec under <html><body>, so its top-level
