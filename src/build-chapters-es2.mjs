@@ -655,10 +655,15 @@ const rewriteXrefs = (html) =>
       return slug ? `${lead}<a href="${pathFor(slug)}#${id}">${num}</a>` : full;
     },
   );
+// Marker names extracted figures `_page_N_Figure_*` — but Lume excludes any
+// path segment starting with "_" (its `_includes`/`_data` convention), so such
+// files never reach _site and render broken. Strip the leading underscore(s) so
+// they publish; the copy step below renames the files to match.
+const imgName = (file) => file.replace(/^_+/, "");
 const imgPaths = (html) =>
   html.replace(
     /\b(src|data)="([^"/]+\.(?:svg|png|jpe?g|gif))"/gi,
-    (_m, attr, file) => `${attr}="${BASE_PATH}/img/${file}"`,
+    (_m, attr, file) => `${attr}="${BASE_PATH}/img/${imgName(file)}"`,
   );
 const reskin = (html) => imgPaths(rewriteXrefs(html));
 
@@ -754,7 +759,11 @@ if (PUBLIC_IMG_DIR) {
   const imgSrc = path.join(path.dirname(INPUT), "img");
   if (fs.existsSync(imgSrc)) {
     for (const name of fs.readdirSync(imgSrc)) {
-      fs.copyFileSync(path.join(imgSrc, name), path.join(PUBLIC_IMG_DIR, name));
+      // Rename to match imgName() so Lume doesn't skip "_"-prefixed files.
+      fs.copyFileSync(
+        path.join(imgSrc, name),
+        path.join(PUBLIC_IMG_DIR, imgName(name)),
+      );
     }
   }
 }
