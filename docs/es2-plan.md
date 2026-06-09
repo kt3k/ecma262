@@ -236,11 +236,18 @@ nonterminal rather than silently emit es3's diverged form. On ch.12 the swap is
   — the body and NOTE fonts map differently, so text is read by meaning). **§8.5
   (the Number type)** and **§9.5–9.7 (ToInt32/ToUint32/ToUint16)** — the
   densest, gate-cited superscript+symbol sections — are fully restored via
-  hand-authored `ES2_SECTION_OVERRIDE`s. _Residue:_ math symbols in the
-  lower-density sections (§9.3.1, §11.5/6 operators, §15.8 Math, §15.9 Date) are
-  still dropped; the vendored PDF makes a later pass feasible. Also minor:
-  `<USP>` in WhiteSpace borrowed from es3; the §4.2.1 prototype-chain figure
-  (`_page_14_Figure_5`) confirmed correct.
+  hand-authored `ES2_SECTION_OVERRIDE`s. **§15.8 Math / §15.9 Date** — symbols
+  scattered across many sections — are restored automatically by
+  `tools/es2-marker/restore-symbols.py`: it locally aligns each section's Marker
+  and PDF significant-char streams and re-inserts the dropped glyphs, with a
+  post-run-match guard that skips (never corrupts) sections it can't align.
+  Output is vendored as `ecma262/es2/symbol-fixes.json`, applied by the ingester
+  before its pipeline (164 symbols / 15 sections, e.g. atan2's "−π to +π").
+  _Residue:_ sections the aligner couldn't verify (acos/asin/atan/exp/sqrt, most
+  Date methods) keep Marker's symbol-dropped text — uncorrupted. (§9.3.1,
+  §11.5/6 have no restorable glyphs — their operators are ASCII `*`/`-`.) Also
+  minor: `<USP>` in WhiteSpace borrowed from es3; the §4.2.1 prototype-chain
+  figure (`_page_14_Figure_5`) confirmed correct.
 
 ## Open questions / risks
 
