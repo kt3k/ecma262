@@ -232,14 +232,15 @@ nonterminal rather than silently emit es3's diverged form. On ch.12 the swap is
   `×` `∞` `π` `≥` `≠`) _and_ the superscripts around them, so formula prose lost
   both. The PDF text layer encodes them as control codes (`\x01`=™ `\x02`=-
   `\x03`=≥ `\x04`=− `\x05`=× `\x06`=∞ `\x07`=π `\x08`=≠), extractable with the
-  Marker venv's `pypdfium2`. **§8.5 (the Number type)** — the densest,
-  gate-cited section — is fully restored via a hand-authored
-  `ES2_SECTION_OVERRIDE` from that text. _Residue:_ math symbols in the other
-  dense sections (9.x ToNumber/ ToInteger, 11.5/6 operators, 15.8 Math, 15.9
-  Date — mostly inside algorithm `<ol>`s) are still dropped; the code map +
-  vendored PDF make a later pass mechanical. Also minor: `<USP>` in WhiteSpace
-  borrowed from es3, the §4.2.1 prototype-chain figure (`_page_14_Figure_5`)
-  confirmed correct.
+  Marker venv's `pypdfium2` (but the codes are **per-font**, not document-global
+  — the body and NOTE fonts map differently, so text is read by meaning). **§8.5
+  (the Number type)** and **§9.5–9.7 (ToInt32/ToUint32/ToUint16)** — the
+  densest, gate-cited superscript+symbol sections — are fully restored via
+  hand-authored `ES2_SECTION_OVERRIDE`s. _Residue:_ math symbols in the
+  lower-density sections (§9.3.1, §11.5/6 operators, §15.8 Math, §15.9 Date) are
+  still dropped; the vendored PDF makes a later pass feasible. Also minor:
+  `<USP>` in WhiteSpace borrowed from es3; the §4.2.1 prototype-chain figure
+  (`_page_14_Figure_5`) confirmed correct.
 
 ## Open questions / risks
 
