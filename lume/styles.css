@@ -2365,12 +2365,34 @@ main[data-pagefind-body] :is(b, strong) {
   color: var(--opt-foreground-color);
 }
 
-/* Tables: the official HTML draws borders with inline styles (neutralised to
-   currentColor by the ingester); collapse them so adjacent cell borders don't
-   double up, and let the translucent cell shade read on either theme. */
+/* Tables: the official HTML's per-cell inline borders are stripped by the
+   ingester so .real-table (the captioned "Table N" data tables) can take the
+   same grid + padding + striping as emu-table — otherwise they'd look unlike
+   every other edition. .lightweight-table is a borderless layout grid (e.g. the
+   reserved-word list), so it keeps no borders, just spacing. */
 .ecma-spec table.real-table,
 .ecma-spec table.lightweight-table {
   border-collapse: collapse;
+  margin: 1em 0;
+}
+.ecma-spec table.real-table th,
+.ecma-spec table.real-table td {
+  border: 1px solid var(--rule);
+  padding: 0.5rem 1rem;
+  vertical-align: baseline;
+  text-align: left;
+}
+.ecma-spec table.real-table th {
+  font-weight: 600;
+}
+.ecma-spec table.real-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.025);
+}
+html.dark .ecma-spec table.real-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.035);
+}
+.ecma-spec table.lightweight-table td {
+  padding: 0.15em 1em 0.15em 0;
 }
 
 /* Notes: .nh is the "NOTE" label, .note its body — match the theme-aware

@@ -186,20 +186,24 @@ const rewriteXrefs = (html) =>
     return slug ? `href="${pathFor(slug)}#${id}"` : m;
   });
 
-// The official HTML hardcodes colours in inline style="…" attributes — black
-// table borders (#000000 / black) and a light-grey cell shade (#C0C0C0) — which
-// vanish or clash in dark mode. Neutralise them *only inside style attributes*
-// (never touching prose): black → currentColor (follows the theme text colour),
-// the grey shade → a translucent grey that reads on either background. High
-// inline specificity means CSS can't override these, so we rewrite at the source.
+// The official HTML hardcodes presentation in inline style="…" attributes:
+// partial cell borders (#000000) and a light-grey cell shade (#C0C0C0). We fix
+// these *only inside style attributes* (never touching prose):
+//   - drop the per-cell border declarations entirely — styles.css draws a
+//     consistent .real-table grid instead, matching emu-table (otherwise the
+//     official tables look unlike every other edition's);
+//   - the grey shade → a translucent grey that reads on either theme.
+// Empty style attributes left behind are removed.
 const themeColors = (html) =>
-  html.replace(/style="([^"]*)"/g, (_m, css) =>
-    `style="${
-      css
-        .replace(/#000000\b/gi, "currentColor")
-        .replace(/\bblack\b/gi, "currentColor")
-        .replace(/#c0c0c0\b/gi, "rgba(128, 128, 128, 0.25)")
-    }"`);
+  html.replace(/style="([^"]*)"/g, (_m, css) => {
+    const fixed = css
+      .replace(/border[a-z-]*\s*:\s*[^;"]*;?/gi, "")
+      .replace(/#c0c0c0\b/gi, "rgba(128, 128, 128, 0.25)")
+      .replace(/#000000\b/gi, "currentColor")
+      .replace(/\bblack\b/gi, "currentColor")
+      .replace(/\s*;\s*/g, "; ").replace(/^[;\s]+|[;\s]+$/g, "").trim();
+    return fixed ? `style="${fixed}"` : "";
+  });
 // Tag the optional-symbol subscript so CSS can colour it like the modern
 // emu-opt (the source renders it as a bare <sub>opt</sub>, indistinguishable
 // from numeric subscripts without a class).
