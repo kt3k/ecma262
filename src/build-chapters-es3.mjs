@@ -66,15 +66,24 @@ const dtRe =
 const raw = [];
 let m;
 while ((m = dtRe.exec(src)) !== null) {
-  raw.push({ id: m[1], anchor: m[2], rest: m[3], dtEnd: dtRe.lastIndex });
+  raw.push({
+    id: m[1],
+    anchor: m[2],
+    rest: m[3],
+    start: m.index,
+    dtEnd: dtRe.lastIndex,
+  });
 }
 if (raw.length === 0) throw new Error("no <dt> sections found");
 
 const sections = raw.map((s, i) => {
   const num = s.id.slice(2); // "a-9.3" -> "9.3"
-  // Body = slice from this </dt> to the next section <dt>, minus the <dd> shell.
-  const end = i + 1 < raw.length ? src.indexOf("<dt", s.dtEnd) : src.length;
-  const body = src.slice(s.dtEnd, end < 0 ? src.length : end)
+  // Body = slice from this </dt> to the START of the next *section* <dt> (not
+  // any <dt> — the body's own <dl class="grammar"> contains grammar <dt>s, so
+  // stopping at the first <dt> would truncate the Syntax block). Strip the
+  // wrapping <dd>…</dd>; inner grammar <dl>s are carried through.
+  const end = i + 1 < raw.length ? raw[i + 1].start : src.length;
+  const body = src.slice(s.dtEnd, end)
     .replace(/^\s*<dd>/i, "").replace(/<\/dd>\s*$/i, "").trim();
   const title = `${s.anchor}${s.rest}`
     .replace(new RegExp(`^\\s*${reEsc(num)}\\.?\\s*`), "")
