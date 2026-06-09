@@ -342,6 +342,13 @@ const OCR_FIXES = [
 const ocrFixes = (html) =>
   OCR_FIXES.reduce((s, [re, to]) => s.replace(re, to), html);
 
+// Marker extracts whole title/cover/back pages as "Picture" images
+// (`_page_N_Picture_*`, full-page aspect) — not spec figures. Drop them (and any
+// wrapping <p>). Real diagrams are `_page_N_Figure_*` and are kept.
+const dropCoverImages = (html) =>
+  html.replace(/<p>\s*<img[^>]*_Picture_[^>]*>\s*<\/p>/gi, "")
+    .replace(/<img[^>]*_Picture_[^>]*>/gi, "");
+
 // ===========================================================================
 // Parse sections  (dotted-number headings only)
 // ===========================================================================
@@ -483,7 +490,9 @@ for (const c of pages) {
 
 // Full per-section transform: grammar swap → algorithms → cleanup → re-skin.
 const processBody = (body) =>
-  ocrFixes(reskin(dropBlockType(algoLists(swapGrammar(body)))));
+  ocrFixes(
+    reskin(dropCoverImages(dropBlockType(algoLists(swapGrammar(body))))),
+  );
 
 // ===========================================================================
 // Emit the scratch contract
