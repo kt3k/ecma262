@@ -214,10 +214,15 @@ nonterminal rather than silently emit es3's diverged form. On ch.12 the swap is
 - **P0** ✅ — grammar-swap prototype (`tools/es2-marker/proto-grammar.mjs`) on
   ch.12: 15/15 nonterminals, transform rules validated, cleanup scoped (ch.7
   lexical residue + math symbols).
-- **P1** — full ingester (`build-chapters-es2.mjs`): all chapters + annexes;
-  grammar swap over every `Syntax` block; anchors + xref reconstruction;
-  register.
-- **P2 / P4** — styling, grammar/table cleanup, QA sweep of OCR artefacts.
+- **P1** ✅ — full ingester (`build-chapters-es2.mjs`): 16 chapters (ES2 has no
+  annexes) + index; grammar swap over every `Syntax` block; `sec-<num>` anchors;
+  "see/section N.N" xrefs; build-pages.ts es2 branch; `ecma-es2` CSS; registered
+  in `editions.json`. Verified `deno task pages`+`build` → 17 pages.
+- **P2 / P4** — remaining cleanup: `InputElement` (ch.7 lexical, no es3
+  equivalent) is flagged `es2-grammar-unmapped` and kept from Marker's flattened
+  text — hand-author it; restore dropped `−`/`×` math symbols; OCR typo sweep
+  ("functionlocal", "Non-a-Number", doubled punctuation); eyeball
+  grammar/tables.
 
 ## Open questions / risks
 
