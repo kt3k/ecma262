@@ -2548,6 +2548,14 @@ html.dark .ecma-es2 table tbody tr:nth-child(even) {
 .ecma-es2 ol.ecma-alg > li {
   margin: 0.15em 0;
 }
+/* NOTE callouts in hand-authored ES2 sections (e.g. §9.5–9.7). */
+.ecma-es2 .es2-note {
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  border-left: 3px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.95em;
+}
 /* The "Nonterminal :: one of" label kept from Marker, above its terminal table. */
 .ecma-es2 .grammar-oneof {
   margin: 1em 0 0.25em 5ex;

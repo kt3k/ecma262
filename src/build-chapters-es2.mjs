@@ -137,10 +137,12 @@ const ES2_GRAMMAR_OVERRIDE = {
 // Whole-section overrides for prose Marker mangled beyond mechanical repair.
 // Marker drops the PDF's symbol-font glyphs entirely — minus (−), times (×),
 // infinity (∞), π, ≥, ≠ — AND the superscripts around them, so e.g. §8.5's
-// "2^64 − 2^53 + 3" arrived as "2^64 253+3". §8.5 (the Number type) is the
-// densest, most prominent such section, so its body is hand-authored here from
-// the vendored PDF's text layer. Other math-heavy sections (9.x, 11.5/6, 15.8/9)
-// keep Marker's text with symbols still missing — a known residue.
+// "2^64 − 2^53 + 3" arrived as "2^64 253+3". The densest such sections — §8.5
+// (the Number type) and §9.5–9.7 (the integer-conversion operators) — are
+// hand-authored here from the vendored PDF's text layer (the symbol-font glyph
+// codes are per-font, so they were read by meaning, not a fixed map). The
+// remaining math-heavy sections (§9.3.1, §11.5/6, §15.8 Math, §15.9 Date) still
+// show Marker's symbol-dropped text — a known residue.
 const sup = (n) => `2<sup>${n}</sup>`;
 const ES2_SECTION_OVERRIDE = {
   "sec-8.5": [
@@ -199,6 +201,73 @@ const ES2_SECTION_OVERRIDE = {
     } − 1, inclusive. These operators accept any value of the Number type but first convert each such value to one of ${
       sup(32)
     } integer values. See the descriptions of the ToInt32 and ToUint32 operators in sections 9.5 and 9.6, respectively.</p>`,
+  ].join("\n"),
+  // §9.5–9.7 — the integer-conversion operators: superscript- and symbol-dense
+  // algorithm sections (2^32 / 2^31 / 2^16, −, +∞/−∞, −0). Marker dropped all of
+  // them. Restored from the PDF text layer (note: the symbol-font glyph codes
+  // differ between the body and the NOTE font, so these were read by meaning).
+  "sec-9.5": [
+    `<p>The operator ToInt32 converts its argument to one of ${
+      sup(32)
+    } integer values in the range −${sup(31)} through ${
+      sup(31)
+    } − 1, inclusive. This operator functions as follows:</p>`,
+    `<ol class="ecma-alg"><li>Call ToNumber on the input argument.</li>`,
+    `<li>If Result(1) is <b>NaN</b>, +0, −0, +∞, or −∞, return +0.</li>`,
+    `<li>Compute sign(Result(1)) × floor(abs(Result(1))).</li>`,
+    `<li>Compute Result(3) modulo ${
+      sup(32)
+    }; that is, a finite integer value <i>k</i> of Number type with positive sign and less than ${
+      sup(32)
+    } in magnitude such that the mathematical difference of Result(3) and <i>k</i> is mathematically an integer multiple of ${
+      sup(32)
+    }.</li>`,
+    `<li>If Result(4) is greater than or equal to ${
+      sup(31)
+    }, return Result(4) − ${sup(32)}, otherwise return Result(4).</li></ol>`,
+    `<p class="es2-note"><b>NOTE</b> Given the above definition of ToInt32: the ToInt32 operation is idempotent: if applied to a result that it produced, the second application leaves that value unchanged. ToInt32(ToUint32(<i>x</i>)) is equal to ToInt32(<i>x</i>) for all values of <i>x</i>. (It is to preserve this latter property that +∞ and −∞ are mapped to +0.) ToInt32 maps −0 to +0.</p>`,
+  ].join("\n"),
+  "sec-9.6": [
+    `<p>The operator ToUint32 converts its argument to one of ${
+      sup(32)
+    } integer values in the range 0 through ${
+      sup(32)
+    } − 1, inclusive. This operator functions as follows:</p>`,
+    `<ol class="ecma-alg"><li>Call ToNumber on the input argument.</li>`,
+    `<li>If Result(1) is <b>NaN</b>, +0, −0, +∞, or −∞, return +0.</li>`,
+    `<li>Compute sign(Result(1)) × floor(abs(Result(1))).</li>`,
+    `<li>Compute Result(3) modulo ${
+      sup(32)
+    }; that is, a finite integer value <i>k</i> of Number type with positive sign and less than ${
+      sup(32)
+    } in magnitude such that the mathematical difference of Result(3) and <i>k</i> is mathematically an integer multiple of ${
+      sup(32)
+    }.</li>`,
+    `<li>Return Result(4).</li></ol>`,
+    `<p class="es2-note"><b>NOTE</b> Given the above definition of ToUint32: step 5 is the only difference between ToUint32 and ToInt32. The ToUint32 operation is idempotent: if applied to a result that it produced, the second application leaves that value unchanged. ToUint32(ToInt32(<i>x</i>)) is equal to ToUint32(<i>x</i>) for all values of <i>x</i>. (It is to preserve this latter property that +∞ and −∞ are mapped to +0.) ToUint32 maps −0 to +0.</p>`,
+  ].join("\n"),
+  "sec-9.7": [
+    `<p>The operator ToUint16 converts its argument to one of ${
+      sup(16)
+    } integer values in the range 0 through ${
+      sup(16)
+    } − 1, inclusive. This operator functions as follows:</p>`,
+    `<ol class="ecma-alg"><li>Call ToNumber on the input argument.</li>`,
+    `<li>If Result(1) is <b>NaN</b>, +0, −0, +∞, or −∞, return +0.</li>`,
+    `<li>Compute sign(Result(1)) × floor(abs(Result(1))).</li>`,
+    `<li>Compute Result(3) modulo ${
+      sup(16)
+    }; that is, a finite integer value <i>k</i> of Number type with positive sign and less than ${
+      sup(16)
+    } in magnitude such that the mathematical difference of Result(3) and <i>k</i> is mathematically an integer multiple of ${
+      sup(16)
+    }.</li>`,
+    `<li>Return Result(4).</li></ol>`,
+    `<p class="es2-note"><b>NOTE</b> Given the above definition of ToUint16: the substitution of ${
+      sup(16)
+    } for ${
+      sup(32)
+    } in step 4 is the only difference between ToUint32 and ToUint16. ToUint16 maps −0 to +0.</p>`,
   ].join("\n"),
 };
 
