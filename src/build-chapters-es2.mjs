@@ -488,6 +488,21 @@ const swapGrammar = (body) => {
   return result;
 };
 
+// Marker sometimes promotes a grammar production declaration ("ArgumentList :",
+// "StringNumericLiteral :::") to an <h*> heading. Outside a "Syntax" block (e.g.
+// the §5.1.5 notation examples, §7.8 ASI examples) swapGrammar never sees it, so
+// it renders as an italicised heading. Demote any such leftover to a grammar
+// line so it reads as a production, not a section heading. ("Syntax"/"Semantics"
+// /"Description"/"NOTE" sub-headings have no leading "NT :" and are kept.)
+const demoteGrammarHeadings = (html) =>
+  html.replace(
+    /<(h[1-6])\b[^>]*>([\s\S]*?)<\/\1>/gi,
+    (m, _t, inner) =>
+      /^[A-Z][A-Za-z]+\s*:{1,3}(\s|<|$)/.test(plain(inner))
+        ? `<p class="grammar-oneof">${inner.trim()}</p>`
+        : m,
+  );
+
 // ===========================================================================
 // Body cleanup  (algorithms, Marker cruft)
 // ===========================================================================
@@ -669,7 +684,11 @@ for (const c of pages) {
 // Full per-section transform: grammar swap → algorithms → cleanup → re-skin.
 const processBody = (body) =>
   ocrFixes(
-    reskin(dropCoverImages(dropBlockType(algoLists(swapGrammar(body))))),
+    reskin(
+      dropCoverImages(
+        dropBlockType(demoteGrammarHeadings(algoLists(swapGrammar(body)))),
+      ),
+    ),
   );
 
 // ===========================================================================
