@@ -124,10 +124,10 @@ const frontMatter = () => {
   if (bh < 0) return null;
   const start = src.indexOf("</h2>", bh) + 5;
   const next = src.indexOf("<h2", start);
-  const note =
-    '<p><em>This is the <a href="https://bclary.com/2004/11/07/ecma-262.html">' +
-    "bclary.com</a> community HTML rendering of the 3rd Edition — not the " +
-    "official ECMA text (which exists only as a PDF). It is not normative.</em></p>";
+  const note = '<p class="es3-source-note">This is the ' +
+    '<a href="https://bclary.com/2004/11/07/ecma-262.html">bclary.com</a> ' +
+    "community HTML rendering of the 3rd Edition — not the official ECMA text " +
+    "(which exists only as a PDF). It is not normative.</p>";
   return leaf(
     "index",
     "index",
