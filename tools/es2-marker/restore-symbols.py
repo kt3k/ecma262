@@ -10,10 +10,13 @@
 import json, re, sys
 import pypdfium2 as pdfium
 
+import os, glob
 HERE=__file__.rsplit("/",1)[0]
-SPEC=f"{HERE}/../../ecma262/es2/spec.html"
-PDF=f"{HERE}/../../ecma262/es2/ECMA-262-2nd.pdf"
-OUT=f"{HERE}/../../ecma262/es2/symbol-fixes.json"
+ED=os.environ.get("ED","es2")  # edition: es1 or es2
+BASE=f"{HERE}/../../ecma262/{ED}"
+SPEC=f"{BASE}/spec.html"
+PDF=sorted(glob.glob(f"{BASE}/*.pdf"))[0]
+OUT=f"{BASE}/symbol-fixes.json"
 SYM={'\x03':'≥','\x04':'−','\x05':'×','\x06':'∞','\x07':'π','\x08':'≠'}
 SYMSET=set(SYM.values())
 

@@ -2495,12 +2495,14 @@ html.dark .ecma-es3 table tbody tr:nth-child(even) {
   margin: 1em auto;
 }
 
-/* === ES2 (Marker re-skin) ================================================
-   ES2 has no HTML source — it's reconstructed from the PDF with Marker, with
-   grammar productions borrowed from ES3 (so it reuses the global dl.grammar /
-   .gsee styling above). Its own additions: the provenance note, bare content
-   tables (scoped like ES3), algorithm <ol>s, kept Marker "one of" labels, and
-   the flag for grammar productions that couldn't be sourced from ES3. */
+/* === ES1 / ES2 (Marker re-skin) ==========================================
+   ES1 and ES2 have no HTML source — reconstructed from the PDFs with Marker,
+   with grammar productions borrowed from ES3 (so they reuse the global
+   dl.grammar / .gsee styling above). Own additions: the provenance note, bare
+   content tables (scoped like ES3), algorithm <ol>s, kept Marker "one of"
+   labels, and the flag for grammar productions that couldn't be sourced from
+   ES3. The es2-* class names are shared by both editions; container scoping
+   uses :is(.ecma-es1, .ecma-es2). */
 .ecma-spec .es2-source-note {
   margin: 0 0 1.5em;
   padding: 0.6em 1em;
@@ -2514,42 +2516,42 @@ html.dark .ecma-es3 table tbody tr:nth-child(even) {
   text-decoration: underline;
 }
 /* Bare <table> content tables — same bordered, theme-aware look as ES3. */
-.ecma-es2 table {
+:is(.ecma-es1, .ecma-es2) table {
   border-collapse: collapse;
   margin: 1em 0;
 }
-.ecma-es2 table th,
-.ecma-es2 table td {
+:is(.ecma-es1, .ecma-es2) table th,
+:is(.ecma-es1, .ecma-es2) table td {
   border: 1px solid var(--rule);
   padding: 0.5rem 1rem;
   vertical-align: baseline;
   text-align: left;
 }
-.ecma-es2 table th {
+:is(.ecma-es1, .ecma-es2) table th {
   font-weight: 600;
 }
-.ecma-es2 table tbody tr:nth-child(even) {
+:is(.ecma-es1, .ecma-es2) table tbody tr:nth-child(even) {
   background: rgba(0, 0, 0, 0.025);
 }
-html.dark .ecma-es2 table tbody tr:nth-child(even) {
+html.dark :is(.ecma-es1, .ecma-es2) table tbody tr:nth-child(even) {
   background: rgba(255, 255, 255, 0.035);
 }
-.ecma-es2 img {
+:is(.ecma-es1, .ecma-es2) img {
   display: block;
   max-width: 100%;
   height: auto;
   margin: 1em auto;
 }
 /* Algorithm steps: Marker emits them as numbered list items; rendered as <ol>. */
-.ecma-es2 ol.ecma-alg {
+:is(.ecma-es1, .ecma-es2) ol.ecma-alg {
   margin: 1em 0 1em 3ex;
   padding-left: 2ex;
 }
-.ecma-es2 ol.ecma-alg > li {
+:is(.ecma-es1, .ecma-es2) ol.ecma-alg > li {
   margin: 0.15em 0;
 }
-/* NOTE callouts in hand-authored ES2 sections (e.g. §9.5–9.7). */
-.ecma-es2 .es2-note {
+/* NOTE / Discussion callouts in hand-authored sections (e.g. §9.5–9.7). */
+:is(.ecma-es1, .ecma-es2) .es2-note {
   margin: 1em 0;
   padding: 0.5em 1em;
   border-left: 3px solid var(--rule);
@@ -2557,7 +2559,7 @@ html.dark .ecma-es2 table tbody tr:nth-child(even) {
   font-size: 0.95em;
 }
 /* The "Nonterminal :: one of" label kept from Marker, above its terminal table. */
-.ecma-es2 .grammar-oneof {
+:is(.ecma-es1, .ecma-es2) .grammar-oneof {
   margin: 1em 0 0.25em 5ex;
   font-style: italic;
 }

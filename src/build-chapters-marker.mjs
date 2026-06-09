@@ -1,8 +1,11 @@
-// ES2 ingester — re-skin the Marker-converted 2nd-edition PDF, with a hybrid
-// grammar swap. See docs/es2-plan.md.
+// Marker ingester — re-skin a Marker-converted pre-ecmarkup PDF (ES1 or ES2),
+// with a hybrid grammar swap. See docs/es2-plan.md. The edition is inferred from
+// the --input path (ecma262/<edition>/spec.html); edition-specific data (section
+// overrides, the provenance note) is keyed by it, everything else is shared — ES1
+// and ES2 have identical grammar/structure (ES2 is ES1's editorial reissue).
 //
-// ECMA-262 2nd Edition (1998) has NO HTML source — only a PDF — so the source is
-// manufactured with Marker (ML PDF→HTML), vendored as ecma262/es2/spec.html.
+// ECMA-262 1st/2nd Editions have NO HTML source — only a PDF — so the source is
+// manufactured with Marker (ML PDF→HTML), vendored as ecma262/<edition>/spec.html.
 // Marker reconstructs prose / algorithms / section structure well, but FLATTENS
 // multi-alternative grammar productions (the line breaks separating alternatives
 // are lost) and drops some math symbols. So this ingester:
@@ -21,7 +24,7 @@
 // content/<slug>.mdx + content/_meta.js), reusing the ES3/ES5.1 re-skin shape.
 //
 // Usage:
-//   node build-chapters-es2.mjs --input ecma262/es2/spec.html \
+//   node build-chapters-marker.mjs --input ecma262/es2/spec.html \
 //     --lib-dir <dir> --content-dir <dir> --public-img-dir <dir> \
 //     --base-path "" [--only 12]   # --only restricts to one chapter (debug)
 
@@ -53,8 +56,12 @@ for (const [k, v] of Object.entries({ INPUT, LIB_DIR, CONTENT_DIR })) {
 fs.mkdirSync(LIB_DIR, { recursive: true });
 fs.mkdirSync(CONTENT_DIR, { recursive: true });
 
+// Edition id from the input path: ecma262/es1/spec.html -> "es1".
+const EDITION = /ecma262\/(es[0-9.]+)\b/.exec(INPUT)?.[1] ?? "es2";
+
 const src = fs.readFileSync(INPUT, "utf8");
-// es3 grammar source sits alongside the es2 input (ecma262/es3/spec.html).
+// es3 grammar source sits alongside the input (ecma262/es3/spec.html); ES1 and
+// ES2 share es3's grammar (no feature changes between the editions).
 const ES3_PATH = path.join(path.dirname(INPUT), "../es3/spec.html");
 const es3src = fs.readFileSync(ES3_PATH, "utf8");
 
@@ -280,6 +287,136 @@ const ES2_SECTION_OVERRIDE = {
     } in step 4 is the only difference between ToUint32 and ToUint16. ToUint16 maps −0 to +0.</p>`,
   ].join("\n"),
 };
+
+// ES1 differs from ES2 in these same sections (editorial): multiplication is "⋅"
+// (not "×"), American "behavior", "We say that …", §9.5–9.7 use a "Discussion:"
+// heading and Result(5)/Result(4) wording. Hand-authored from the ES1 PDF.
+const ES1_SECTION_OVERRIDE = {
+  "sec-8.5": [
+    `<p>The Number type has exactly 18437736874454810627 (that is, ${
+      sup(64)
+    } − ${
+      sup(53)
+    } + 3) values, representing the double-precision 64-bit format IEEE 754 values as specified in the IEEE Standard for Binary Floating-Point Arithmetic, except that the 9007199254740990 (that is, ${
+      sup(53)
+    } − 2) distinct "Not-a-Number" values of the IEEE Standard are represented in ECMAScript as a single special <b>NaN</b> value. (Note that the <b>NaN</b> value is produced by the program expression <b>NaN</b>, assuming that the globally defined variable <b>NaN</b> has not been altered by program execution.) In some implementations, external code might be able to detect a difference between various Not-a-Number values, but such behavior is implementation-dependent; to ECMAScript code, all <b>NaN</b> values are the same.</p>`,
+    `<p>There are two other special values, called <b>positive Infinity</b> and <b>negative Infinity</b>. For brevity, these values are also referred to for expository purposes by the symbols +∞ and −∞, respectively. (Note that these two infinite number values are produced by the program expressions <b>+Infinity</b> (or simply <b>Infinity</b>) and <b>-Infinity</b>, assuming that the globally defined variable <b>Infinity</b> has not been altered by program execution.)</p>`,
+    `<p>The other 18437736874454810624 (that is, ${sup(64)} − ${
+      sup(53)
+    }) values are called the finite numbers. Half of these are positive numbers and half are negative numbers; for every finite positive number there is a corresponding negative number having the same magnitude.</p>`,
+    `<p>Note that there is both a positive zero and a negative zero. For brevity, these values are also referred to for expository purposes by the symbols +0 and −0, respectively. (Note that these two zero number values are produced by the program expressions <b>+0</b> (or simply <b>0</b>) and <b>-0</b>.)</p>`,
+    `<p>The 18437736874454810622 (that is, ${sup(64)} − ${
+      sup(53)
+    } − 2) finite nonzero values are of two kinds:</p>`,
+    `<p>18428729675200069632 (that is, ${sup(64)} − ${
+      sup(54)
+    }) of them are <i>normalized</i>, having the form</p>`,
+    `<p style="text-align:center"><i>s</i> ⋅ <i>m</i> ⋅ 2<sup><i>e</i></sup></p>`,
+    `<p>where <i>s</i> is +1 or −1, <i>m</i> is a positive integer less than ${
+      sup(53)
+    } but not less than ${
+      sup(52)
+    }, and <i>e</i> is an integer ranging from −1074 to 971, inclusive.</p>`,
+    `<p>The remaining 9007199254740990 (that is, ${
+      sup(53)
+    } − 2) values are <i>denormalized</i>, having the form</p>`,
+    `<p style="text-align:center"><i>s</i> ⋅ <i>m</i> ⋅ 2<sup><i>e</i></sup></p>`,
+    `<p>where <i>s</i> is +1 or −1, <i>m</i> is a positive integer less than ${
+      sup(52)
+    }, and <i>e</i> is −1074.</p>`,
+    `<p>Note that all the positive and negative integers whose magnitude is no greater than ${
+      sup(53)
+    } are representable in the Number type (indeed, the integer 0 has two representations, <b>+0</b> and <b>-0</b>).</p>`,
+    `<p>We say that a finite number has an <i>odd significand</i> if it is nonzero and the integer <i>m</i> used to express it (in one of the two forms shown above) is odd. Otherwise we say that it has an <i>even significand</i>.</p>`,
+    `<p>In this specification, the phrase "the number value for <i>x</i>" where <i>x</i> represents an exact nonzero real mathematical quantity (which might even be an irrational number such as π) means a number value chosen in the following manner. Consider the set of all finite values of the Number type, with −0 removed and with two additional values added to it that are not representable in the Number type, namely ${
+      sup(1024)
+    } (which is +1 ⋅ ${sup(53)} ⋅ ${sup(971)}) and −${
+      sup(1024)
+    } (which is −1 ⋅ ${sup(53)} ⋅ ${
+      sup(971)
+    }). Choose the member of this set that is closest in value to <i>x</i>. If two values of the set are equally close, then the one with an even significand is chosen; for this purpose, the two extra values ${
+      sup(1024)
+    } and −${sup(1024)} are considered to have even significands. Finally, if ${
+      sup(1024)
+    } was chosen, replace it with +∞; if −${
+      sup(1024)
+    } was chosen, replace it with −∞; if +0 was chosen, replace it with −0 if and only if <i>x</i> is less than zero; any other chosen value is used unchanged. The result is the number value for <i>x</i>. (This procedure corresponds exactly to the behavior of the IEEE 754 "round to nearest" mode.)</p>`,
+    `<p>Some ECMAScript operators deal only with integers in the range −${
+      sup(31)
+    } through ${sup(31)} − 1, inclusive, or in the range 0 through ${
+      sup(32)
+    } − 1, inclusive. These operators accept any value of the Number type but first convert each such value to one of ${
+      sup(32)
+    } integer values. See the descriptions of the ToInt32 and ToUint32 operators in sections 9.5 and 9.6, respectively.</p>`,
+  ].join("\n"),
+  "sec-9.5": [
+    `<p>The operator ToInt32 converts its argument to one of ${
+      sup(32)
+    } integer values in the range −${sup(31)} through ${
+      sup(31)
+    } − 1, inclusive. This operator functions as follows:</p>`,
+    `<ol class="ecma-alg"><li>Call ToNumber on the input argument.</li>`,
+    `<li>If Result(1) is <b>NaN</b>, +0, −0, +∞, or −∞, return +0.</li>`,
+    `<li>Compute sign(Result(1)) ⋅ floor(abs(Result(1))).</li>`,
+    `<li>Compute Result(3) modulo ${
+      sup(32)
+    }; that is, a finite integer value <i>k</i> of Number type with positive sign and less than ${
+      sup(32)
+    } in magnitude such that the mathematical difference of Result(3) and <i>k</i> is mathematically an integer multiple of ${
+      sup(32)
+    }.</li>`,
+    `<li>If Result(4) is greater than or equal to ${
+      sup(31)
+    }, return Result(5) − ${sup(32)}; otherwise return Result(5).</li></ol>`,
+    `<p class="es2-note"><b>Discussion:</b> Note that the ToInt32 operation is idempotent: if applied to a result that it produced, the second application leaves that value unchanged. Note also that ToInt32(ToUint32(<i>x</i>)) is equal to ToInt32(<i>x</i>) for all values of <i>x</i>. (It is to preserve this latter property that +∞ and −∞ are mapped to +0.) Note that ToInt32 maps −0 to +0.</p>`,
+  ].join("\n"),
+  "sec-9.6": [
+    `<p>The operator ToUint32 converts its argument to one of ${
+      sup(32)
+    } integer values in the range 0 through ${
+      sup(32)
+    } − 1, inclusive. This operator functions as follows:</p>`,
+    `<ol class="ecma-alg"><li>Call ToNumber on the input argument.</li>`,
+    `<li>If Result(1) is <b>NaN</b>, +0, −0, +∞, or −∞, return +0.</li>`,
+    `<li>Compute sign(Result(1)) ⋅ floor(abs(Result(1))).</li>`,
+    `<li>Compute Result(3) modulo ${
+      sup(32)
+    }; that is, a finite integer value <i>k</i> of Number type with positive sign and less than ${
+      sup(32)
+    } in magnitude such that the mathematical difference of Result(3) and <i>k</i> is mathematically an integer multiple of ${
+      sup(32)
+    }.</li>`,
+    `<li>Return Result(4).</li></ol>`,
+    `<p class="es2-note"><b>Discussion:</b> Note that step 5 is the only difference between ToUint32 and ToInt32. The ToUint32 operation is idempotent: if applied to a result that it produced, the second application leaves that value unchanged. ToUint32(ToInt32(<i>x</i>)) is equal to ToUint32(<i>x</i>) for all values of <i>x</i>. (It is to preserve this latter property that +∞ and −∞ are mapped to +0.) ToUint32 maps −0 to +0.</p>`,
+  ].join("\n"),
+  "sec-9.7": [
+    `<p>The operator ToUint16 converts its argument to one of ${
+      sup(16)
+    } integer values in the range 0 through ${
+      sup(16)
+    } − 1, inclusive. This operator functions as follows:</p>`,
+    `<ol class="ecma-alg"><li>Call ToNumber on the input argument.</li>`,
+    `<li>If Result(1) is <b>NaN</b>, +0, −0, +∞, or −∞, return +0.</li>`,
+    `<li>Compute sign(Result(1)) ⋅ floor(abs(Result(1))).</li>`,
+    `<li>Compute Result(3) modulo ${
+      sup(16)
+    }; that is, a finite integer value <i>k</i> of Number type with positive sign and less than ${
+      sup(16)
+    } in magnitude such that the mathematical difference of Result(3) and <i>k</i> is mathematically an integer multiple of ${
+      sup(16)
+    }.</li>`,
+    `<li>Return Result(4).</li></ol>`,
+    `<p class="es2-note"><b>Discussion:</b> The substitution of ${
+      sup(16)
+    } for ${
+      sup(32)
+    } in step 4 is the only difference between ToUint32 and ToUint16. ToUint16 maps −0 to +0.</p>`,
+  ].join("\n"),
+};
+
+const SECTION_OVERRIDE = EDITION === "es1"
+  ? ES1_SECTION_OVERRIDE
+  : ES2_SECTION_OVERRIDE;
 
 // ES2 spelling (American) vs bclary es3 (British): normalise borrowed markup.
 const normSpell = (html) => html.replace(/Initialiser/g, "Initializer");
@@ -622,12 +759,15 @@ const frontMatter = () => {
     /<h[1-6][^>]*>\s*(?:<b>)?\s*Table of contents[\s\S]*?<\/table>/i,
     "",
   );
-  const note = '<p class="es2-source-note">This edition is ' +
-    "<strong>reconstructed from the ES2 PDF with Marker (ML)</strong> — it is " +
-    "not the official ECMA text (which exists only as a PDF) and may contain " +
-    "conversion artefacts. The grammar productions are sourced from the 3rd " +
-    "Edition and pruned to ES2. ES2 (1998) is an editorial reissue of ES1 " +
-    "(1997).</p>";
+  const ed = EDITION === "es1" ? "1st" : "2nd";
+  const tail = EDITION === "es1"
+    ? "ES1 (1997) is the first edition; ES2 (1998) is its editorial reissue."
+    : "ES2 (1998) is an editorial reissue of ES1 (1997).";
+  const note = `<p class="es2-source-note">This edition is ` +
+    `<strong>reconstructed from the ${ed}-edition PDF with Marker (ML)</strong> — ` +
+    "it is not the official ECMA text (which exists only as a PDF) and may " +
+    "contain conversion artefacts. The grammar productions are sourced from the " +
+    `3rd Edition and pruned. ${tail}</p>`;
   return leaf("index", "index", "Introduction", note + intro);
 };
 
@@ -704,12 +844,12 @@ for (const chapter of pages) {
   const slug = chapter.slug;
   const secMap = {};
   (function collect(n) {
-    secMap[n.id] = ES2_SECTION_OVERRIDE[n.id] ?? processBody(n.body);
+    secMap[n.id] = SECTION_OVERRIDE[n.id] ?? processBody(n.body);
     n.children.forEach(collect);
   })(chapter);
 
   const componentSrc = [
-    "// Generated from ecma262/es2/spec.html (Marker re-skin) — do not edit by hand.",
+    `// Generated from ecma262/${EDITION}/spec.html (Marker re-skin) — do not edit by hand.`,
     `const sections = ${JSON.stringify(secMap)};`,
     "export function Sec({ id }) {",
     "  const html = sections[id] ?? '';",
@@ -722,7 +862,7 @@ for (const chapter of pages) {
   const mdxLines = [
     `import { Sec } from '../lib/spec/${slug}'`,
     "",
-    `<div id="spec-container" className="ecma-spec ecma-es2">`,
+    `<div id="spec-container" className="ecma-spec ecma-${EDITION}">`,
     "",
   ];
   (function emit(n, level) {
@@ -770,12 +910,12 @@ if (PUBLIC_IMG_DIR) {
 
 if (unmappedNTs.size) {
   console.log(
-    `[es2] ${unmappedNTs.size} unmapped nonterminal(s) kept from Marker ` +
+    `[${EDITION}] ${unmappedNTs.size} unmapped nonterminal(s) kept from Marker ` +
       `(flag es2-grammar-unmapped): ${[...unmappedNTs].sort().join(", ")}`,
   );
 }
 console.log(
-  `[es2] converted ${Object.keys(meta).length} page(s): ${
+  `[${EDITION}] converted ${Object.keys(meta).length} page(s): ${
     Object.keys(meta).join(", ")
   }`,
 );
