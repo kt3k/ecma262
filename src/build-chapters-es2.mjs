@@ -58,6 +58,16 @@ const src = fs.readFileSync(INPUT, "utf8");
 const ES3_PATH = path.join(path.dirname(INPUT), "../es3/spec.html");
 const es3src = fs.readFileSync(ES3_PATH, "utf8");
 
+// Offline math-symbol restoration for the dense Math/Date sections (§15.8/15.9):
+// Marker dropped the PDF's symbol glyphs (− × ∞ π …); tools/es2-marker/
+// restore-symbols.py re-inserts them by aligning the Marker and PDF text streams
+// and vendors the patched section bodies here, keyed by section number. Applied
+// before the normal pipeline so grammar/algorithm/re-skin still run.
+const SYMBOL_FIXES_PATH = path.join(path.dirname(INPUT), "symbol-fixes.json");
+const SYMBOL_FIXES = fs.existsSync(SYMBOL_FIXES_PATH)
+  ? JSON.parse(fs.readFileSync(SYMBOL_FIXES_PATH, "utf8"))
+  : {};
+
 const plain = (html) =>
   html.replace(/<br\s*\/?>/g, " ").replace(/<[^>]+>/g, "")
     .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")
@@ -525,7 +535,7 @@ const sections = rawHeads.map((h, i) => {
     id: `sec-${h.num}`,
     num: h.num,
     title: h.title,
-    body: src.slice(h.end, end).trim(),
+    body: (SYMBOL_FIXES[h.num] ?? src.slice(h.end, end)).trim(),
     depth: h.num.split(".").length,
     children: [],
   };
