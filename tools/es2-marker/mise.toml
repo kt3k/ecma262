@@ -1,0 +1,25 @@
+# Reproducible toolchain for the offline ES2 PDF → Marker conversion.
+# mise bootstraps uv; uv (see pyproject.toml / uv.lock) manages Python + Marker.
+# This config is scoped to tools/es2-marker/ — it does not touch the repo's
+# Deno build. Nothing here runs in CI; only the *vendored output* is used.
+
+[tools]
+uv = "latest" # pin to a fixed version once chosen, e.g. "0.5.x"
+
+[tasks.setup]
+description = "Install Python + Marker into a local uv venv (reproducible via uv.lock)"
+run = "uv sync"
+
+[tasks.convert]
+description = "Convert the vendored ES2 PDF → HTML (downloads ML models on first run)"
+run = """
+uv run marker_single ../../ecma262/es2/ECMA-262-2nd.pdf \
+  --output_format html --output_dir out
+"""
+
+[tasks."convert:json"]
+description = "Same, but Marker's structured JSON (section_hierarchy + typed blocks)"
+run = """
+uv run marker_single ../../ecma262/es2/ECMA-262-2nd.pdf \
+  --output_format json --output_dir out
+"""

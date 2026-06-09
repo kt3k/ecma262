@@ -1,0 +1,11 @@
+[project]
+name = "es2-marker"
+version = "0"
+description = "Offline Marker conversion of the ECMA-262 2nd edition PDF (see docs/es2-plan.md)"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "marker-pdf>=1.6",
+  # Optional, only needed with `--use_llm` (Gemini default; or use a local
+  # Ollama / OpenAI / Claude service via --llm_service):
+  # "google-genai",
+]
