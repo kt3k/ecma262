@@ -294,6 +294,38 @@ const cleanDt = (dtHtml) =>
     .replace(/\s*:+\s*See\s[0-9.]+/g, (s) => s.replace(/See\s[0-9.]+/, ""))
     .trim();
 
+// Split an es3 <dd> into per-alternative fragments that are each tag-balanced.
+// es3 wraps runs of nonterminals in a single <i> that spans the <br/>s between
+// alternatives, so a naive split leaves dangling <i>/</i> — and dropping an
+// ES3-only alternative would then strip a tag belonging to a kept one. Re-open
+// any tag still open at a <br/> boundary and close it at the segment end, so
+// every alternative stands alone and is safe to drop.
+const INLINE = /<(\/?)(i|b|tt|sub|sup)>/gi;
+const splitAlts = (ddHtml) => {
+  const inner = ddHtml.replace(/^\s*<dd>/i, "").replace(/<\/dd>\s*$/i, "");
+  const open = [];
+  const out = [];
+  for (const seg of inner.split(/<br\s*\/?>/i)) {
+    const prefix = open.map((t) => `<${t}>`).join("");
+    const stack = open.slice();
+    let mm;
+    INLINE.lastIndex = 0;
+    while ((mm = INLINE.exec(seg)) !== null) {
+      const tag = mm[2].toLowerCase();
+      if (mm[1]) {
+        const k = stack.lastIndexOf(tag);
+        if (k >= 0) stack.splice(k, 1);
+      } else stack.push(tag);
+    }
+    const suffix = stack.slice().reverse().map((t) => `</${t}>`).join("");
+    const frag = (prefix + seg + suffix).trim();
+    if (plain(frag).length > 0) out.push(frag);
+    open.length = 0;
+    open.push(...stack);
+  }
+  return out;
+};
+
 const grammar = new Map(); // name -> { dt, alts: [htmlFragment, ...] }
 const indexGrammar = (text) => {
   const re = new RegExp(dlRe.source, "g");
@@ -301,10 +333,9 @@ const indexGrammar = (text) => {
   while ((m = re.exec(text)) !== null) {
     const name = grammarNameOf(m[1]);
     if (!name || ES3_ONLY.has(name)) continue;
-    const alts = m[2].split(/<br\s*\/?>/i)
-      .map((s) => s.trim())
-      .filter((s) => plain(s).length > 0);
-    if (!grammar.has(name)) grammar.set(name, { dt: cleanDt(m[1]), alts });
+    if (!grammar.has(name)) {
+      grammar.set(name, { dt: cleanDt(m[1]), alts: splitAlts(m[2]) });
+    }
   }
 };
 // Prefer Annex A's consolidated productions, then backfill from the body.
