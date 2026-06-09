@@ -138,17 +138,36 @@ Two findings make this work:
    are trustworthy. So Marker tells us _which_ productions ES2 has; es3 supplies
    the _correct layout_.
 
-ES2 ≈ ES1, so es3 grammar is a near-superset. The ES2↔ES3 delta to **prune out**
-of the borrowed es3 grammar is local and known:
+ES2 ≈ ES1, so es3 grammar is a near-superset. The transform from a borrowed es3
+production to its ES2 form is **three mechanical rules** (prototyped in
+`tools/es2-marker/proto-grammar.mjs`, validated on ch.12):
 
-- **7.8 Literals** — drop `RegularExpressionLiteral` (no RegExp in ES2).
-- **11 / 13 Expressions** — drop the `FunctionExpression` alternative es3 added
-  to `MemberExpression` / `PrimaryExpression`.
-- **12 Statements** — drop `LabelledStatement`, `SwitchStatement` /
-  `CaseClause`, `ThrowStatement`, `TryStatement`, and do-while.
+1. **Strip `NoIn`** — ES3 added a parallel `*NoIn` nonterminal set (13 of them:
+   `ExpressionNoIn`, `VariableDeclarationListNoIn`, …) for the `in`-operator /
+   for-statement ambiguity. ES2 has none. `ExpressionNoInopt` → `Expressionopt`;
+   the `*NoIn` `<dl>` definitions then collapse onto their base names.
+2. **Drop do-while** — the `do Statement while (…)` `IterationStatement`
+   alternative is ES3-only.
+3. **Drop ES3-only productions / whole-alternatives** —
+   `RegularExpressionLiteral` (+ sub-nonterminals), the `FunctionExpression`
+   alternative, `SwitchStatement` / `CaseBlock` / `CaseClause` /
+   `DefaultClause`, `ThrowStatement`, `TryStatement` / `Catch` / `Finally`,
+   `LabelledStatement`.
 
-Everything else (lexical grammar, expressions, type conversion) is ES2 ≡ ES3 and
-copies verbatim. Validate each pruned production against the Marker checklist.
+Plus a one-entry **spelling map** (`Initialiser` → `Initializer`): bclary es3
+uses British spelling, ES2 American. Source the clean layout from the **es3
+Annex A grammar summary** (one consolidated `<dl>` per nonterminal), backfilling
+from the es3 body for any Annex A misses.
+
+**Validated coverage (whole doc):** ES2 declares 93 grammar nonterminals; 88 map
+to es3 (verbatim or via the rules above). The residue is **Chapter 7 lexical
+grammar that genuinely diverged** — `IdentifierLetter` (ES3 replaced it with
+Unicode `IdentifierStart`/`IdentifierPart`) and `InputElement` (ES3 split into
+`InputElementDiv`/`InputElementRegExp`). These have **no es3 equivalent** and
+must come from the Marker ES2 text (short, single-token productions where Marker
+is reliable) or be hand-authored. The ingester must flag any un-mapped
+nonterminal rather than silently emit es3's diverged form. On ch.12 the swap is
+15/15 (`Statement` 14→10 alts, `IterationStatement` 6→5).
 
 ### Pipeline
 
@@ -156,11 +175,13 @@ copies verbatim. Validate each pruned production against the Marker checklist.
    dotted number). Each section = (number, title, body).
 2. **Rebuild the tree** from the dotted number by dot-depth (same stack walk as
    ES3) → top-level chapters (1…16) + annexes.
-3. **Grammar swap.** Build a `nonterminal → production` map from es3
-   `<dl class="grammar">`, apply the prune list above, then replace each Marker
-   `Syntax` block (flattened `<p>`/`<pre>` productions) with the corresponding
-   pruned es3 `<dl class="grammar">`. Productions present only in ES2 (none
-   expected) or absent from es3 fall back to the Marker text, flagged.
+3. **Grammar swap.** Build a `nonterminal → production` map from es3 Annex A
+   (then body), apply the three transform rules + spelling map above. For each
+   Marker `Syntax` block, read the nonterminals it declares (reliable even
+   though the production _layout_ is flattened) and replace the block with the
+   transformed es3 `<dl class="grammar">` for each, in declaration order.
+   Nonterminals with no es3 equivalent (the ch.7 lexical divergences) fall back
+   to the Marker text and are flagged for hand review.
 4. **Synthesise anchors** from the section numbers (`id="sec-11.1"`) — the PDF
    has none. These ids drive intra-edition links + the on-this-page TOC.
 5. **Reconstruct cross-references**: the PDF refers to sections by _text_ ("see
@@ -188,10 +209,14 @@ copies verbatim. Validate each pruned production against the Marker checklist.
 
 ## Phased rollout
 
-- **P-1 (prep + gate)** — vendor PDF, run Marker offline, vendor output, eyeball
-  quality (Step 3). Go/no-go decision here.
-- **P0** — ingester on one chapter; validate parsing + scope the cleanup.
-- **P1** — all chapters + annexes; anchors + xref reconstruction; register.
+- **P-1 (prep + gate)** ✅ — vendored PDF, ran Marker offline
+  (`convert:openai`), vendored output, gated (Step 3): HTML No-Go → hybrid.
+- **P0** ✅ — grammar-swap prototype (`tools/es2-marker/proto-grammar.mjs`) on
+  ch.12: 15/15 nonterminals, transform rules validated, cleanup scoped (ch.7
+  lexical residue + math symbols).
+- **P1** — full ingester (`build-chapters-es2.mjs`): all chapters + annexes;
+  grammar swap over every `Syntax` block; anchors + xref reconstruction;
+  register.
 - **P2 / P4** — styling, grammar/table cleanup, QA sweep of OCR artefacts.
 
 ## Open questions / risks
