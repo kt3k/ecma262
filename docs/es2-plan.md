@@ -92,33 +92,94 @@ Before writing the ingester, manually review the Marker output for:
 If the output is too noisy to clean up economically, **stop here** and record
 ES2 as not-reproduced (like ES5), rather than shipping a garbled edition.
 
-## Step 4 — ingester (`src/build-chapters-es2.mjs`)
+### Gate result (2026-06-09, `convert:openai` HTML output)
+
+Reviewed the vendored `out/ECMA-262-2nd/ECMA-262-2nd.html` (27.7k lines).
+Verdict per category:
+
+- ✅ **Section numbering** — near-perfect. Dotted numbers (`1`…`16`, down to
+  `15.9.5.41`) land in heading text, in order. Heading _levels_ (`<h1>`/`<h3>`)
+  are random, but the ingester keys off the dotted number, not the tag —
+  non-issue.
+- ✅ **Algorithms** — good. Steps land as `<ul><li block-type="ListItem">` with
+  `"1." "2."` text prefixes; trivially re-wrapped as `<ol>`.
+- ✅ **"one of" grammars** (keywords, punctuators, digits) — clean `<table>`.
+- ✅ **Prose** — clean, zero mojibake (no `�`).
+- ❌ **Grammar productions (multi-alternative)** — _the_ break. PDF line breaks
+  that separate alternatives are lost, so a production like `MemberExpression :`
+  collapses its 4 RHS alternatives into one flattened `<p>` run. Single-token
+  alternatives (e.g. the top-level `Statement :` list) _do_ survive as separate
+  `<p>`s, but anything with multi-token alternatives is unrecoverable from the
+  HTML alone. This is the deciding factor the gate was built to catch.
+- ❌ **Math symbols silently dropped** — `−` and `×` are _deleted_, not
+  mojibake'd. `2^64 − 2^53 + 3` renders as "2^64 253+3"; the `−Infinity` symbol
+  vanishes. Meaning-changing and invisible. Bounded set of sites (Number type,
+  ToNumber, operators, Math).
+
+**Decision: HTML-only is No-Go, but recoverable via the hybrid below** — keep
+Marker's strong output (prose / algorithms / structure) and source the grammar
+from the already-vendored es3 spec. See Step 4.
+
+## Step 4 — ingester (`src/build-chapters-es2.mjs`), hybrid grammar
 
 Mirrors the ES3 ingester (flat list → tree by dotted section number), but parses
-Marker output instead of bclary `<dt>`/`<dd>`:
+Marker output instead of bclary `<dt>`/`<dd>` — **and replaces Marker's mangled
+grammar blocks with pruned es3 productions.**
 
-1. **Split** on section headings (HTML `<h*>` whose text starts with a dotted
-   number, or JSON `SectionHeader` blocks). Each section = (number, title,
-   body).
+### Why hybrid
+
+Two findings make this work:
+
+1. **es3 grammar is a clean template.** `ecma262/es3/spec.html` has 385
+   `<dl class="grammar">` blocks — `<dt>` = LHS `Nonterminal :`, `<dd>` = RHS
+   alternatives separated by `<br />`. Line structure intact.
+2. **Marker ES2 is a reliable checklist.** Flattening only hits _multi-token_
+   alternatives; the set, names, and order of ES2's nonterminals/alternatives
+   are trustworthy. So Marker tells us _which_ productions ES2 has; es3 supplies
+   the _correct layout_.
+
+ES2 ≈ ES1, so es3 grammar is a near-superset. The ES2↔ES3 delta to **prune out**
+of the borrowed es3 grammar is local and known:
+
+- **7.8 Literals** — drop `RegularExpressionLiteral` (no RegExp in ES2).
+- **11 / 13 Expressions** — drop the `FunctionExpression` alternative es3 added
+  to `MemberExpression` / `PrimaryExpression`.
+- **12 Statements** — drop `LabelledStatement`, `SwitchStatement` /
+  `CaseClause`, `ThrowStatement`, `TryStatement`, and do-while.
+
+Everything else (lexical grammar, expressions, type conversion) is ES2 ≡ ES3 and
+copies verbatim. Validate each pruned production against the Marker checklist.
+
+### Pipeline
+
+1. **Split** on section headings (HTML `<h*>`/`<pre>` whose text starts with a
+   dotted number). Each section = (number, title, body).
 2. **Rebuild the tree** from the dotted number by dot-depth (same stack walk as
    ES3) → top-level chapters (1…16) + annexes.
-3. **Synthesise anchors** from the section numbers (`id="sec-11.1"`) — the PDF
+3. **Grammar swap.** Build a `nonterminal → production` map from es3
+   `<dl class="grammar">`, apply the prune list above, then replace each Marker
+   `Syntax` block (flattened `<p>`/`<pre>` productions) with the corresponding
+   pruned es3 `<dl class="grammar">`. Productions present only in ES2 (none
+   expected) or absent from es3 fall back to the Marker text, flagged.
+4. **Synthesise anchors** from the section numbers (`id="sec-11.1"`) — the PDF
    has none. These ids drive intra-edition links + the on-this-page TOC.
-4. **Reconstruct cross-references**: the PDF refers to sections by _text_ ("see
+5. **Reconstruct cross-references**: the PDF refers to sections by _text_ ("see
    11.2"), not links. A pass rewrites recognised "see N.N" patterns into
    `<a href="…#sec-N.N">`. Imperfect; unmatched ones stay plain text.
-5. **Clean up**: drop page headers/footers/numbers, fix obvious OCR artefacts,
-   wrap algorithm list items as `<ol>`, keep Marker tables.
-6. **Emit** the scratch contract (`lib/<slug>.jsx` + `<slug>.mdx` + `_meta.js`)
+6. **Clean up**: drop page headers/footers/numbers, fix obvious OCR artefacts,
+   restore dropped `−`/`×` math symbols at the bounded set of sites, wrap
+   algorithm list items as `<ol>`, keep Marker tables.
+7. **Emit** the scratch contract (`lib/<slug>.jsx` + `<slug>.mdx` + `_meta.js`)
    and run the shared re-skin pipeline (basePath image paths, theme-aware
    colours) — exactly like ES3/ES5.1. `build-pages.ts` gets another
    `edition === "es2"` branch.
 
 ## Step 5 — styling, index, integration
 
-- CSS add-on for whatever classes the Marker output uses (likely plain
-  `<table>`/`<p>` — reuse the `.ecma-es3` table treatment via an `ecma-es2`
-  container class).
+- CSS add-on for the Marker classes (plain `<table>`/`<p>`) **and** the borrowed
+  es3 grammar classes (`.grammar`, `.gsee`, `.nonterminal`) — reuse the existing
+  `.ecma-es3` treatment via an `ecma-es2` container so swapped-in grammar
+  renders identically to es3.
 - Index page with a **prominent provenance note**: "Reconstructed from the ES2
   PDF with Marker (ML). Not the official text; expect conversion artefacts. ES2
   is an editorial reissue of ES1 (1997)."
@@ -135,8 +196,11 @@ Marker output instead of bclary `<dt>`/`<dd>`:
 
 ## Open questions / risks
 
-- **Grammar fidelity** is the deciding factor — if Marker can't keep the
-  production layout, the edition loses most of its (already small) value.
+- **Grammar fidelity** was the deciding factor — Marker flattened multi-token
+  productions (Step 3 gate). **Resolved** by the hybrid: borrow + prune es3
+  grammar (Step 4). Residual risk is the prune list — an ES3-only production
+  left in, or an ES2 production es3 changed. Mitigated by validating each
+  against the Marker checklist; worth a manual diff pass at P2.
 - **Marker availability here** — this sandbox has no Python/Marker and likely
   can't install the models, so Step 2 runs on the user's machine; the vendored
   output is what lands in the repo.
