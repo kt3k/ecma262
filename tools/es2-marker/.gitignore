@@ -1,4 +1,3 @@
 # uv-managed venv and Marker scratch output — regenerated, not committed.
 # (The *chosen* Marker output is vendored under ecma262/es2/ instead.)
 .venv/
-out/
