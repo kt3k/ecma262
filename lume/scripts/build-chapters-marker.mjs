@@ -181,6 +181,14 @@ const ES2_GRAMMAR_OVERRIDE = {
     `<dl class="grammar"><dt><i>StrDecimalLiteral</i> <b>:::</b></dt>\n      <dd><b><tt>Infinity</tt></b>\n      <br /><i>DecimalDigits</i> <b><tt>.</tt></b> <i>DecimalDigits<sub>opt</sub> ExponentPart<sub>opt</sub></i>\n      <br /><b><tt>.</tt></b> <i>DecimalDigits ExponentPart<sub>opt</sub></i>\n      <br /><i>DecimalDigits ExponentPart<sub>opt</sub></i></dd>\n    </dl>`,
 };
 
+// Productions ES2 changed from ES1: the 2nd edition replaced §7.4 Token's
+// collective Literal alternative with NumericLiteral/StringLiteral (the es3
+// borrow matches ES2's five-alternative form, so only ES1 needs the original).
+if (EDITION === "es1") {
+  ES2_GRAMMAR_OVERRIDE.Token =
+    `<dl class="grammar"><dt><i>Token</i> <b>::</b></dt>\n      <dd><i>ReservedWord</i>\n      <br /><i>Identifier</i>\n      <br /><i>Punctuator</i>\n      <br /><i>Literal</i></dd>\n    </dl>`;
+}
+
 // Whole-section overrides for prose Marker mangled beyond mechanical repair.
 // Marker drops the PDF's symbol-font glyphs entirely — minus (−), times (×),
 // infinity (∞), π, ≥, ≠ — AND the superscripts around them, so e.g. §8.5's
@@ -815,6 +823,18 @@ const mergeNotationProductions = (html) =>
       /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?)<\/p>((?:\s*<p[^>]*>\s*<b>\s*\S{1,12}\s*<\/b>\s*<\/p>){2,})/g,
       (_m, decl, alts) =>
         toDl(decl, [...alts.matchAll(/<b>\s*(\S+)\s*<\/b>/g)].map((x) => x[1])),
+    )
+    // LHS + a run of single-nonterminal italic paragraphs (ES1 §7.4.1
+    // ReservedWord: the PDF has no "Syntax" heading there, so the production
+    // sits in the Description region and swapGrammar never rebuilds it; the
+    // LHS heading is demoted to a grammar-oneof paragraph instead).
+    .replace(
+      /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?)<\/p>((?:\s*<p[^>]*>\s*<i>\s*[A-Z][A-Za-z]*\s*<\/i>\s*<\/p>){2,})/g,
+      (_m, decl, alts) =>
+        toDl(
+          decl.replace(/\s+/g, " "),
+          [...alts.matchAll(/<i>\s*([A-Za-z]+)\s*<\/i>/g)].map((x) => x[1]),
+        ),
     )
     // LHS + an inline-marked-up "but not" RHS (the Identifier example): the RHS
     // is already correct grammar markup — keep it verbatim.
