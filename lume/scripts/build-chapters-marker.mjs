@@ -163,6 +163,10 @@ const ES2_GRAMMAR_OVERRIDE = {
   // dropped by es1PageBreakRepair).
   LineTerminator:
     `<dl class="grammar"><dt><i>LineTerminator</i> <b>::</b></dt>\n      <dd><i>&lt;LF&gt;</i>\n      <br /><i>&lt;CR&gt;</i></dd>\n    </dl>`,
+  // §9.3.1 — ES3 added <NBSP> (and <USP>) to the string whitespace; ES1/ES2
+  // have only the six ASCII-era characters.
+  StrWhiteSpaceChar:
+    `<dl class="grammar"><dt><i>StrWhiteSpaceChar</i> <b>:::</b></dt>\n      <dd><i>&lt;TAB&gt;</i>\n      <br /><i>&lt;SP&gt;</i>\n      <br /><i>&lt;FF&gt;</i>\n      <br /><i>&lt;VT&gt;</i>\n      <br /><i>&lt;CR&gt;</i>\n      <br /><i>&lt;LF&gt;</i></dd>\n    </dl>`,
   // §7.5 — ES3 rebuilt identifiers on Unicode (IdentifierStart/Part); ES2 uses
   // the simpler IdentifierLetter form.
   IdentifierName:
@@ -196,8 +200,9 @@ if (EDITION === "es1") {
 // (the Number type) and §9.5–9.7 (the integer-conversion operators) — are
 // hand-authored here from the vendored PDF's text layer (the symbol-font glyph
 // codes are per-font, so they were read by meaning, not a fixed map). The
-// remaining math-heavy sections (§9.3.1, §11.5/6, §15.8 Math, §15.9 Date) still
-// show Marker's symbol-dropped text — a known residue.
+// remaining math-heavy sections (§9.3.1's MV prose, §11.5/6, §15.8 Math, §15.9
+// Date) still show Marker's symbol-dropped text — a known residue. (§9.3.1's
+// grammar itself is rebuilt by the ":::" region handling in swapGrammar.)
 const sup = (n) => `2<sup>${n}</sup>`;
 const ES2_SECTION_OVERRIDE = {
   "sec-8.5": [
@@ -571,11 +576,17 @@ const declOf = (b) => {
 };
 // Distinguish a flattened grammar alternative (drop / fold into a production)
 // from prose (keep). Prose has consecutive lowercase words; grammar runs are
-// Capitalised nonterminals + lowercase terminals + symbols.
+// Capitalised nonterminals + lowercase terminals + symbols. Headings count
+// too — Marker promotes grammar lines to <h*> (§9.3.1's Infinity terminal,
+// the HexDigit one-of run) — but never the structural Syntax/Semantics/…
+// labels, which delimit regions.
 const isGrammarish = (b) => {
   const tag = blockTag(b);
-  if (tag !== "p" && tag !== "pre") return false;
-  return !/[a-z]{3,}\s+[a-z]{3,}/.test(plain(b));
+  if (!/^(?:p|pre|h[1-6])$/.test(tag)) return false;
+  const t = plain(b);
+  if (/^h/.test(tag) && STOP_LABEL.test(t)) return false;
+  if (/^h/.test(tag) && /^Syntax$/i.test(t)) return false;
+  return !/[a-z]{3,}\s+[a-z]{3,}/.test(t);
 };
 
 const unmappedNTs = new Set();
@@ -668,7 +679,14 @@ const rebuildSyntax = (regionHtml) => {
 
 // Within a section body, find each "Syntax" sub-heading and rebuild the grammar
 // region that follows it (up to the next Semantics/Description/NOTE heading —
-// section boundaries are already handled by the splitter).
+// section boundaries are already handled by the splitter). §9.3.1's numeric
+// string grammar has NO "Syntax" heading in either PDF (the productions follow
+// the intro prose directly, their LHS promoted to <h3>s), so a heading that
+// itself reads as a ":::" declaration also opens a region; it extends only
+// while blocks stay grammar-shaped, stopping at the first prose block (the
+// "Some differences…" paragraph) so the MV prose after it is never touched.
+// The ":::" restriction keeps the §5.1.5 / §7.8 teaching examples (":"/"::",
+// handled by mergeNotationProductions) out of the es3 swap.
 const STOP_LABEL = /^(Semantics|Description|Runtime Semantics|NOTE\b)/i;
 const swapGrammar = (body) => {
   const headRe = /<(h[1-6])\b[^>]*>([\s\S]*?)<\/\1>/gi;
@@ -677,21 +695,53 @@ const swapGrammar = (body) => {
   while ((m = headRe.exec(body)) !== null) {
     heads.push({ text: plain(m[2]), start: m.index, end: headRe.lastIndex });
   }
-  // Process from the end so earlier offsets stay valid as we splice.
-  let result = body;
-  for (let h = heads.length - 1; h >= 0; h--) {
-    if (!/^Syntax$/i.test(heads[h].text)) continue;
-    // Region = after this Syntax heading up to the next stop-label heading
-    // (or end of body).
-    let end = result.length;
-    for (let k = h + 1; k < heads.length; k++) {
-      if (STOP_LABEL.test(heads[k].text)) {
-        end = heads[k].start;
-        break;
+  // Build non-overlapping regions in document order…
+  const regions = [];
+  for (let h = 0; h < heads.length; h++) {
+    if (regions.length && heads[h].start < regions[regions.length - 1].end) {
+      continue; // already inside a claimed region
+    }
+    if (/^Syntax$/i.test(heads[h].text)) {
+      let end = body.length;
+      for (let k = h + 1; k < heads.length; k++) {
+        if (STOP_LABEL.test(heads[k].text)) {
+          end = heads[k].start;
+          break;
+        }
+      }
+      regions.push({ start: heads[h].end, end });
+    } else if (/^[A-Z][A-Za-z]+\s*:::/.test(heads[h].text)) {
+      let pos = heads[h].start;
+      let end = pos;
+      for (const blk of body.slice(heads[h].start).match(BLOCK_RE) ?? []) {
+        const at = body.indexOf(blk, pos);
+        if (at === -1) break;
+        if (
+          !declOf(blk) && !isGrammarish(blk) && blockTag(blk) !== "table"
+        ) break;
+        pos = at + blk.length;
+        end = pos;
+      }
+      if (end > heads[h].start) {
+        regions.push({ start: heads[h].start, end, tripleColon: true });
       }
     }
-    const region = result.slice(heads[h].end, end);
-    result = result.slice(0, heads[h].end) + "\n    " + rebuildSyntax(region) +
+  }
+  // …then splice from the end so earlier offsets stay valid. In a ":::"
+  // region every production belongs to the numeric string grammar, but the
+  // es3 borrow returns DecimalDigits & co. from the lexical grammar (Annex A,
+  // "::") — normalise the colon count on the rebuilt declarations.
+  let result = body;
+  for (let r = regions.length - 1; r >= 0; r--) {
+    const { start, end, tripleColon } = regions[r];
+    let rebuilt = rebuildSyntax(result.slice(start, end));
+    if (tripleColon) {
+      rebuilt = rebuilt.replace(
+        /<b>:{1,3}( one of)?<\/b>/g,
+        "<b>:::$1</b>",
+      );
+    }
+    result = result.slice(0, start) + "\n    " + rebuilt +
       "\n    " + result.slice(end);
   }
   return result;
