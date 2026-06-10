@@ -1375,6 +1375,14 @@ h1 .secnum:empty {
   display: block;
   overflow-x: auto;
 }
+/* Long monospace lines — code examples, and the ES1/ES2 chapter-15 date
+   formulas (93-char lines) — scroll inside the measure instead of widening
+   the page, same treatment as emu-table. Without an overflow value the
+   automatic grid minimum keeps a <pre> at min-content width, so on narrow
+   viewports it blows past the viewport and the whole page pans. */
+.ecma-spec pre {
+  overflow-x: auto;
+}
 .ecma-spec emu-table,
 .ecma-spec emu-table + * {
   margin-top: calc(2em * var(--ecma-rhythm, 1));
