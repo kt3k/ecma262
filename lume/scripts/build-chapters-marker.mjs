@@ -205,6 +205,10 @@ const ES2_GRAMMAR_OVERRIDE = {
     `<dl class="grammar"><dt><i>IdentifierName</i> <b>::</b></dt>\n      <dd><i>IdentifierLetter</i>\n      <br /><i>IdentifierName IdentifierLetter</i>\n      <br /><i>IdentifierName DecimalDigit</i></dd>\n    </dl>`,
   IdentifierLetter:
     `<dl class="grammar"><dt><i>IdentifierLetter</i> <b>:: one of</b></dt>\n      <dd><b><tt>a b c d e f g h i j k l m n o p q r s t u v w x y z</tt></b>\n      <br /><b><tt>A B C D E F G H I J K L M N O P Q R S T U V W X Y Z _ $</tt></b></dd>\n    </dl>`,
+  // §12.6 — ES3 changed the for-in var alternative to VariableDeclarationNoIn;
+  // ES1/ES2 read `var Identifier Initializer_opt in` (identical in both PDFs).
+  IterationStatement:
+    `<dl class="grammar"><dt><i>IterationStatement</i> <b>:</b></dt>\n      <dd><b><tt>while (</tt></b> <i>Expression</i> <b><tt>)</tt></b> <i>Statement</i>\n      <br /><b><tt>for (</tt></b> <i>Expression<sub>opt</sub></i> <b><tt>;</tt></b> <i>Expression<sub>opt</sub></i> <b><tt>;</tt></b> <i>Expression<sub>opt</sub></i> <b><tt>)</tt></b> <i>Statement</i>\n      <br /><b><tt>for ( var</tt></b> <i>VariableDeclarationList</i> <b><tt>;</tt></b> <i>Expression<sub>opt</sub></i> <b><tt>;</tt></b> <i>Expression<sub>opt</sub></i> <b><tt>)</tt></b> <i>Statement</i>\n      <br /><b><tt>for (</tt></b> <i>LeftHandSideExpression</i> <b><tt>in</tt></b> <i>Expression</i> <b><tt>)</tt></b> <i>Statement</i>\n      <br /><b><tt>for ( var</tt></b> <i>Identifier Initializer<sub>opt</sub></i> <b><tt>in</tt></b> <i>Expression</i> <b><tt>)</tt></b> <i>Statement</i></dd>\n    </dl>`,
   // §13 — ES2 function bodies are a Block; ES3 introduced { FunctionBody }.
   FunctionDeclaration:
     `<dl class="grammar"><dt><i>FunctionDeclaration</i> <b>:</b></dt>\n      <dd><b><tt>function</tt></b> <i>Identifier</i> <b><tt>(</tt></b> <i>FormalParameterList<sub>opt</sub></i> <b><tt>)</tt></b> <i>Block</i></dd>\n    </dl>`,
@@ -618,7 +622,10 @@ const isGrammarish = (b) => {
   const t = plain(b);
   if (/^h/.test(tag) && STOP_LABEL.test(t)) return false;
   if (/^h/.test(tag) && /^Syntax$/i.test(t)) return false;
-  return !/[a-z]{3,}\s+[a-z]{3,}/.test(t);
+  // \b: without it the lowercase tail of a nonterminal counts as a word, so
+  // "Statement else" reads as prose and flattened alternatives survive as
+  // duplicates next to the rebuilt dl (§12.5's if-statement pre).
+  return !/\b[a-z]{3,}\s+[a-z]{3,}/.test(t);
 };
 
 const unmappedNTs = new Set();
