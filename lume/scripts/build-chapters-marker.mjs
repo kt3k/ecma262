@@ -1055,6 +1055,28 @@ const algoLists = (html) =>
       return `<ol class="ecma-alg"${start}>${lis}</ol>`;
     },
   );
+// …then fold a continuation back into its list when the printed numbering is
+// continuous (the common case: nothing between the two halves was lost), so
+// one algorithm renders as one <ol>. A discontinuous continuation keeps its
+// start attribute rather than silently renumbering cross-referenced steps.
+const mergeSplitAlgs = (html) => {
+  let prev;
+  do {
+    prev = html;
+    html = html.replace(
+      /<ol class="ecma-alg"( start="(\d+)")?>((?:(?!<\/ol>)[\s\S])*?)<\/ol>\s*<ol class="ecma-alg" start="(\d+)">((?:(?!<\/ol>)[\s\S])*?)<\/ol>/g,
+      (m, _attr, s1, items1, s2, items2) => {
+        const next = (s1 ? Number(s1) : 1) +
+          (items1.match(/<li>/g) || []).length;
+        if (Number(s2) !== next) return m;
+        return `<ol class="ecma-alg"${
+          s1 ? ` start="${s1}"` : ""
+        }>${items1}\n    ${items2}</ol>`;
+      },
+    );
+  } while (html !== prev);
+  return html;
+};
 // Drop Marker's block-type bookkeeping attributes (cosmetic).
 const dropBlockType = (html) => html.replace(/\s*block-type="[^"]*"/g, "");
 
@@ -1300,7 +1322,9 @@ const processBody = (body) =>
           dropBlockType(
             demathify(
               mergeNotationProductions(
-                demoteGrammarHeadings(algoLists(swapGrammar(body))),
+                demoteGrammarHeadings(
+                  mergeSplitAlgs(algoLists(swapGrammar(body))),
+                ),
               ),
             ),
           ),
