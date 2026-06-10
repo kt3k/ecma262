@@ -616,7 +616,20 @@ const rebuildSyntax = (regionHtml) => {
         out.push(renderEs2Dl(decl.name));
       } else {
         out.push(`<p class="grammar-oneof">${plain(b)}</p>`);
-        if (table) out.push(blocks[++i]);
+        // The kept table is grammar, not data: render it like the official
+        // es5.1 HTML's borderless lightweight-table, cells as <b><tt>
+        // terminals. (Marker sometimes makes the first row <th> — §7.4.3.)
+        if (table) {
+          out.push(
+            blocks[++i]
+              .replace(/<table\b[^>]*>/i, '<table class="lightweight-table">')
+              .replace(/<(\/?)th\b/gi, "<$1td")
+              .replace(
+                /<td>([\s\S]*?)<\/td>/gi,
+                (_m, cell) => `<td><b><tt>${cell.trim()}</tt></b></td>`,
+              ),
+          );
+        }
       }
       continue;
     }
