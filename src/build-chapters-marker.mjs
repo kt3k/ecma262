@@ -418,6 +418,19 @@ const SECTION_OVERRIDE = EDITION === "es1"
   ? ES1_SECTION_OVERRIDE
   : ES2_SECTION_OVERRIDE;
 
+// ES1's "Brief History" page was captured by Marker only as an image (see
+// frontMatter); restore its prose as text from the PDF. ES2's is real text.
+const BRIEF_HISTORY = EDITION === "es1"
+  ? "<p>This ECMA Standard is based on several originating technologies, the " +
+    "most well known being JavaScript&trade; (Netscape Communications) and " +
+    "JScript&trade; (Microsoft Corporation). The development of this Standard " +
+    "started in November 1996.</p>" +
+    "<p>The ECMA Standard is submitted to ISO/IEC JTC 1 for adoption under the " +
+    "fast-track procedure.</p>" +
+    "<p>This ECMA Standard has been adopted by the ECMA General Assembly of " +
+    "June 1997.</p>"
+  : "";
+
 // ES2 spelling (American) vs bclary es3 (British): normalise borrowed markup.
 const normSpell = (html) => html.replace(/Initialiser/g, "Initializer");
 const es3Name = (es2Name) => es2Name.replace(/Initializer/g, "Initialiser");
@@ -759,6 +772,23 @@ const frontMatter = () => {
     /<h[1-6][^>]*>\s*(?:<b>)?\s*Table of contents[\s\S]*?<\/table>/i,
     "",
   );
+  // The front matter (title page / Brief History / ToC) has no figures, so any
+  // <img> here is a Marker page-scan artefact — e.g. ES1's Brief History page
+  // mis-extracted as `_page_4_Figure_1` (not caught by dropCoverImages, which
+  // only targets `_Picture_`). Real figures live in numbered body sections.
+  intro = intro.replace(/<p>\s*<img[^>]*>\s*<\/p>/gi, "").replace(
+    /<img[^>]*>/gi,
+    "",
+  );
+  // Drop empty tables (Marker emits a contentless <table> grid next to the ES1
+  // Brief-History image).
+  intro = intro.replace(
+    /<table>[\s\S]*?<\/table>/gi,
+    (m) => (plain(m) ? m : ""),
+  );
+  // ES1's Brief History was captured ONLY as that page-scan image (no text), so
+  // restore the prose from the PDF text layer; ES2's Brief History is real text.
+  intro = BRIEF_HISTORY + intro;
   const ed = EDITION === "es1" ? "1st" : "2nd";
   const tail = EDITION === "es1"
     ? "ES1 (1997) is the first edition; ES2 (1998) is its editorial reissue."
