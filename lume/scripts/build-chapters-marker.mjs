@@ -80,6 +80,13 @@ const es1PageBreakRepair = (s) =>
   ).replace(
     /(Description\s*<\/b>\s*<\/h3>)\s*<p block-type="Text">\s*<i>\s*&lt;CR&gt;\s*<\/i>\s*<\/p>/,
     "$1",
+  ).replace(
+    // §7.7.4: the PDF page break truncated the grammar <pre> right after
+    // "HexEscapeSequence ::" and its RHS (\x HexDigit HexDigit) was
+    // re-attached as a stray paragraph above the section's intro prose. The
+    // production content is restored via ES2_GRAMMAR_OVERRIDE; drop the stray.
+    /(7\.7\.4 String Literals\s*<\/b>\s*<\/h1>)\s*<p block-type="Text">\s*<b>\s*\\x\s*<\/b>\s*<i>\s*HexDigit HexDigit\s*<\/i>\s*<\/p>/,
+    "$1",
   );
 
 const src = EDITION === "es1"
@@ -167,6 +174,31 @@ const ES2_GRAMMAR_OVERRIDE = {
   // have only the six ASCII-era characters.
   StrWhiteSpaceChar:
     `<dl class="grammar"><dt><i>StrWhiteSpaceChar</i> <b>:::</b></dt>\n      <dd><i>&lt;TAB&gt;</i>\n      <br /><i>&lt;SP&gt;</i>\n      <br /><i>&lt;FF&gt;</i>\n      <br /><i>&lt;VT&gt;</i>\n      <br /><i>&lt;CR&gt;</i>\n      <br /><i>&lt;LF&gt;</i></dd>\n    </dl>`,
+  // §7.7.4 — ES3 reworked string escapes: it moved the backslash out of
+  // CharacterEscapeSequence into the string-character alternatives, replaced
+  // the OctalEscapeSequence alternative with `0` [lookahead ∉ DecimalDigit]
+  // (octal moved to Annex B), added \v to SingleEscapeCharacter, and widened
+  // EscapeCharacter's OctalDigit to DecimalDigit. ES1/ES2 are identical to
+  // each other here (verified against both PDFs), so hand-author the nine
+  // productions ES3 changed; the rest of the section borrows cleanly.
+  DoubleStringCharacter:
+    `<dl class="grammar"><dt><i>DoubleStringCharacter</i> <b>::</b></dt>\n      <dd><i>SourceCharacter</i> <b>but not</b> <i>double-quote</i> <b><tt>"</tt> or</b> <i>backslash</i> <b><tt>\\</tt> or</b> <i>LineTerminator</i>\n      <br /><i>EscapeSequence</i></dd>\n    </dl>`,
+  SingleStringCharacter:
+    `<dl class="grammar"><dt><i>SingleStringCharacter</i> <b>::</b></dt>\n      <dd><i>SourceCharacter</i> <b>but not</b> <i>single-quote</i> <b><tt>'</tt> or</b> <i>backslash</i> <b><tt>\\</tt> or</b> <i>LineTerminator</i>\n      <br /><i>EscapeSequence</i></dd>\n    </dl>`,
+  EscapeSequence:
+    `<dl class="grammar"><dt><i>EscapeSequence</i> <b>::</b></dt>\n      <dd><i>CharacterEscapeSequence</i>\n      <br /><i>OctalEscapeSequence</i>\n      <br /><i>HexEscapeSequence</i>\n      <br /><i>UnicodeEscapeSequence</i></dd>\n    </dl>`,
+  CharacterEscapeSequence:
+    `<dl class="grammar"><dt><i>CharacterEscapeSequence</i> <b>::</b></dt>\n      <dd><b><tt>\\</tt></b> <i>SingleEscapeCharacter</i>\n      <br /><b><tt>\\</tt></b> <i>NonEscapeCharacter</i></dd>\n    </dl>`,
+  SingleEscapeCharacter:
+    `<dl class="grammar"><dt><i>SingleEscapeCharacter</i> <b>:: one of</b></dt>\n      <dd><b><tt>' " \\ b f n r t</tt></b></dd>\n    </dl>`,
+  EscapeCharacter:
+    `<dl class="grammar"><dt><i>EscapeCharacter</i> <b>::</b></dt>\n      <dd><i>SingleEscapeCharacter</i>\n      <br /><i>OctalDigit</i>\n      <br /><b><tt>x</tt></b>\n      <br /><b><tt>u</tt></b></dd>\n    </dl>`,
+  HexEscapeSequence:
+    `<dl class="grammar"><dt><i>HexEscapeSequence</i> <b>::</b></dt>\n      <dd><b><tt>\\x</tt></b> <i>HexDigit HexDigit</i></dd>\n    </dl>`,
+  OctalEscapeSequence:
+    `<dl class="grammar"><dt><i>OctalEscapeSequence</i> <b>::</b></dt>\n      <dd><b><tt>\\</tt></b> <i>OctalDigit</i>\n      <br /><b><tt>\\</tt></b> <i>OctalDigit OctalDigit</i>\n      <br /><b><tt>\\</tt></b> <i>ZeroToThree OctalDigit OctalDigit</i></dd>\n    </dl>`,
+  UnicodeEscapeSequence:
+    `<dl class="grammar"><dt><i>UnicodeEscapeSequence</i> <b>::</b></dt>\n      <dd><b><tt>\\u</tt></b> <i>HexDigit HexDigit HexDigit HexDigit</i></dd>\n    </dl>`,
   // §7.5 — ES3 rebuilt identifiers on Unicode (IdentifierStart/Part); ES2 uses
   // the simpler IdentifierLetter form.
   IdentifierName:
@@ -591,10 +623,33 @@ const isGrammarish = (b) => {
 
 const unmappedNTs = new Set();
 
+// A single <pre> can carry several productions (ES1 §7.7.4 and §11.2 set the
+// whole grammar in one block; the §5.1.5 example pre never reaches a Syntax
+// region). Split such a pre at its declaration lines so each production
+// resolves independently; a pre with at most one declaration passes through.
+const expandMultiPre = (b) => {
+  if (blockTag(b) !== "pre") return [b];
+  const inner = b.replace(/^<pre\b[^>]*>/i, "").replace(/<\/pre>\s*$/i, "");
+  const chunks = [];
+  let cur = null;
+  for (const raw of inner.split("\n")) {
+    const t = raw.trim();
+    if (!t) continue;
+    if (/^[A-Z][A-Za-z]+\s*:{1,3}\s*(?:one of)?$/.test(t) || cur === null) {
+      cur = [raw];
+      chunks.push(cur);
+    } else {
+      cur.push(raw);
+    }
+  }
+  if (chunks.length <= 1) return [b];
+  return chunks.map((c) => `<pre>${c.join("\n")}</pre>`);
+};
+
 // Rebuild one Syntax region: swap structural productions for es3, keep Marker's
 // "one of" tables, drop the flattened alternative paragraphs.
 const rebuildSyntax = (regionHtml) => {
-  const blocks = splitBlocks(regionHtml);
+  const blocks = splitBlocks(regionHtml).flatMap(expandMultiPre);
   const out = [];
   for (let i = 0; i < blocks.length; i++) {
     const b = blocks[i];
