@@ -1109,10 +1109,13 @@ const secnumSpan = (n) => (n ? `<span className="secnum">${n}</span> ` : "");
 
 // Section titles are plain text (entities decoded during parsing), so operator
 // titles like "The left shift operator ( << )" carry raw <, >, {, } that MDX
-// reads as JSX. Re-escape them for the MDX heading line.
+// reads as JSX. Re-escape them for the MDX heading line. "[" is escaped too:
+// the internal-method titles read "[[Get]](P)" (no space, faithful to the
+// PDF), which markdown would otherwise parse as a link — [Get] href="P".
 const mdxTitle = (t) =>
   t.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/\{/g, "&#123;").replace(/\}/g, "&#125;");
+    .replace(/\{/g, "&#123;").replace(/\}/g, "&#125;")
+    .replace(/\[/g, "&#91;");
 
 // --- assign chapter slugs + global maps --------------------------------------
 for (const c of pages) {
