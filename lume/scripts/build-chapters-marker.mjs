@@ -698,19 +698,57 @@ const splitNotationAlts = (text) => {
   }
   return [t];
 };
-const toDl = (decl, alts) =>
+const toDlRaw = (decl, dds) =>
   `<dl class="grammar"><dt>${decl.trim()}</dt>\n      <dd>${
-    alts.map(markupRHS).join("\n      <br />\n      ")
+    dds.join("\n      <br />\n      ")
   }</dd>\n    </dl>`;
+const toDl = (decl, alts) => toDlRaw(decl, alts.map(markupRHS));
 const mergeNotationProductions = (html) =>
-  // LHS (grammar-oneof) + a <pre> RHS → one <dl class="grammar"> (WithStatement,
-  // ArgumentList, VariableDeclaration, IterationStatement, ReturnStatement). The
-  // `::` examples whose RHS is a plain <p> (ZeroToThree, Identifier,
-  // SourceCharacter — often descriptive) are left as the demoted grammar line.
-  html.replace(
-    /<p class="grammar-oneof">([\s\S]*?)<\/p>\s*<pre>([\s\S]*?)<\/pre>/gi,
-    (_m, decl, rhs) => toDl(decl, splitNotationAlts(rhs)),
-  );
+  html
+    // LHS (grammar-oneof) + a <pre> RHS → one <dl class="grammar"> (WithStatement,
+    // ArgumentList, VariableDeclaration, IterationStatement, ReturnStatement).
+    .replace(
+      /<p class="grammar-oneof">([\s\S]*?)<\/p>\s*<pre>([\s\S]*?)<\/pre>/gi,
+      (_m, decl, rhs) => toDl(decl, splitNotationAlts(rhs)),
+    )
+    // "NT :: one of" LHS + one bold terminal row (§5.1.5's ZeroToThree example).
+    // Marker collapsed the spaced single-character terminals ("0 1 2 3" → "0123");
+    // each character is its own alternative, so re-space them. ((?:(?!<\/p>)…)
+    // keeps each capture inside its own paragraph.)
+    .replace(
+      /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?\bone of\b(?:(?!<\/p>)[\s\S])*?)<\/p>\s*<p[^>]*>\s*<b>\s*([0-9A-Za-z]{2,9})\s*<\/b>\s*<\/p>/g,
+      (_m, decl, run) => toDl(decl, [run.split("").join(" ")]),
+    )
+    // Same example in the ES1 conversion: Marker fused LHS and RHS into a single
+    // paragraph (<i>ZeroToThree</i> <b>:: one of 0123</b>).
+    .replace(
+      /<p[^>]*>\s*(<i>(?:(?!<\/p>)[\s\S])*?<\/i>)\s*<b>\s*(:{1,3})\s*one of\s+([0-9A-Za-z]{2,9})\s*<\/b>\s*<\/p>/g,
+      (_m, nt, colons, run) =>
+        toDl(`${nt.replace(/\s+/g, " ")} <b>${colons} one of</b>`, [
+          run.split("").join(" "),
+        ]),
+    )
+    // LHS + a run of single-token bold paragraphs (the "convenient abbreviation"
+    // expansion of a one-of): each paragraph is one alternative.
+    .replace(
+      /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?)<\/p>((?:\s*<p[^>]*>\s*<b>\s*\S{1,12}\s*<\/b>\s*<\/p>){2,})/g,
+      (_m, decl, alts) =>
+        toDl(decl, [...alts.matchAll(/<b>\s*(\S+)\s*<\/b>/g)].map((x) => x[1])),
+    )
+    // LHS + an inline-marked-up "but not" RHS (the Identifier example): the RHS
+    // is already correct grammar markup — keep it verbatim.
+    .replace(
+      /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?)<\/p>\s*<p[^>]*>\s*(<i>(?:(?!<\/p>)[\s\S])*?<\/i>\s*<b>\s*but not\s*<\/b>\s*<i>(?:(?!<\/p>)[\s\S])*?<\/i>)\s*<\/p>/g,
+      (_m, decl, rhs) => toDlRaw(decl, [rhs.replace(/\s+/g, " ")]),
+    )
+    // The descriptive-phrase example (SourceCharacter :: any Unicode character):
+    // its RHS is roman prose by definition ("described by a descriptive phrase in
+    // roman type"), so no grammar markup. Normalises both editions' mangled LHS
+    // (ES1 has the colon inside the italics: <i>SourceCharacter:</i>).
+    .replace(
+      /<p class="grammar-oneof">\s*<i>\s*SourceCharacter:?\s*<\/i>\s*(?:<b>\s*:{1,3}\s*<\/b>\s*)?<\/p>\s*<p[^>]*>\s*(?:<i>\s*)?(any Unicode character)(?:\s*<\/i>)?\s*<\/p>/g,
+      (_m, rhs) => toDlRaw("<i>SourceCharacter</i> <b>::</b>", [rhs]),
+    );
 
 // ===========================================================================
 // Body cleanup  (algorithms, Marker cruft)
