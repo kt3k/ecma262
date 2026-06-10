@@ -63,6 +63,10 @@ const EDITION = /ecma262\/(es[0-9.]+)\b/.exec(INPUT)?.[1] ?? "es2";
 // expansion alternatives out of the multi-production <pre>; Marker re-attached
 // them as two stray paragraphs after the ReturnStatement example. Fold them
 // back into the <pre> and drop the strays (both anchors verified unique).
+// ES1 §7.2/7.3: Marker likewise displaced the LineTerminator production's
+// second alternative (<CR>) past the "7.3 Comments / Description" headings;
+// the production itself is restored via ES2_GRAMMAR_OVERRIDE, so just drop
+// the stray paragraph.
 const es1PageBreakRepair = (s) =>
   s.replace(
     "for ( Expression ; ; ) Statement</pre>",
@@ -73,6 +77,9 @@ const es1PageBreakRepair = (s) =>
   ).replace(
     /<p block-type="Text">\s*<b>\s*for \(\s*<\/b>(?:(?!<\/p>)[\s\S])*?<\/p>\s*<p block-type="Text">\s*<b>\s*for \(\s*<\/b>(?:(?!<\/p>)[\s\S])*?<\/p>/,
     "",
+  ).replace(
+    /(Description\s*<\/b>\s*<\/h3>)\s*<p block-type="Text">\s*<i>\s*&lt;CR&gt;\s*<\/i>\s*<\/p>/,
+    "$1",
   );
 
 const src = EDITION === "es1"
@@ -151,6 +158,11 @@ const ES2_GRAMMAR_OVERRIDE = {
   // (it split into InputElementDiv/RegExp for the regexp/division ambiguity).
   InputElement:
     `<dl class="grammar"><dt><i>InputElement</i> <b>::</b></dt>\n      <dd><i>WhiteSpace</i>\n      <br /><i>LineTerminator</i>\n      <br /><i>Comment</i>\n      <br /><i>Token</i></dd>\n    </dl>`,
+  // §7.2 — ES3 added the Unicode line separators (<LS>, <PS>); ES1/ES2 have
+  // only <LF> and <CR> (Marker also displaced the <CR> alternative in ES1,
+  // dropped by es1PageBreakRepair).
+  LineTerminator:
+    `<dl class="grammar"><dt><i>LineTerminator</i> <b>::</b></dt>\n      <dd><i>&lt;LF&gt;</i>\n      <br /><i>&lt;CR&gt;</i></dd>\n    </dl>`,
   // §7.5 — ES3 rebuilt identifiers on Unicode (IdentifierStart/Part); ES2 uses
   // the simpler IdentifierLetter form.
   IdentifierName:
