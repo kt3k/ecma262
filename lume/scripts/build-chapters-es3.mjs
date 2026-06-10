@@ -193,7 +193,13 @@ const imgPaths = (html) =>
     /\b(src|data)="([^"/]+\.(?:svg|png|jpe?g|gif))"/gi,
     (_m, attr, file) => `${attr}="${BASE_PATH}/img/${file}"`,
   );
-const reskin = (html) => imgPaths(themeColors(rewriteXrefs(html)));
+// Tag the optional-symbol subscript so CSS can colour it like the modern
+// emu-opt (the source renders it as a bare <sub>opt</sub>, indistinguishable
+// from numeric subscripts without a class). Same treatment as the es5.1
+// ingester.
+const tagOpt = (html) =>
+  html.replace(/<sub>opt<\/sub>/g, '<sub class="g-opt">opt</sub>');
+const reskin = (html) => tagOpt(imgPaths(themeColors(rewriteXrefs(html))));
 
 const secnumSpan = (n) => (n ? `<span className="secnum">${n}</span> ` : "");
 

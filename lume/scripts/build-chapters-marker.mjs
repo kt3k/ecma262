@@ -1090,12 +1090,18 @@ const processBody = (body) =>
 // ===========================================================================
 // Emit the scratch contract
 // ===========================================================================
+// Tag the optional-symbol subscript so CSS can colour it like the modern
+// emu-opt (a bare <sub>opt</sub> is indistinguishable from numeric subscripts
+// without a class). Same treatment as the es5.1 ingester.
+const tagOpt = (html) =>
+  html.replace(/<sub>opt<\/sub>/g, '<sub class="g-opt">opt</sub>');
+
 const meta = {};
 for (const chapter of pages) {
   const slug = chapter.slug;
   const secMap = {};
   (function collect(n) {
-    secMap[n.id] = SECTION_OVERRIDE[n.id] ?? processBody(n.body);
+    secMap[n.id] = tagOpt(SECTION_OVERRIDE[n.id] ?? processBody(n.body));
     n.children.forEach(collect);
   })(chapter);
 
