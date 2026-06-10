@@ -2515,10 +2515,13 @@ html.dark .ecma-es3 table tbody tr:nth-child(even) {
   color: inherit;
   text-decoration: underline;
 }
-/* Bare <table> content tables — same bordered, theme-aware look as ES3. */
+/* Bare <table> content tables — same bordered, theme-aware look as ES3.
+   Centred within the measure: the printed ECMA-262 1st/2nd editions centre
+   their tables (ES1 PDF §7.1: body x≈99–500, table x≈190–420), as do the
+   modern editions (tc39 `emu-table table { margin: 0 auto }`). */
 :is(.ecma-es1, .ecma-es2) table {
   border-collapse: collapse;
-  margin: 1em 0;
+  margin: 1em auto;
 }
 :is(.ecma-es1, .ecma-es2) table th,
 :is(.ecma-es1, .ecma-es2) table td {
