@@ -692,6 +692,46 @@ const dropCoverImages = (html) =>
   html.replace(/<p>\s*<img[^>]*_Picture_[^>]*>\s*<\/p>/gi, "")
     .replace(/<img[^>]*_Picture_[^>]*>/gi, "");
 
+// Marker sometimes emits a contentless <table> grid (e.g. trailing §16). Drop
+// any table with no text in any cell.
+const dropEmptyTables = (html) =>
+  html.replace(/<table>[\s\S]*?<\/table>/gi, (m) => (plain(m) ? m : ""));
+
+// Marker (LLM mode) wraps some inline maths in <math>…</math> with a little
+// LaTeX (\text, \cdot, \infty, 10^{n−k}, …). The site has no math renderer, so
+// these show raw. Decode the small vocabulary that appears to inline HTML.
+const MATH_SYM = {
+  cdot: "⋅",
+  times: "×",
+  setminus: "∖",
+  infty: "∞",
+  ge: "≥",
+  le: "≤",
+  bullet: "•",
+  quad: " ",
+  pm: "±",
+  ne: "≠",
+  times2: "×",
+};
+const demathify = (html) =>
+  html.replace(/<math[^>]*>([\s\S]*?)<\/math>/gi, (_m, body) => {
+    let s = body
+      .replace(/\\textit\{([^{}]*)\}/g, "<i>$1</i>")
+      .replace(/\\(?:textbf|mathbf)\{([^{}]*)\}/g, "<b>$1</b>")
+      .replace(/\\text\{([^{}]*)\}/g, "$1")
+      .replace(/\\([a-zA-Z]+)/g, (m, c) => MATH_SYM[c] ?? m)
+      .replace(/\\\\/g, "\\");
+    // exponents / subscripts — repeat so nested braces resolve innermost-first.
+    for (let i = 0; i < 3; i++) {
+      s = s.replace(/\^\{([^{}]*)\}/g, "<sup>$1</sup>")
+        .replace(/_\{([^{}]*)\}/g, "<sub>$1</sub>");
+    }
+    s = s.replace(/\^(\w)/g, "<sup>$1</sup>").replace(/_(\w)/g, "<sub>$1</sub>")
+      .replace(/[{}]/g, "") // drop any orphan braces
+      .replace(/(^|[\s(>])-(?=[\d.\w])/g, "$1−"); // hyphen → minus in math
+    return `<span class="es2-math">${s.replace(/\s+/g, " ").trim()}</span>`;
+  });
+
 // ===========================================================================
 // Parse sections  (dotted-number headings only)
 // ===========================================================================
@@ -863,7 +903,11 @@ const processBody = (body) =>
   ocrFixes(
     reskin(
       dropCoverImages(
-        dropBlockType(demoteGrammarHeadings(algoLists(swapGrammar(body)))),
+        dropEmptyTables(
+          dropBlockType(
+            demathify(demoteGrammarHeadings(algoLists(swapGrammar(body)))),
+          ),
+        ),
       ),
     ),
   );
