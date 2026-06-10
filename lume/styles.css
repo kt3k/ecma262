@@ -2588,6 +2588,17 @@ html.dark
 :is(.ecma-es1, .ecma-es2) ol.ecma-alg > li {
   margin: 0.15em 0;
 }
+/* Bulleted value lists (the Math special cases, the §7.7.4 SV/CV lists) —
+   printed as • items in the PDFs, not numbered steps. Same spacing as the
+   algorithm lists; list-style restored against the preflight reset. */
+:is(.ecma-es1, .ecma-es2) ul.ecma-list {
+  margin: 1em 0 1em 3ex;
+  padding-left: 2ex;
+  list-style: disc;
+}
+:is(.ecma-es1, .ecma-es2) ul.ecma-list > li {
+  margin: 0.15em 0;
+}
 /* NOTE / Discussion callouts in hand-authored sections (e.g. §9.5–9.7). */
 :is(.ecma-es1, .ecma-es2) .es2-note {
   margin: 1em 0;

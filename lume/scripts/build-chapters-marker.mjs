@@ -1039,10 +1039,21 @@ const mergeNotationProductions = (html) =>
 // A PDF page break can split one algorithm into two lists (ES1 §15.1.2.5
 // unescape: steps 1–12 + 13–20); steps are cross-referenced by number
 // ("go to step 18"), so carry the printed first number as the ol's start.
+// Items with NO printed number are bullets in the PDFs (the Math special
+// cases, the §7.7.4 SV/CV value lists) — render those as a <ul>, keeping
+// Marker's has-continuation page-break marker for the merge pass below.
 const algoLists = (html) =>
   html.replace(
-    /<p[^>]*block-type="ListGroup"[^>]*>\s*<ul>([\s\S]*?)<\/ul>\s*<\/p>/gi,
-    (_m, items) => {
+    /<p([^>]*block-type="ListGroup"[^>]*)>\s*<ul>([\s\S]*?)<\/ul>\s*<\/p>/gi,
+    (_m, attrs, items) => {
+      if (!/<li[^>]*>\s*[0-9]+\./.test(items)) {
+        const cont = /has-continuation/.test(attrs) ? " has-continuation" : "";
+        const lis = items.replace(
+          /<li[^>]*>\s*([\s\S]*?)\s*<\/li>/gi,
+          (_x, txt) => `<li>${txt.trim()}</li>`,
+        );
+        return `<ul class="ecma-list${cont}">${lis}</ul>`;
+      }
       let first = null;
       const lis = items.replace(
         /<li[^>]*>\s*([0-9]+)\.\s*([\s\S]*?)<\/li>/gi,
@@ -1074,9 +1085,23 @@ const mergeSplitAlgs = (html) => {
         }>${items1}\n    ${items2}</ol>`;
       },
     );
+    // Bullet lists have no numbering to validate; fold on Marker's own
+    // page-break marker (the has-continuation class on the first half).
+    html = html.replace(
+      /<ul class="ecma-list has-continuation">((?:(?!<\/ul>)[\s\S])*?)<\/ul>\s*<ul class="ecma-list( has-continuation)?">/g,
+      (_m, items1, cont2) =>
+        `<ul class="ecma-list${cont2 ?? ""}">${items1}\n    `,
+    );
   } while (html !== prev);
   return html;
 };
+// A has-continuation whose other half didn't follow (nothing to fold) is just
+// Marker bookkeeping — drop the leftover marker class.
+const dropContinuationMarks = (html) =>
+  html.replace(
+    /<ul class="ecma-list has-continuation">/g,
+    '<ul class="ecma-list">',
+  );
 // Drop Marker's block-type bookkeeping attributes (cosmetic).
 const dropBlockType = (html) => html.replace(/\s*block-type="[^"]*"/g, "");
 
@@ -1323,7 +1348,9 @@ const processBody = (body) =>
             demathify(
               mergeNotationProductions(
                 demoteGrammarHeadings(
-                  mergeSplitAlgs(algoLists(swapGrammar(body))),
+                  dropContinuationMarks(
+                    mergeSplitAlgs(algoLists(swapGrammar(body))),
+                  ),
                 ),
               ),
             ),
