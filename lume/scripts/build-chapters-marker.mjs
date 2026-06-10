@@ -1036,15 +1036,23 @@ const mergeNotationProductions = (html) =>
 
 // Algorithm lists: Marker emits <ul><li block-type="ListItem">1. …</li></ul>.
 // Turn into <ol> and strip the leading "N." (and the ListGroup <p> wrapper).
+// A PDF page break can split one algorithm into two lists (ES1 §15.1.2.5
+// unescape: steps 1–12 + 13–20); steps are cross-referenced by number
+// ("go to step 18"), so carry the printed first number as the ol's start.
 const algoLists = (html) =>
   html.replace(
     /<p[^>]*block-type="ListGroup"[^>]*>\s*<ul>([\s\S]*?)<\/ul>\s*<\/p>/gi,
     (_m, items) => {
+      let first = null;
       const lis = items.replace(
         /<li[^>]*>\s*([0-9]+)\.\s*([\s\S]*?)<\/li>/gi,
-        (_x, _n, txt) => `<li>${txt.trim()}</li>`,
+        (_x, n, txt) => {
+          if (first === null) first = Number(n);
+          return `<li>${txt.trim()}</li>`;
+        },
       );
-      return `<ol class="ecma-alg">${lis}</ol>`;
+      const start = first !== null && first !== 1 ? ` start="${first}"` : "";
+      return `<ol class="ecma-alg"${start}>${lis}</ol>`;
     },
   );
 // Drop Marker's block-type bookkeeping attributes (cosmetic).
