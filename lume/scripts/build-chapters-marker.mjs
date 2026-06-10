@@ -59,7 +59,25 @@ fs.mkdirSync(CONTENT_DIR, { recursive: true });
 // Edition id from the input path: ecma262/es1/spec.html -> "es1".
 const EDITION = /ecma262\/(es[0-9.]+)\b/.exec(INPUT)?.[1] ?? "es2";
 
-const src = fs.readFileSync(INPUT, "utf8");
+// ES1 §5.1.5: the PDF page break spilled the last three IterationStatement
+// expansion alternatives out of the multi-production <pre>; Marker re-attached
+// them as two stray paragraphs after the ReturnStatement example. Fold them
+// back into the <pre> and drop the strays (both anchors verified unique).
+const es1PageBreakRepair = (s) =>
+  s.replace(
+    "for ( Expression ; ; ) Statement</pre>",
+    "for ( Expression ; ; ) Statement\n" +
+      "      for ( Expression ; ; Expression ) Statement\n" +
+      "      for ( Expression ; Expression ; ) Statement\n" +
+      "      for ( Expression ; Expression ; Expression ) Statement</pre>",
+  ).replace(
+    /<p block-type="Text">\s*<b>\s*for \(\s*<\/b>(?:(?!<\/p>)[\s\S])*?<\/p>\s*<p block-type="Text">\s*<b>\s*for \(\s*<\/b>(?:(?!<\/p>)[\s\S])*?<\/p>/,
+    "",
+  );
+
+const src = EDITION === "es1"
+  ? es1PageBreakRepair(fs.readFileSync(INPUT, "utf8"))
+  : fs.readFileSync(INPUT, "utf8");
 // es3 grammar source sits alongside the input (ecma262/es3/spec.html); ES1 and
 // ES2 share es3's grammar (no feature changes between the editions).
 const ES3_PATH = path.join(path.dirname(INPUT), "../es3/spec.html");
@@ -705,11 +723,55 @@ const toDlRaw = (decl, dds) =>
 const toDl = (decl, alts) => toDlRaw(decl, alts.map(markupRHS));
 const mergeNotationProductions = (html) =>
   html
-    // LHS (grammar-oneof) + a <pre> RHS → one <dl class="grammar"> (WithStatement,
-    // ArgumentList, VariableDeclaration, IterationStatement, ReturnStatement).
+    // LHS (grammar-oneof) + an adjacent <pre> RHS → one <dl class="grammar">
+    // (WithStatement, ReturnStatement, and in ES2 the whole §5.1.5 family). The
+    // decl must stay inside its own paragraph — un-tempered, it once swallowed
+    // everything between ES1's "ArgumentList :" and a <pre> four paragraphs on.
     .replace(
-      /<p class="grammar-oneof">([\s\S]*?)<\/p>\s*<pre>([\s\S]*?)<\/pre>/gi,
+      /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?)<\/p>\s*<pre>([\s\S]*?)<\/pre>/gi,
       (_m, decl, rhs) => toDl(decl, splitNotationAlts(rhs)),
+    )
+    // A standalone <pre> holding a chain of productions (ES1's §5.1.5
+    // VariableDeclaration/IterationStatement passage came through as one big
+    // <pre>): an "NT :" line starts a production, indented grammar lines are its
+    // alternatives, and lowercase connective lines ("is a convenient
+    // abbreviation for:") are prose between productions.
+    .replace(
+      /<pre>([A-Z][A-Za-z]+\s*:{1,3}\n[\s\S]*?)<\/pre>/g,
+      (_m, text) => {
+        const out = [];
+        let decl = null, alts = [];
+        const flush = () => {
+          if (decl) out.push(toDl(decl, alts));
+          decl = null;
+          alts = [];
+        };
+        for (const line of text.split("\n").map((l) => l.trim())) {
+          if (!line) continue;
+          const lhs = line.match(/^([A-Z][A-Za-z]+)\s*(:{1,3})$/);
+          if (lhs) {
+            flush();
+            decl = `<i>${lhs[1]}</i> <b>${lhs[2]}</b>`;
+          } else if (
+            /^[a-z]/.test(line) && /[a-z]{3,}\s+[a-z]{3,}/.test(line)
+          ) {
+            flush();
+            out.push(`<p>${line}</p>`);
+          } else if (decl) {
+            alts.push(line);
+          } else {
+            out.push(`<p>${markupRHS(line)}</p>`);
+          }
+        }
+        flush();
+        return out.join("\n  ");
+      },
+    )
+    // §5.1.5's recursive-definition example (ArgumentList): ES1's Marker kept
+    // the two alternatives as separate paragraphs after the demoted LHS.
+    .replace(
+      /<p class="grammar-oneof">(\s*<i>\s*ArgumentList\s*<\/i>\s*<b>\s*:\s*<\/b>\s*)<\/p>\s*<p[^>]*>\s*<i>\s*AssignmentExpression\s*<\/i>\s*<\/p>\s*<p[^>]*>((?:(?!<\/p>)[\s\S])*?)<\/p>/g,
+      (_m, decl, alt2) => toDl(decl, ["AssignmentExpression", plain(alt2)]),
     )
     // "NT :: one of" LHS + one bold terminal row (§5.1.5's ZeroToThree example).
     // Marker collapsed the spaced single-character terminals ("0 1 2 3" → "0123");
