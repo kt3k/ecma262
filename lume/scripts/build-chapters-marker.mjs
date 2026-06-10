@@ -895,17 +895,22 @@ const mergeNotationProductions = (html) =>
       (_m, decl, alts) =>
         toDl(decl, [...alts.matchAll(/<b>\s*(\S+)\s*<\/b>/g)].map((x) => x[1])),
     )
-    // LHS + a run of single-nonterminal italic paragraphs (ES1 §7.4.1
-    // ReservedWord: the PDF has no "Syntax" heading there, so the production
-    // sits in the Description region and swapGrammar never rebuilds it; the
-    // LHS heading is demoted to a grammar-oneof paragraph instead).
+    // LHS + a run of grammar-fragment paragraphs — each made only of <i>/<b>
+    // segments with no prose and no colon (ES1 §7.4.1 ReservedWord, §12.1
+    // Block/StatementList: those PDFs have no "Syntax" heading there, so the
+    // productions sit outside any Syntax region and swapGrammar never rebuilds
+    // them; the LHS headings are demoted to grammar-oneof paragraphs instead).
     .replace(
-      /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?)<\/p>((?:\s*<p[^>]*>\s*<i>\s*[A-Z][A-Za-z]*\s*<\/i>\s*<\/p>){2,})/g,
-      (_m, decl, alts) =>
-        toDl(
-          decl.replace(/\s+/g, " "),
-          [...alts.matchAll(/<i>\s*([A-Za-z]+)\s*<\/i>/g)].map((x) => x[1]),
-        ),
+      /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?)<\/p>((?:\s*<p(?![^>]*grammar-oneof)[^>]*>\s*(?:(?:<i>[^<]*<\/i>|<b>[^<]*<\/b>)\s*)+<\/p>)+)/g,
+      (m0, decl, alts) => {
+        const ps = [...alts.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)]
+          .map((x) => plain(x[1]));
+        if (
+          !ps.length ||
+          ps.some((t) => !t || /:/.test(t) || /[a-z]{3,}\s+[a-z]{3,}/.test(t))
+        ) return m0;
+        return toDl(decl.replace(/\s+/g, " "), ps);
+      },
     )
     // LHS + an inline-marked-up "but not" RHS (the Identifier example): the RHS
     // is already correct grammar markup — keep it verbatim.
@@ -922,6 +927,45 @@ const mergeNotationProductions = (html) =>
     .replace(
       /<p[^>]*>\s*<i>\s*SourceCharacter:?\s*<\/i>\s*(?:<b>\s*:{1,3}\s*<\/b>\s*)?<\/p>\s*<p[^>]*>\s*(?:<i>\s*)?(any Unicode character)(?:\s*<\/i>)?\s*<\/p>/g,
       (_m, rhs) => toDlRaw("<i>SourceCharacter</i> <b>::</b>", [rhs]),
+    )
+    // §11.2.1 Property Accessors: the dot/bracket notation displays and the
+    // four syntactic-conversion lines. The PDFs set these off from the prose
+    // (indented to the grammar position), but Marker leaves them as plain
+    // paragraphs — ES2 even fuses the pairs and drops the italics. The lines
+    // are fixed and known, so rewrite the whole span (prose connectives
+    // included) to es3-equivalent markup; the trailing "where
+    // <identifier-string> is…" paragraph anchors the end and is kept.
+    .replace(
+      /<p[^>]*>\s*Properties are accessed by name, using either the dot notation:\s*<\/p>[\s\S]*?(?=<p[^>]*>\s*where &lt;identifier-string&gt;)/,
+      () => {
+        const behave = EDITION === "es1" ? "behavior" : "behaviour";
+        const dd = (lines) =>
+          `<dl class="grammar"><dd>${
+            lines.join("\n      <br />\n      ")
+          }</dd>\n    </dl>`;
+        const dot = (nt) => `<i>${nt}</i> <b><tt>.</tt></b> <i>Identifier</i>`;
+        const idx = (nt, inner) =>
+          `<i>${nt}</i> <b><tt>[</tt></b> ${inner} <b><tt>]</tt></b>`;
+        const idstr = "<i>&lt;identifier-string&gt;</i>";
+        return [
+          "<p>Properties are accessed by name, using either the dot notation:</p>",
+          dd([dot("MemberExpression"), dot("CallExpression")]),
+          "<p>or the bracket notation:</p>",
+          dd([
+            idx("MemberExpression", "<i>Expression</i>"),
+            idx("CallExpression", "<i>Expression</i>"),
+          ]),
+          "<p>The dot notation is explained by the following syntactic conversion:</p>",
+          dd([dot("MemberExpression")]),
+          `<p>is identical in its ${behave} to</p>`,
+          dd([idx("MemberExpression", idstr)]),
+          "<p>and similarly</p>",
+          dd([dot("CallExpression")]),
+          `<p>is identical in its ${behave} to</p>`,
+          dd([idx("CallExpression", idstr)]),
+          "",
+        ].join("\n  ");
+      },
     );
 
 // ===========================================================================
