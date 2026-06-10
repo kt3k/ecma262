@@ -2563,6 +2563,11 @@ html.dark :is(.ecma-es1, .ecma-es2) table tbody tr:nth-child(even) {
   margin: 1em 0 0.25em 5ex;
   font-style: italic;
 }
+/* Bracketed grammar annotations, e.g. [no LineTerminator here], [empty]. */
+:is(.ecma-es1, .ecma-es2) .grammar-note {
+  font-style: italic;
+  color: var(--muted);
+}
 /* Grammar productions that genuinely diverged from ES3 (ch.7 lexical) and were
    kept from Marker's flattened output — flag faintly so they're easy to find
    and hand-correct. */

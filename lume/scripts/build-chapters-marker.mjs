@@ -653,6 +653,65 @@ const demoteGrammarHeadings = (html) =>
         : m,
   );
 
+// Reconstruct grammar markup for a plain-text RHS: a CamelCase token is a
+// nonterminal (italic), a trailing `opt` is a subscript, a [bracketed] phrase is
+// a notation note, and runs of everything else are terminals (<b><tt>).
+const markupRHS = (text) => {
+  const toks = plain(text).split(/\s+/).filter(Boolean);
+  const out = [];
+  let term = [];
+  const flush = () => {
+    if (term.length) out.push(`<b><tt>${term.join(" ")}</tt></b>`);
+    term = [];
+  };
+  for (let i = 0; i < toks.length; i++) {
+    let t = toks[i];
+    if (t.startsWith("[")) {
+      flush();
+      while (!t.endsWith("]") && i + 1 < toks.length) t += " " + toks[++i];
+      out.push(`<span class="grammar-note">${t}</span>`);
+      continue;
+    }
+    let name = t, opt = false;
+    if (/[A-Za-z]opt$/.test(t)) {
+      opt = true;
+      name = t.slice(0, -3);
+    }
+    if (/^[A-Z][A-Za-z]*[a-z]/.test(name)) {
+      flush();
+      out.push(`<i>${name}</i>${opt ? "<sub>opt</sub>" : ""}`);
+    } else term.push(t);
+  }
+  flush();
+  return out.join(" ");
+};
+
+// §5.1.5 (Grammar Notation) and the ASI examples leave a production as a bare LHS
+// (now a grammar-oneof <p>) + its right-hand side in a separate <pre>/<p>. Fold
+// each LHS + RHS into one <dl class="grammar"> like the rest of the site (and the
+// newer editions). Alternatives that begin with a statement keyword (the §5.1.5
+// `for (…)` expansion examples) are split onto their own lines.
+const splitNotationAlts = (text) => {
+  const t = plain(text);
+  if ((t.match(/\bfor\s*\(/g) || []).length > 1) {
+    return t.split(/\s+(?=for\s*\()/).filter(Boolean);
+  }
+  return [t];
+};
+const toDl = (decl, alts) =>
+  `<dl class="grammar"><dt>${decl.trim()}</dt>\n      <dd>${
+    alts.map(markupRHS).join("\n      <br />\n      ")
+  }</dd>\n    </dl>`;
+const mergeNotationProductions = (html) =>
+  // LHS (grammar-oneof) + a <pre> RHS → one <dl class="grammar"> (WithStatement,
+  // ArgumentList, VariableDeclaration, IterationStatement, ReturnStatement). The
+  // `::` examples whose RHS is a plain <p> (ZeroToThree, Identifier,
+  // SourceCharacter — often descriptive) are left as the demoted grammar line.
+  html.replace(
+    /<p class="grammar-oneof">([\s\S]*?)<\/p>\s*<pre>([\s\S]*?)<\/pre>/gi,
+    (_m, decl, rhs) => toDl(decl, splitNotationAlts(rhs)),
+  );
+
 // ===========================================================================
 // Body cleanup  (algorithms, Marker cruft)
 // ===========================================================================
@@ -910,7 +969,11 @@ const processBody = (body) =>
       dropCoverImages(
         dropEmptyTables(
           dropBlockType(
-            demathify(demoteGrammarHeadings(algoLists(swapGrammar(body)))),
+            demathify(
+              mergeNotationProductions(
+                demoteGrammarHeadings(algoLists(swapGrammar(body))),
+              ),
+            ),
           ),
         ),
       ),
