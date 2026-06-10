@@ -710,10 +710,17 @@ const markupRHS = (text) => {
 // newer editions). Alternatives that begin with a statement keyword (the §5.1.5
 // `for (…)` expansion examples) are split onto their own lines.
 const splitNotationAlts = (text) => {
-  const t = plain(text);
+  const t = plain(text).trim();
   if ((t.match(/\bfor\s*\(/g) || []).length > 1) {
     return t.split(/\s+(?=for\s*\()/).filter(Boolean);
   }
+  // §5.1.5's recursive ArgumentList example: ES2's Marker ran its two
+  // alternatives together on one line; the recursive case starts at the
+  // second nonterminal. (ES1 keeps them as separate paragraphs.)
+  const arg = t.match(
+    /^AssignmentExpression\s+(ArgumentList\s*,\s*AssignmentExpression)$/,
+  );
+  if (arg) return ["AssignmentExpression", arg[1]];
   return [t];
 };
 const toDlRaw = (decl, dds) =>
