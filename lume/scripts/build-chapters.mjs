@@ -1255,7 +1255,9 @@ function applyAlgSubst(html) {
 function tokenizeGrammarLine(line) {
   if (!line.trim()) return line;
   if (/^\s*\/\//.test(line)) return `<span class="cm">${line}</span>`;
-  const descM = line.match(/^([ \t]*)(&gt;\s.*)$/);
+  // The "&gt; " is grammarkdown's prose-RHS marker, not content — ecmarkup
+  // drops it from the rendered output.
+  const descM = line.match(/^([ \t]*)&gt;\s+(.*)$/);
   if (descM) return `${descM[1]}<emu-gprose>${descM[2]}</emu-gprose>`;
 
   let out = "";
