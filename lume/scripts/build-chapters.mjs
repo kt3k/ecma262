@@ -1376,7 +1376,13 @@ function tokenizeGrammarLine(line) {
 // its own <emu-rhs>. Indentation/newlines are preserved as raw whitespace
 // so the block keeps its visual shape when display-rendered with line breaks.
 function tokenizeGrammarProduction(chunk) {
-  const lines = chunk.split("\n");
+  // Grammarkdown comment lines (in practice only the `// emu-format ignore`
+  // formatter pragma) are tooling directives, not grammar; tc39.es strips
+  // them from the rendered output. Drop them before picking the LHS line —
+  // a leading pragma would otherwise become the "first line", costing the
+  // production its id="prod-…" anchor and demoting the real LHS to an
+  // <emu-rhs>.
+  const lines = chunk.split("\n").filter((l) => !/^\s*\/\//.test(l));
   // Pull the LHS name off the first non-blank line so the production gets
   // id="prod-Foo" name="Foo", matching tc39's hyperlink target shape.
   const firstNonEmpty = lines.find((l) => l.trim() !== "") || "";
@@ -1427,9 +1433,6 @@ function tokenizeGrammarProduction(chunk) {
         }
       }
       isFirst = false;
-    } else if (/^\s*\/\//.test(line)) {
-      // Preserve in-grammar comments as a span; not a separate RHS.
-      body += `<span class="cm">${line}</span>`;
     } else {
       const leadingWs = line.match(/^\s*/)[0];
       const rest = line.slice(leadingWs.length);
