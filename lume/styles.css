@@ -2553,6 +2553,19 @@ html.dark
 :is(.ecma-es1, .ecma-es2) table.lightweight-table {
   margin: 0.25em 0 1em 10ex;
 }
+/* Mobile: a table can exceed the viewport (the keyword grids at their
+   grammar indent, the §7.7.4 escape-sequence table). Drop the grammar
+   indent and let tables scroll internally instead of widening the page
+   (display:block keeps the row layout via the anonymous table box). */
+@media (max-width: 767px) {
+  :is(.ecma-es1, .ecma-es2) table {
+    display: block;
+    overflow-x: auto;
+  }
+  :is(.ecma-es1, .ecma-es2) table.lightweight-table {
+    margin-left: 0;
+  }
+}
 :is(.ecma-es1, .ecma-es2) img {
   display: block;
   max-width: 100%;

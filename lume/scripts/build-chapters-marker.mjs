@@ -618,16 +618,24 @@ const rebuildSyntax = (regionHtml) => {
         out.push(`<p class="grammar-oneof">${plain(b)}</p>`);
         // The kept table is grammar, not data: render it like the official
         // es5.1 HTML's borderless lightweight-table, cells as <b><tt>
-        // terminals. (Marker sometimes makes the first row <th> — §7.4.3.)
+        // terminals. A PDF page break can split the list across several
+        // <table>s (ES2 §7.4.3) — fold all consecutive tables into one.
+        // (Marker sometimes makes a leading row <th>, too.)
         if (table) {
+          const parts = [blocks[++i]];
+          while (i + 1 < blocks.length && blockTag(blocks[i + 1]) === "table") {
+            parts.push(blocks[++i]);
+          }
+          const rows = parts
+            .flatMap((t) => t.match(/<tr>[\s\S]*?<\/tr>/gi) ?? [])
+            .join("\n    ")
+            .replace(/<(\/?)th\b/gi, "<$1td")
+            .replace(
+              /<td>([\s\S]*?)<\/td>/gi,
+              (_m, cell) => `<td><b><tt>${cell.trim()}</tt></b></td>`,
+            );
           out.push(
-            blocks[++i]
-              .replace(/<table\b[^>]*>/i, '<table class="lightweight-table">')
-              .replace(/<(\/?)th\b/gi, "<$1td")
-              .replace(
-                /<td>([\s\S]*?)<\/td>/gi,
-                (_m, cell) => `<td><b><tt>${cell.trim()}</tt></b></td>`,
-              ),
+            `<table class="lightweight-table"><tbody>\n    ${rows}\n    </tbody></table>`,
           );
         }
       }
