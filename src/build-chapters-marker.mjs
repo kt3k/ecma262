@@ -767,9 +767,11 @@ const frontMatter = () => {
   const start = src.indexOf("</h1>", bh) + 5;
   const firstSec = rawHeads[0].start;
   let intro = src.slice(start, firstSec);
-  // Drop the "Table of contents" heading and the ToC table that follows it.
+  // Drop the "Table of contents" heading and everything after it up to §1 (the
+  // end of the front matter). A long ToC is split across several <table>s, so
+  // stopping at the first </table> (as before) would leave the rest behind.
   intro = intro.replace(
-    /<h[1-6][^>]*>\s*(?:<b>)?\s*Table of contents[\s\S]*?<\/table>/i,
+    /<h[1-6][^>]*>\s*(?:<b>)?\s*Table of contents[\s\S]*$/i,
     "",
   );
   // The front matter (title page / Brief History / ToC) has no figures, so any
