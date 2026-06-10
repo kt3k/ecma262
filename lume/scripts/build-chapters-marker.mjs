@@ -810,12 +810,14 @@ const mergeNotationProductions = (html) =>
       /<p class="grammar-oneof">((?:(?!<\/p>)[\s\S])*?)<\/p>\s*<p[^>]*>\s*(<i>(?:(?!<\/p>)[\s\S])*?<\/i>\s*<b>\s*but not\s*<\/b>\s*<i>(?:(?!<\/p>)[\s\S])*?<\/i>)\s*<\/p>/g,
       (_m, decl, rhs) => toDlRaw(decl, [rhs.replace(/\s+/g, " ")]),
     )
-    // The descriptive-phrase example (SourceCharacter :: any Unicode character):
-    // its RHS is roman prose by definition ("described by a descriptive phrase in
-    // roman type"), so no grammar markup. Normalises both editions' mangled LHS
+    // The descriptive-phrase production (SourceCharacter :: any Unicode
+    // character), in §5.1.5 (LHS demoted from a heading to a grammar-oneof
+    // paragraph) and in chapter 6 (LHS is an ordinary paragraph). Its RHS is
+    // roman prose by definition ("described by a descriptive phrase in roman
+    // type"), so no grammar markup. Normalises both editions' mangled LHS
     // (ES1 has the colon inside the italics: <i>SourceCharacter:</i>).
     .replace(
-      /<p class="grammar-oneof">\s*<i>\s*SourceCharacter:?\s*<\/i>\s*(?:<b>\s*:{1,3}\s*<\/b>\s*)?<\/p>\s*<p[^>]*>\s*(?:<i>\s*)?(any Unicode character)(?:\s*<\/i>)?\s*<\/p>/g,
+      /<p[^>]*>\s*<i>\s*SourceCharacter:?\s*<\/i>\s*(?:<b>\s*:{1,3}\s*<\/b>\s*)?<\/p>\s*<p[^>]*>\s*(?:<i>\s*)?(any Unicode character)(?:\s*<\/i>)?\s*<\/p>/g,
       (_m, rhs) => toDlRaw("<i>SourceCharacter</i> <b>::</b>", [rhs]),
     );
 
