@@ -721,10 +721,15 @@ const demathify = (html) =>
       .replace(/\\text\{([^{}]*)\}/g, "$1")
       .replace(/\\([a-zA-Z]+)/g, (m, c) => MATH_SYM[c] ?? m)
       .replace(/\\\\/g, "\\");
-    // exponents / subscripts — repeat so nested braces resolve innermost-first.
+    // OCR artefact in §9.3.1: a minus inside an exponent comes through as a
+    // spurious subscript, e.g. 10^{e_{-}n} / 10^{e_-n} — both mean 10^(e−n).
+    s = s.replace(/_\{-\}/g, "−").replace(/_-/g, "−");
+    // exponents / subscripts — repeat so nested braces resolve innermost-first;
+    // a hyphen inside an exponent is a minus (e.g. 10^{n-k} → 10^(n−k)).
+    const minus = (e) => e.replace(/-/g, "−");
     for (let i = 0; i < 3; i++) {
-      s = s.replace(/\^\{([^{}]*)\}/g, "<sup>$1</sup>")
-        .replace(/_\{([^{}]*)\}/g, "<sub>$1</sub>");
+      s = s.replace(/\^\{([^{}]*)\}/g, (_x, e) => `<sup>${minus(e)}</sup>`)
+        .replace(/_\{([^{}]*)\}/g, (_x, e) => `<sub>${minus(e)}</sub>`);
     }
     s = s.replace(/\^(\w)/g, "<sup>$1</sup>").replace(/_(\w)/g, "<sub>$1</sub>")
       .replace(/[{}]/g, "") // drop any orphan braces
