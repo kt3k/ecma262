@@ -49,8 +49,8 @@ EDITION=es2025 BASE_PATH=/ecma262/es2025 deno task pages
 EDITION=es2025 BASE_PATH=/ecma262/es2025 deno task build
 ```
 
-`assemble-dist.mjs` folds `_site/` into `dist/<id>/`; the root redirect, footer
-and version switcher list editions from `src/editions.json`.
+`scripts/assemble-dist.mjs` folds `_site/` into `dist/<id>/`; the root redirect,
+footer and version switcher list editions from `editions.json`.
 
 ## Deviations from tc39.es
 

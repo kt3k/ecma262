@@ -32,6 +32,7 @@
     "jsr:@std/yaml@^1.0.5": "1.0.8",
     "npm:@mdx-js/mdx@3.1.0": "3.1.0_acorn@8.16.0",
     "npm:estree-walker@3.0.3": "3.0.3",
+    "npm:highlight.js@^11.11.1": "11.11.1",
     "npm:lightningcss-wasm@1.30.1": "1.30.1",
     "npm:markdown-it-attrs@4.3.1": "4.3.1_markdown-it@14.1.0",
     "npm:markdown-it-deflist@3.0.0": "3.0.0",
@@ -420,6 +421,9 @@
       "dependencies": [
         "@types/hast"
       ]
+    },
+    "highlight.js@11.11.1": {
+      "integrity": "sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w=="
     },
     "inline-style-parser@0.2.7": {
       "integrity": "sha512-Nb2ctOyNR8DqQoR0OwRG95uNWIC0C1lCgf5Naz5H6Ji72KZ8OcFZLz2P5sNgwlyoJ8Yif11oMuYs5pBQa86csA=="
@@ -1349,5 +1353,10 @@
     "https://deno.land/x/vento@v1.15.0/src/loader.ts": "d39b83d252adbceab26292ba41c67dc15086c3fb739647b933000ade2a24dad5",
     "https://deno.land/x/vento@v1.15.0/src/tokenizer.ts": "c48b88cf8df8ca55e213897369c4ab7145adecebef087eeb0b7db5674d62e90b",
     "https://deno.land/x/vento@v1.15.0/src/transformer.ts": "9ff70c554b3889151745b5f7117bc5c02b889e6e16ca53e5b8c1fa6b767fb451"
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:highlight.js@^11.11.1"
+    ]
   }
 }

@@ -27,25 +27,25 @@ const scratch = await Deno.makeTempDir({ prefix: "lume-pages-" });
 // HTML, so each goes through its own re-skin ingester instead of the ecmarkup
 // resolver (ES5.1 = official ECMA HTML, ES3 = the bclary HTML, ES1/ES2 = Marker
 // conversions of the PDFs). See docs/es5.1-plan.md, docs/es3-plan.md,
-// docs/es2-plan.md. Other editions use the standard generator.
+// docs/es2-plan.md. Other editions use the standard generator. The generators
+// live alongside this script in lume/scripts/.
+const generator = (name: string) =>
+  new URL(`./${name}`, import.meta.url).pathname;
 const buildChapters = edition === "es3"
-  ? `${repoRoot}src/build-chapters-es3.mjs`
+  ? generator("build-chapters-es3.mjs")
   : edition === "es5.1"
-  ? `${repoRoot}src/build-chapters-es51.mjs`
+  ? generator("build-chapters-es51.mjs")
   : (edition === "es2" || edition === "es1")
-  ? `${repoRoot}src/build-chapters-marker.mjs`
-  : `${repoRoot}src/build-chapters.mjs`;
+  ? generator("build-chapters-marker.mjs")
+  : generator("build-chapters.mjs");
 
 console.log(`• building edition "${edition}" (base "${basePath || "/"}")`);
 const run = new Deno.Command("deno", {
   args: [
     "run",
     "-A",
-    // Use the repo-root config so build-chapters.mjs resolves its bare
-    // "highlight.js" import via the root deno.json import map (the spawn
-    // inherits lume/ as cwd, whose deno.json doesn't declare it).
-    "--config",
-    `${repoRoot}deno.json`,
+    // No --config needed: the generator resolves its "highlight.js" import via
+    // lume/deno.json (discovered from the script's own location).
     buildChapters,
     "--input",
     `${repoRoot}ecma262/${edition}/spec.html`,

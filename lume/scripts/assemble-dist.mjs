@@ -14,20 +14,21 @@ import path from "node:path";
 import process from "node:process";
 import { execFileSync } from "node:child_process";
 
-const root = path.resolve(import.meta.dirname, "..");
+// This script lives in lume/scripts/; the repo root is two levels up.
+const root = path.resolve(import.meta.dirname, "../..");
 const distDir = path.join(root, "dist");
 const lumeDir = path.join(root, "lume");
 
 // The published editions, newest first — the single source of truth shared with
-// the Lume build (lume/_includes/editions.ts imports the same JSON). Only id +
-// title are needed here. (The Nextra comparison site under nextra-poc/ is not
-// listed; it's reachable by direct URL only.)
+// the Lume build (lume/_includes/editions.ts imports the same JSON, lume/
+// editions.json). Only id + title are needed here. (The Nextra comparison site
+// under nextra-poc/ is not listed; it's reachable by direct URL only.)
 const editions = JSON.parse(
-  fs.readFileSync(path.join(import.meta.dirname, "editions.json"), "utf8"),
+  fs.readFileSync(path.join(lumeDir, "editions.json"), "utf8"),
 );
 
 if (editions.length === 0) {
-  console.error("[assemble-dist] no editions in src/editions.json");
+  console.error("[assemble-dist] no editions in lume/editions.json");
   process.exit(1);
 }
 

@@ -1,7 +1,8 @@
 {
   "imports": {
     "lume/": "https://deno.land/x/lume@v3.0.5/",
-    "lume/jsx-runtime": "https://deno.land/x/ssx@v0.1.10/jsx-runtime.ts"
+    "lume/jsx-runtime": "https://deno.land/x/ssx@v0.1.10/jsx-runtime.ts",
+    "highlight.js": "npm:highlight.js@^11.11.1"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
@@ -10,6 +11,7 @@
   "tasks": {
     "pages": "deno run -A scripts/build-pages.ts",
     "build": "deno run -A _config.ts",
-    "pagefind": "deno run -A npm:pagefind --site _site --output-subdir pagefind"
+    "pagefind": "deno run -A npm:pagefind --site _site --output-subdir pagefind",
+    "dist": "deno run -A scripts/assemble-dist.mjs"
   }
 }

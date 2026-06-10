@@ -1,6 +1,6 @@
 // Edition list for the footer + version switcher, from the shared single source
 // of truth that assemble-dist also reads (newest first).
-import data from "../../src/editions.json" with { type: "json" };
+import data from "../editions.json" with { type: "json" };
 
 export interface Edition {
   id: string;
