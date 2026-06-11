@@ -89,6 +89,23 @@ console.error(
 await browser.close();
 
 // --- compare ---
+// FIDELITY_DUMP=<clause-id> writes both sides' full text for one clause.
+if (process.env.FIDELITY_DUMP) {
+  const id = process.env.FIDELITY_DUMP;
+  fs.writeFileSync(
+    "/tmp/pwtest/fidelity-dump.json",
+    JSON.stringify({ id, oracle: oracle[id], ours: ours[id] }, null, 1),
+  );
+}
+
+// Known-intentional absences: sec-intro renders as the edition's index page
+// (outside any emu-clause wrapper), and sec-copyright-and-software-license
+// is ecmarkup-generated boilerplate from the frontmatter metadata, not
+// source content.
+for (const id of ["sec-intro", "sec-copyright-and-software-license"]) {
+  delete oracle[id];
+}
+
 const ids = new Set([...Object.keys(oracle), ...Object.keys(ours)]);
 const missing = [], extra = [], diff = [];
 // Compare whitespace-free: inter-token spacing differs legitimately between

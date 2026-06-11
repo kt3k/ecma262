@@ -70,6 +70,39 @@ src = src.replace(/<emu-table\b[^>]*>/g, (tag) => {
   const title = type.replace(/\b[a-z]/g, (c) => c.toUpperCase());
   return tag.replace(/>$/, ` caption="${title} of ${of}">`);
 });
+// The caption renders via CSS attr(), which can't carry markup — reduce
+// ecmarkup text markers in caption attributes to their plain text
+// ("module _E_ finishes" would otherwise show the underscores literally).
+src = src.replace(
+  /(<emu-(?:table|figure)\b[^>]*\bcaption=")([^"]*)(")/g,
+  (_m, pre, cap, post) =>
+    pre +
+    cap.replace(/_([^_]+)_/g, "$1").replace(/\*([^*]+)\*/g, "$1")
+      .replace(/`([^`]+)`/g, "$1").replace(/~([^~]+)~/g, "$1") +
+    post,
+);
+
+// <emu-table type="abstract methods"> rows carry a typed signature in their
+// first cell; ecmarkup displays the untyped signature and prepends the
+// generated "The abstract method X takes … and returns …." paragraph to the
+// description cell (Table.js processAbstractMethodsDeclarations).
+src = src.replace(
+  /<emu-table\b[^>]*type="abstract methods"[\s\S]*?<\/emu-table>/g,
+  (block) =>
+    block.replace(
+      /(<tr\b[^>]*>\s*)<td>([\s\S]*?)<\/td>(\s*)<td>/g,
+      (row, pre, sig, ws) => {
+        const parsed = parseStructuredH1(sig);
+        if (!parsed?.name || parsed.returnType == null) return row;
+        const sentence = `The abstract method ${parsed.name} takes ${
+          formatParamsClause(parsed.params, parsed.optionalParams)
+        } and returns ${parsed.returnType}.`;
+        return `${pre}<td>${
+          formatHeaderTitle(parsed, null)
+        }</td>${ws}<td><p>${sentence}</p>`;
+      },
+    ),
+);
 
 // Spec images (`<img src="img/…">`, `<object data="img/…">`) use root-relative
 // paths in the source. Chapter pages render one level below the edition root
@@ -464,6 +497,15 @@ function buildStructuredBody(clauseType, parsed, dlEntries, rest) {
       skippedNotes = true;
       continue;
     }
+    // HTML comments are not elements (ecmarkup's nextElementSibling walk
+    // never sees them) — sec-compilesubpattern has "<!-- Disjunction -->"
+    // between its note and the grammar.
+    if (rest.startsWith("<!--", pos)) {
+      const end = rest.indexOf("-->", pos);
+      if (end === -1) break;
+      pos = end + 3;
+      continue;
+    }
     break;
   }
   const openTag = rest.startsWith(targetTag, pos)
@@ -842,6 +884,12 @@ const dfnTargets = new Map();
     if (!chap) continue;
     const b = built.find((x) => x.id === chap.id);
     if (!b) continue;
+    // An id-bearing dfn is an xref target in its own right: an empty
+    // <emu-xref href="#use-strict-directive"> renders the term's text
+    // (ecmarkup buildXrefLink with the term entry), not the raw id.
+    if (idm && !idToLabel.has(idm[1])) {
+      idToLabel.set(idm[1], { text: term, slug: b.pageSlug });
+    }
     const variants = (attrs.match(/\bvariants="([^"]*)"/)?.[1] ?? "")
       .split(",").map((s) => s.trim()).filter(Boolean);
     for (const surf of [term, ...variants]) {
@@ -928,16 +976,19 @@ const aoTargets = new Map(); // exact aoid name → { slug, id }
 // Add data-num="N" to <emu-table>/<emu-figure> so the caption CSS can render
 // "Table N: <caption>" / "Figure N: <caption>". An informative float renders
 // as "Table N (Informative): …" (ecmarkup's wording), carried through the
-// same attribute.
+// same attribute. Numbering is cursor-based — the section pipeline visits
+// floats in the same document order the counting pass did — so id-less
+// floats (Table 91) get their number too, matching ecmarkup.
+let floatCursor = { table: 0, figure: 0 };
 function applyFloatNum(html) {
-  return html.replace(/<emu-(table|figure)\b([^>]*)>/g, (full, kind, attrs) => {
-    const idm = attrs.match(/\bid="([^"]+)"/);
-    if (!idm) return full;
-    let num = (kind === "table" ? tableNum : figureNum).get(idm[1]);
-    if (!num) return full;
-    if (/\binformative\b/.test(attrs)) num += " (Informative)";
-    return `<emu-${kind}${attrs} data-num="${num}">`;
-  });
+  return html.replace(
+    /<emu-(table|figure)\b([^>]*)>/g,
+    (_full, kind, attrs) => {
+      let num = String(++floatCursor[kind]);
+      if (/\binformative\b/.test(attrs)) num += " (Informative)";
+      return `<emu-${kind}${attrs} data-num="${num}">`;
+    },
+  );
 }
 
 // Notes are labelled "Note" when a clause has one, "Note 1"/"Note 2"/… when it
@@ -973,11 +1024,19 @@ function numberNotes(html) {
 const applyNoteNum = (html) => numberNotes(html).html;
 
 // Pre-pass: register note ids → label/slug so cross-references resolve (must
-// run before any applyXrefSubst).
+// run before any applyXrefSubst). Cross-clause note references render as
+// "<clause number> Note <n>" (ecmarkup buildFigureLink), so the containing
+// clause's number is baked into the label text.
 for (const c of built) {
-  for (const [, html] of flattenTree(c.tree)) {
+  for (const [secPath, html] of flattenTree(c.tree)) {
+    // Gap segments ("2.1~") belong to the PARENT of the named child.
+    const base = secPath.endsWith("~")
+      ? secPath.slice(0, -1).replace(/\.?\d+$/, "")
+      : secPath;
+    const num = base === "" ? String(c.chapterNum) : `${c.chapterNum}.${base}`;
     for (const { id, label } of numberNotes(html).found) {
-      idToLabel.set(id, { text: label, slug: c.pageSlug });
+      const n = label.match(/\d+$/)?.[0] ?? "1";
+      idToLabel.set(id, { text: `${num} Note ${n}`, slug: c.pageSlug });
     }
   }
 }
@@ -1029,7 +1088,15 @@ function applyHljsSubst(html) {
     /<pre><code class="([A-Za-z0-9_-]+)">([\s\S]*?)<\/code><\/pre>/g,
     (full, lang, code) => {
       if (!hljs.getLanguage(lang)) return full;
-      const raw = code.replace(codeEntityRe, (_, e) => codeEntityMap[e] ?? _);
+      // Numeric character references decode too (the localeCompare example
+      // comments use &#x212B; for Å); hljs re-escapes what needs escaping.
+      const raw = code
+        .replace(codeEntityRe, (_, e) => codeEntityMap[e] ?? _)
+        .replace(
+          /&#x([0-9a-f]+);/gi,
+          (_, h) => String.fromCodePoint(parseInt(h, 16)),
+        )
+        .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)));
       const { value } = hljs.highlight(raw, { language: lang });
       return `<pre><code class="hljs ${lang}">${value}</code></pre>`;
     },
@@ -1106,10 +1173,13 @@ const grammarDefSrcOffset = new Map();
       );
       const minIndent = indents.length ? Math.min(...indents) : 0;
       const dedented = lines.map((l) => l.slice(minIndent)).join("\n");
-      // Longest production wins when multiple definitions exist (the canonical
-      // one tends to list more alternatives).
-      const existing = grammarDefs.get(lhs);
-      if (!existing || dedented.length > existing.length) {
+      // First definition in document order wins when multiple exist: the
+      // canonical grammar lives in the main body, and Annex B's web-compat
+      // REdefinitions (HTML-like comments, the IfStatement
+      // FunctionDeclaration alternative, the loosened RegExp grammar) come
+      // after it. ("Longest wins" used to pick those Annex B variants,
+      // leaking them into the Annex A grammar summary's prodrefs.)
+      if (!grammarDefs.has(lhs)) {
         grammarDefs.set(lhs, dedented);
         grammarDefSrcOffset.set(lhs, gm.index);
       }
@@ -1136,14 +1206,74 @@ for (const [lhs, srcOffset] of grammarDefSrcOffset) {
 
 // Replace empty <emu-prodref name="X"></emu-prodref> with its production text
 // wrapped in <pre> so line breaks and indentation survive raw-HTML embedding.
+// <emu-concrete-method-dfns for="X"> expands to the list of clauses that
+// give X a concrete definition (the Environment Record / Module Record
+// abstract-method tables): one li per type="concrete method" clause whose
+// name is X, text "<clause number> <record type>" where the record type is
+// the clause's dl `for` value sans article and variable
+// ("a Declarative Environment Record _envRec_" → "Declarative Environment
+// Record"). Emitted as plain emu-xrefs; applyXrefSubst links them.
+const concreteMethodDfns = new Map(); // method name -> [{ id, forText }]
+{
+  // The h1 capture is tempered — an unanchored lazy run would let a parent
+  // clause's failed match swallow its child's h1 + header dl.
+  const re =
+    /<emu-clause\b([^>]*)>\s*<h1>((?:(?!<\/h1>)[\s\S])*?)<\/h1>\s*<dl class="header">([\s\S]*?)<\/dl>/g;
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    if (!/\btype="concrete method"/.test(m[1])) continue;
+    const idm = m[1].match(/\bid="([^"]+)"/);
+    if (!idm) continue;
+    const parsed = parseStructuredH1(m[2]);
+    const forVal = parseHeaderDl(m[3]).for;
+    if (!parsed?.name || !forVal) continue;
+    const forText = forVal
+      .replace(/<[^>]+>/g, "")
+      .replace(/^(?:an?|the)\s+/i, "")
+      .replace(/\s*_[A-Za-z0-9]+_\s*$/, "")
+      .trim();
+    if (!concreteMethodDfns.has(parsed.name)) {
+      concreteMethodDfns.set(parsed.name, []);
+    }
+    concreteMethodDfns.get(parsed.name).push({ id: idm[1], forText });
+  }
+}
+function applyConcreteMethodDfns(html) {
+  return html.replace(
+    /<emu-concrete-method-dfns\b[^>]*\bfor="([^"]+)"[^>]*>\s*<\/emu-concrete-method-dfns>/g,
+    (full, name) => {
+      const defs = concreteMethodDfns.get(name);
+      if (!defs?.length) return full;
+      const lis = defs.map(({ id, forText }) => {
+        const s = idToSection.get(id);
+        return `<li><emu-xref href="#${id}">${
+          s ? `${s.number} ` : ""
+        }${forText}</emu-xref></li>`;
+      }).join("");
+      return `<emu-concrete-method-dfns for="${name}"><ul>${lis}</ul></emu-concrete-method-dfns>`;
+    },
+  );
+}
+
 function applyProdrefSubst(html) {
   return html.replace(
     /<emu-prodref([^>]*?)>\s*<\/emu-prodref>/g,
     (full, attrs) => {
       const m = attrs.match(/\bname="([^"]+)"/);
       if (!m) return full;
-      const def = grammarDefs.get(m[1]);
+      let def = grammarDefs.get(m[1]);
       if (def === undefined) return full;
+      // a="x" selects the single alternative annotated "#x" in the source
+      // grammar (the Annex A cover-grammar refinements reference one RHS,
+      // e.g. <emu-prodref name="PrimaryExpression" a="parencover">).
+      const am = attrs.match(/\ba="([^"]+)"/);
+      if (am) {
+        const lines = def.split("\n");
+        const want = lines.slice(1).filter((l) =>
+          new RegExp(`#${am[1]}\\s*$`).test(l)
+        );
+        if (want.length) def = [lines[0], ...want].join("\n");
+      }
       return `<emu-grammar type="definition">${
         tokenizeGrammarBlock(def)
       }</emu-grammar>`;
@@ -1329,7 +1459,9 @@ function romanLabel(n) {
   return s;
 }
 function stepOrdinal(n, olLevel) {
-  const k = (olLevel - 1) % 3;
+  // ecmarkup caps the bullet cycle at six levels (Xref.js `bullets[Math.min(i,
+  // 5)]`), so depth 7+ stays lower-roman instead of cycling back to decimal.
+  const k = Math.min(olLevel - 1, 5) % 3;
   return k === 0 ? String(n) : k === 1 ? alphaLabel(n) : romanLabel(n);
 }
 
@@ -1436,6 +1568,15 @@ function tokenizeGrammarLine(line) {
       // Annotations and modifications carry inner NTs/terminals so the
       // contents get a recursive tokenize pass; constraints stay raw.
       let content = line.slice(i + 1, end);
+      // `[> …]` is grammarkdown's prose constraint on an alternative ("but
+      // only if the MV of |HexDigits| > 0x10FFFF"); ecmarkup renders the
+      // content as plain prose — |NT|s resolved, no brackets or marker.
+      const proseM = content.match(/^\s*(?:>|&gt;)\s*([\s\S]*)$/);
+      if (proseM) {
+        out += `<emu-gprose>${transformInlineText(proseM[1])}</emu-gprose>`;
+        i = end + 1;
+        continue;
+      }
       const tag = /^\s*lookahead\b/.test(content)
         ? "emu-gann"
         : /^\s*no\s+/.test(content)
@@ -1727,6 +1868,10 @@ function transformInlineText(text) {
   // (Foo) is the link target, so split it from any [params] / ? suffix and
   // wrap just that part in <a href="…#prod-Foo"> when we know where Foo is
   // defined (mirrors tc39.es). Suffix becomes the inline emu-mods structure.
+  // The emitted markup is placeholder-protected: a parameter list like
+  // [~UnicodeMode, ~NamedCaptureGroups] would otherwise be chewed up by the
+  // later ~enum~ transform (the first "~…, ~" pair reads as an emu-const).
+  const keep = [];
   out = out.replace(
     /\|([A-Za-z][A-Za-z0-9_]*)(\[[^\]]*\])?(\?)?\|/g,
     (_, name, params, opt) => {
@@ -1737,9 +1882,10 @@ function transformInlineText(text) {
       let mods = "";
       if (params) mods += `<emu-params>${params}</emu-params>`;
       if (opt) mods += `<emu-opt>opt</emu-opt>`;
-      return `<emu-nt>${head}${
-        mods ? `<emu-mods>${mods}</emu-mods>` : ""
-      }</emu-nt>`;
+      keep.push(
+        `<emu-nt>${head}${mods ? `<emu-mods>${mods}</emu-mods>` : ""}</emu-nt>`,
+      );
+      return `\x02${keep.length - 1}\x02`;
     },
   );
   out = out.replace(/~([^\s~][^~]*?)~/g, "<emu-const>$1</emu-const>");
@@ -1762,6 +1908,12 @@ function transformInlineText(text) {
     /\[\[([A-Z][A-Za-z0-9_]*)\]\]/g,
     '<var class="field">[[$1]]</var>',
   );
+  // The \x02 sentinel marks emitted <emu-nt> markup — restore it verbatim.
+  out = out.replace(
+    // deno-lint-ignore no-control-regex
+    /\x02(\d+)\x02/g,
+    (_, i) => keep[Number(i)],
+  );
   // The \x01 sentinel marks protected escapes — restore the bare character.
   out = out.replace(
     // deno-lint-ignore no-control-regex
@@ -1778,6 +1930,15 @@ function transformInlineText(text) {
 }
 
 function applyInlineMarkup(html) {
+  // A `*"…"*` value literal whose content carries markup
+  // (*"%<var>NativeError</var>.prototype%"*) spans tag boundaries, so the
+  // segment-wise transform below can never see the matching asterisks.
+  // Resolve those here; requiring a <var> inside keeps the pre-pass off
+  // code blocks and ordinary prose values.
+  html = html.replace(
+    /\*("(?:[^"*<]|<\/?var>)*<\/var>(?:[^"*<]|<\/?var>)*")\*/g,
+    "<emu-val>$1</emu-val>",
+  );
   const tagRe = /<\/?([a-zA-Z][a-zA-Z0-9-]*)\b[^>]*>|<!--[\s\S]*?-->/g;
   let out = "";
   let last = 0;
@@ -2028,11 +2189,13 @@ built.forEach((c) => {
       applyDfnLinkSubst(
         applyInlineMarkup(
           applyXrefSubst(
-            applyProdrefSubst(
-              applyEqnInlineSubst(
-                applyGrammarSubst(
-                  applyAlgSubst(
-                    applyHljsSubst(applyFloatNum(applyNoteNum(v))),
+            applyConcreteMethodDfns(
+              applyProdrefSubst(
+                applyEqnInlineSubst(
+                  applyGrammarSubst(
+                    applyAlgSubst(
+                      applyHljsSubst(applyFloatNum(applyNoteNum(v))),
+                    ),
                   ),
                 ),
               ),

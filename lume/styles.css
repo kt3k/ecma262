@@ -2180,14 +2180,11 @@ html.show-early-exits
 .ecma-spec emu-alg ol ol ol ol ol {
   list-style-type: lower-alpha;
 }
+/* ecmarkup caps the cycle at six levels — deeper lists keep lower-roman
+   (the 6-deep selector also matches them), matching the step-reference
+   labels ("step 12.b.ii.2.a.ii.iii"). */
 .ecma-spec emu-alg ol ol ol ol ol ol {
   list-style-type: lower-roman;
-}
-.ecma-spec emu-alg ol ol ol ol ol ol ol {
-  list-style-type: decimal;
-}
-.ecma-spec emu-alg ol ol ol ol ol ol ol ol {
-  list-style-type: lower-alpha;
 }
 
 /* emu-figure: centre the image and render the caption= attribute below it.

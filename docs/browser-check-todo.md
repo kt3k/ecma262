@@ -77,9 +77,10 @@ plus the apt libraries listed in the project memory.
    on a grammar line is cover-grammar bookkeeping and is stripped before
    tokenising (the `#` terminal of PrivateIdentifier is backtick-quoted, so it
    is unaffected)._
-6. **emu-xref auto-text** — empty xref to a clause with `aoid`-less title
-   renders the slug ("use-strict-directive") instead of the title; some
-   clause-number xrefs render empty (sec-code-realms loses "16.2.1.10").
+6. ~~**emu-xref auto-text**~~ _Fixed: id-bearing `<dfn>`s register as xref
+   targets (empty xref renders the term text, "Use Strict Directive"), and note
+   ids resolve to "<clause number> Note <n>" like ecmarkup's buildFigureLink
+   (the sec-code-realms reference was to a note id)._
 7. ~~**Table auto-numbering drift**~~ _Fixed — the real cause: `<emu-import>`
    was unsupported, so the three imported Unicode property tables (table-\*.html
    fragments) never rendered and every later table number ran behind. Imports
@@ -87,11 +88,9 @@ plus the apt libraries listed in the project memory.
    (fetched from the tc39 release tags). Same sweep also normalised
    `<emu-caption>` elements and `type=… of=…` synthesised captions onto the
    caption attribute, and renders informative floats as "Table N (Informative):
-   …". 118 → 63 mismatches; table-number category is at zero._ 7b. **`[> …]`
-   prose constraints render raw** — grammarkdown's RHS prose annotation
-   (`[> but only if the MV of |Hex4Digits| …]`) should render as plain prose
-   with |NT|s resolved; we leak the `[>` marker and the pipes (sec-patterns,
-   sec-regular-expressions-patterns).
+   …". 118 → 63 mismatches; table-number category is at zero._ 7b. ~~**`[> …]`
+   prose constraints render raw**~~ _Fixed: rendered as emu-gprose with the
+   inline transforms applied (|NT|s resolved, marker and brackets dropped)._
 8. ~~**SDO/host-hook boilerplate drift**~~ _Fixed — the real rule (ecmarkup
    header-parser): the "It performs the following steps when called:" / "It is
    defined piecewise…" sentence is emitted only when the element directly
@@ -101,18 +100,34 @@ plus the apt libraries listed in the project memory.
    where the source hand-writes the connective
    (FunctionDeclarationInstantiation). Adjacency rule ported verbatim; 63 → 52
    mismatches, all three boilerplate signatures at zero._
-9. **Structured-header table cells** — Table 14's method column includes
-   parameter types (`( name : a String, )`) where the oracle strips them; its
-   caption also arrives empty.
-10. sec-intro / sec-copyright-and-software-license absent from our rendering —
-    verify intentional (front matter) and exclude from the check if so.
+9. ~~**Structured-header table cells**~~ _Fixed: `type="abstract methods"` table
+   rows now mirror ecmarkup's Table.js — the first cell shows the untyped
+   signature, the description cell gets the generated "The abstract method X
+   takes … and returns …." paragraph, and `<emu-concrete-method-dfns>` expands
+   to the linked "<number> <record type>" list (collection regex tempered so a
+   parent clause's h1 can't swallow its child's)._
+10. ~~sec-intro / sec-copyright-and-software-license~~ _Verified intentional:
+    sec-intro renders as the edition index page; the copyright annex is
+    ecmarkup-generated boilerplate from frontmatter metadata, absent from the
+    source. Excluded in check-fidelity.mjs (which also gained a
+    FIDELITY_DUMP=<id> debug switch)._
 11. **`__proto__`-style headings** — ~~the MDX heading line read `__proto__` as
     markdown strong emphasis ("Object.prototype.<strong>proto</strong>") across
     six clauses~~ _fixed: underscores left after the inline transforms are
     literal title text and are entity-escaped in the heading line._
-12. **Numeric character references in code blocks** — `&#x212B;` in
-    sec-string.prototype.localecompare's example comments renders literally; the
-    oracle decodes it to Å before highlighting.
+12. ~~**Numeric character references in code blocks**~~ _Fixed: decoded before
+    highlighting._
+13. ~~**Step-reference labels past depth 6**~~ _Fixed: ecmarkup caps the bullet
+    cycle at six levels (depth 7+ stays lower-roman); stepOrdinal and the
+    list-style CSS now match ("step 12.b.ii.2.a.ii.iii")._
+14. ~~**Caption attributes with text markers**~~ _Fixed: CSS attr() captions
+    can't carry markup, so `_E_`-style markers reduce to plain text._
+15. ~~**Annex A prodref leakage**~~ _Fixed: grammar definitions resolve
+    first-in-document (Annex B redefinitions no longer shadow the main grammar)
+    and `<emu-prodref a="…">` selects the single annotated alternative for the
+    cover-grammar refinements._
+
+**2026-06-11: the draft fidelity check is at ZERO mismatches (2271 clauses).**
 
 - [ ] **4. Deep-link scroll position** Navigate to `/<chapter>/#sec-x.y.z` URLs
       and assert the heading lands visible below the sticky navbar
