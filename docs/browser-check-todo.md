@@ -58,17 +58,21 @@ plus the apt libraries listed in the project memory.
    characters (`\*`, `\~`, …) are protected before the inline transforms and
    restored as bare characters; `\\` inside inline code is one backslash._
 3. ~~**Clause badges not rendered (12 clauses)**~~ _Fixed — the
-   normative-optional / legacy / deprecated attributes now carry through to
-   the rendered emu-clause wrapper, algorithm steps (leading […] step
-   annotations) and the pass-through inline span/ul carriers, each prepended
-   with ecmarkup's `<div class="attributes-tag">` label (auto-linked to §2
-   like tc39). Styled on the site's panel grammar: soft amber wash, 3px
-   accent edge, panel radius, uppercase tag (light #b45309 / dark #fbbf24).
-   52 → 39 mismatches; note that the one remaining "badge-looking" diff in
-   sec-conformance is actually finding 4's misattributed paragraph._
-4. **Clause-boundary misattribution** — a paragraph that follows a nested clause
-   is emitted inside that child instead of the parent (sec-conformance's "A
-   conforming implementation … Legacy subclauses…").
+   normative-optional / legacy / deprecated attributes now carry through to the
+   rendered emu-clause wrapper, algorithm steps (leading […] step annotations)
+   and the pass-through inline span/ul carriers, each prepended with ecmarkup's
+   `<div class="attributes-tag">` label (auto-linked to §2 like tc39). Styled on
+   the site's panel grammar: soft amber wash, 3px accent edge, panel radius,
+   uppercase tag (light #b45309 / dark #fbbf24). 52 → 39 mismatches; note that
+   the one remaining "badge-looking" diff in sec-conformance is actually finding
+   4's misattributed paragraph._
+4. ~~**Clause-boundary misattribution**~~ _Fixed — parseTree glued parent prose
+   that follows a nested clause into the previous child's body (its only slot
+   was `pre`). The tree now records per-child `gaps` (parent-owned content after
+   child k), flattenTree emits them as `<path>~` segments with the parent's
+   clause context, and renderMdxTree renders them after the child's
+   `</emu-clause>` — outside any badge box. sec-conformance's trailing paragraph
+   sits between 2.1 and 2.2 again; 39 → 33 mismatches, conformance diffs zero._
 5. ~~**Grammarkdown production annotations leak**~~ _Fixed: a trailing " #word"
    on a grammar line is cover-grammar bookkeeping and is stripped before
    tokenising (the `#` terminal of PrivateIdentifier is backtick-quoted, so it

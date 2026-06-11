@@ -488,6 +488,11 @@ function buildStructuredBody(clauseType, parsed, dlEntries, rest) {
 // is the HTML before the first nested section.
 function parseTree(html) {
   const children = [];
+  // Parent prose can continue between/after nested clauses (sec-conformance's
+  // "A conforming implementation…" follows the example subclauses); gaps[k]
+  // holds the parent-owned content after child k so it renders in the parent
+  // at its true position instead of being glued into the child.
+  const gaps = {};
   let pre = "";
   let i = 0;
   while (i < html.length) {
@@ -496,7 +501,7 @@ function parseTree(html) {
       const rest = html.slice(i);
       if (children.length === 0) pre += rest;
       else if (rest.trim() !== "") {
-        children[children.length - 1].tree.pre += rest;
+        gaps[children.length - 1] = (gaps[children.length - 1] ?? "") + rest;
       }
       break;
     }
@@ -565,7 +570,7 @@ function parseTree(html) {
     const preText = html.slice(i, openIdx);
     if (children.length === 0) pre += preText;
     else if (preText.trim() !== "") {
-      children[children.length - 1].tree.pre += preText;
+      gaps[children.length - 1] = (gaps[children.length - 1] ?? "") + preText;
     }
     children.push({
       id,
@@ -575,7 +580,7 @@ function parseTree(html) {
     });
     i = j;
   }
-  return { pre, children };
+  return { pre, children, gaps };
 }
 
 // Walk the tree and collect [secPath, html, clauseId] entries. clauseId is the
@@ -589,6 +594,11 @@ function flattenTree(tree, prefix = "", clauseId = "") {
   tree.children.forEach((child, idx) => {
     const newPrefix = prefix === "" ? String(idx + 1) : `${prefix}.${idx + 1}`;
     sections.push(...flattenTree(child.tree, newPrefix, child.id));
+    // Parent prose after this child (tree.gaps) — its immediate clause is the
+    // PARENT's, both for rendering position and dfn-link suppression.
+    if (tree.gaps?.[idx]) {
+      sections.push([`${newPrefix}~`, tree.gaps[idx], clauseId]);
+    }
   });
   return sections;
 }
@@ -673,6 +683,12 @@ function renderMdxTree(tree, chapterPrefix, secPath, depth) {
     lines.push("");
     lines.push("</emu-clause>");
     lines.push("");
+    // Parent prose that follows this child renders here, outside the child's
+    // clause (and outside any badge box it may carry).
+    if (tree.gaps?.[idx]) {
+      lines.push(`<Sec id=${JSON.stringify(`${childSecPath}~`)} />`);
+      lines.push("");
+    }
   });
   return lines;
 }
