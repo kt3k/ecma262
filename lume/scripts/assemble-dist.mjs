@@ -75,7 +75,10 @@ if (fs.existsSync(nextraVendored)) {
 const escape = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-// Shared shell for the top-level static pages (landing + about).
+// Shared shell for the top-level static pages (landing + about). The theme
+// script mirrors lume/_includes/page.tsx: same localStorage key + system
+// fallback, applied before paint, so /about follows the reader's choice on
+// the edition pages instead of flashing a light-only article.
 const page = (title, main, css) =>
   `<!DOCTYPE html>
 <html lang="en">
@@ -83,6 +86,7 @@ const page = (title, main, css) =>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escape(title)}</title>
+  <script>(function(){var p=localStorage.getItem("theme");var d=p==="dark"||(p===null&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.classList.add("dark");})();</script>
   <style>
 ${css}
   </style>
@@ -144,7 +148,18 @@ const articleCss =
     footer a { color: #15171a; text-decoration: none; }
     footer a:hover { text-decoration: underline; }
     footer .copyright { margin-top: 0.8rem; color: #999; font-size: 1.4rem; }
-    footer .copyright a { color: inherit; text-decoration: underline; }`;
+    footer .copyright a { color: inherit; text-decoration: underline; }
+    html.dark body { color: #c5c9d3; background: #15171a; }
+    html.dark h1, html.dark h2, html.dark strong, html.dark .flow li strong,
+    html.dark th, html.dark footer a { color: #f0f1f3; }
+    html.dark code, html.dark pre, html.dark .flow li, html.dark th { background: #1f2227; }
+    html.dark pre, html.dark .flow li { border-color: #2e323a; }
+    html.dark pre { color: #c5c9d3; }
+    html.dark th, html.dark td { border-color: #2e323a; }
+    html.dark a { text-decoration-color: rgba(255,255,255,0.3); }
+    html.dark .flow li span { color: #9aa0ab; }
+    html.dark .flow li:not(:last-child)::after { color: #555; }
+    html.dark figcaption, html.dark footer .copyright { color: #8a8f99; }`;
 
 // The root has no landing page; it redirects to the editor's draft (like
 // tc39.es/ecma262/). Every edition, plus /about, stays reachable

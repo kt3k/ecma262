@@ -25,11 +25,16 @@ plus the apt libraries listed in the project memory.
       chrome with dead site links, source typos `#-a13` and the URIError section
       anchored as `a-15.1.6.6` instead of `a-15.11.6.6`) — fixed in
       build-chapters-es3.mjs; now 47k links / 0 broken._
-- [ ] **2. Dark-mode audit** Toggle `html.dark` (and emulate
+- [x] **2. Dark-mode audit** Toggle `html.dark` (and emulate
       `prefers-color-scheme`), walk visible text nodes, flag computed fg/bg
       contrast below threshold. Guards the themeColors inline-style rewrites
       (es5.1/es2015) and any hardcoded colours that sink into the dark
-      background.
+      background. _Done: `tools/browser-checks/check-dark.mjs` (alpha-composited
+      effective colours, WCAG ratio, < 3:1 flagged). First run: 10 signatures —
+      /about/ had no dark mode at all; hljs regexp tokens were 1.2:1 (invisible)
+      and title/number/literal/attr below 3:1; the site footer (gray-600) and
+      the skip-nav button (white on blue-400) sat ~2.3–2.5:1. All fixed; re-run
+      is clean at 550 pages / 0 findings._
 - [ ] **3. Text fidelity vs tc39.es (modern editions)** For draft/es2026,
       compare normalised `innerText` per section against the official tc39.es
       rendering to detect text loss/duplication from the custom ecmarkup
