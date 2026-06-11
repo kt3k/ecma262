@@ -2,8 +2,8 @@
 
 Playwright audits to run against the assembled `dist/` (all editions, served
 under the deploy prefix, e.g. `/tmp/serve-root/ecma262 -> dist` +
-`python3 -m http.server`). The base sweep already exists at
-`/tmp/pwtest/crawl.mjs` (console/page errors, HTTP >= 400, desktop+mobile
+`python3 -m http.server`). The scripts live in `tools/browser-checks/`:
+`crawl.mjs` is the base sweep (console/page errors, HTTP >= 400, desktop+mobile
 horizontal overflow, ingester-artifact text scan, missing h1) and runs clean at
 550 pages / 0 findings as of 2026-06-11.
 
@@ -14,12 +14,16 @@ plus the apt libraries listed in the project memory.
 
 ## High priority — targets known bug classes
 
-- [ ] **1. Anchor / internal-link integrity (full sweep)** Collect every
+- [x] **1. Anchor / internal-link integrity (full sweep)** Collect every
       `a[href]` on every page; for same-page and cross-page fragments (`#sec-…`,
       `#prod-…`) verify the target element exists on the destination page.
       Catches resolver regressions like the `// emu-format ignore` bug that
       silently dropped `id="prod-AsciiLetter"` and broke inbound production
-      links.
+      links. _Done: `tools/browser-checks/check-links.mjs`; first run found 28
+      broken links (all es3 — markdown-link-mangled `[[Get]](P)` headings, named
+      anchors `#_Value_`/`#annex-a` not rewritten cross-page, bclary metabottom
+      chrome with dead site links, source typo `#-a13`, missing URIError section
+      target) — fixed in build-chapters-es3.mjs; now 47k links / 0 broken._
 - [ ] **2. Dark-mode audit** Toggle `html.dark` (and emulate
       `prefers-color-scheme`), walk visible text nodes, flag computed fg/bg
       contrast below threshold. Guards the themeColors inline-style rewrites

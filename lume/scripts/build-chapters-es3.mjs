@@ -44,7 +44,17 @@ for (const [k, v] of Object.entries({ INPUT, LIB_DIR, CONTENT_DIR })) {
 fs.mkdirSync(LIB_DIR, { recursive: true });
 fs.mkdirSync(CONTENT_DIR, { recursive: true });
 
-const src = fs.readFileSync(INPUT, "utf8");
+// Source repairs (all verified against the bclary HTML):
+//   • "#-a13" is a typo for "#a-13" (the FormalParameterList gsee).
+//   • "#a-15.11.6.6" (URIError) has no target — the bclary conversion lost
+//     that section entirely; point the lone xref at its 15.11.6 parent.
+//   • the metabottom navigation tables (Home / Index / Top / Feedback) are
+//     bclary site chrome at the document tail; they'd land in the last
+//     chapter with dead site-relative links.
+const src = fs.readFileSync(INPUT, "utf8")
+  .replace(/href="#-a13"/g, 'href="#a-13"')
+  .replace(/href="#a-15\.11\.6\.6"/g, 'href="#a-15.11.6"')
+  .replace(/<table class="metabottom"[\s\S]*?<\/table>/g, "");
 
 const plain = (html) =>
   html.replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
@@ -171,7 +181,7 @@ if (!ONLY) {
 const pathFor = (slug) => `${BASE_PATH}${slug === "index" ? "" : `/${slug}`}`;
 const idToSlug = {}; // filled once chapter slugs are known
 const rewriteXrefs = (html) =>
-  html.replace(/href="#(a-[0-9A-Za-z.]+)"/g, (full, id) => {
+  html.replace(/href="#([^"]+)"/g, (full, id) => {
     const slug = idToSlug[id];
     return slug ? `href="${pathFor(slug)}#${id}"` : full;
   });
@@ -208,6 +218,12 @@ for (const c of pages) {
   c.slug = c.slug || slugify(c.title) || `section-${c.num}`;
   (function map(n) {
     idToSlug[n.id] = c.slug;
+    // Named in-body anchors too (the §8.6.1 attribute definitions <a
+    // name="_Value_">, annex-a/annex-b, …) — bclary links to them from other
+    // chapters, and rewriteXrefs needs to know which page they end up on.
+    for (const m of (n.body ?? "").matchAll(/(?:name|id)="([^"]+)"/g)) {
+      idToSlug[m[1]] ??= c.slug;
+    }
     n.children.forEach(map);
   })(c);
 }
@@ -244,7 +260,14 @@ for (const chapter of pages) {
     mdxLines.push(`<emu-clause id="${n.id}">`, "");
     // Titles can contain xref links (e.g. method headings like "[[Put]]"), so
     // run the full re-skin (xref rewrite included), not just colour fixup.
-    mdxLines.push(`${hashes} ${secnumSpan(n.num)}${reskin(n.title)}`, "");
+    // "[" is escaped afterwards: markdown reads "[[Get]](P)" in the MDX
+    // heading line as a link — [Get] with href="P" (same bug as ES1/ES2).
+    mdxLines.push(
+      `${hashes} ${secnumSpan(n.num)}${
+        reskin(n.title).replace(/\[/g, "&#91;")
+      }`,
+      "",
+    );
     mdxLines.push(`<Sec id="${n.id}" />`, "");
     n.children.forEach((child) => emit(child, level + 1));
     mdxLines.push(`</emu-clause>`, "");
