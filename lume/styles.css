@@ -1677,6 +1677,15 @@ html.dark .ecma-spec .hljs-string {
   font-weight: 700;
   white-space: pre;
 }
+/* Mobile: a long inline code run (`(Math.exp(x) - Math.exp(-x)) / …`) is
+   wider than the viewport and, unlike a pre, has no scroll container — it
+   was the main source of page-level horizontal panning. pre-wrap keeps the
+   meaningful interior spaces while allowing wraps. */
+@media (max-width: 767px) {
+  .ecma-spec :not(pre) > code {
+    white-space: pre-wrap;
+  }
+}
 /* tc39 itself walks back the `white-space: pre` inside regular tables
    so long identifiers don't blow the cell wide (ecmarkup.css
    `emu-table:not(.code) td code { white-space: normal }`). */
@@ -2080,6 +2089,14 @@ html.show-early-exits
      steps indent per level (matches ecmarkup's 40px). */
   padding-inline-start: 40px;
 }
+/* Mobile: 40px per nesting level starves deep steps of measure — a six-deep
+   algorithm leaves ~100px for text and the longest identifier widens the
+   page. Tighten the per-level indent below the mobile breakpoint. */
+@media (max-width: 767px) {
+  .ecma-spec emu-alg ol {
+    padding-inline-start: 1.4em;
+  }
+}
 .ecma-spec emu-alg ol ol {
   list-style-type: lower-alpha;
 }
@@ -2109,6 +2126,10 @@ html.show-early-exits
   display: block;
   text-align: center;
   margin-block: 2em;
+  /* <object data="figure-1.svg" width="719"> embeds keep their attribute
+     width (unlike img with max-width), so let the figure scroll on narrow
+     viewports instead of widening the page. */
+  overflow-x: auto;
 }
 .ecma-spec emu-figure img {
   max-width: 100%;
@@ -2393,6 +2414,18 @@ main[data-pagefind-body] :is(b, strong) {
   border-collapse: collapse;
   margin: 1em 0;
 }
+/* es5.1's URI character tables are wider than even a desktop viewport —
+   scroll them in place like emu-table (display:block keeps the row layout). */
+.ecma-spec table.real-table {
+  display: block;
+  overflow-x: auto;
+}
+/* es5.1 wraps its figures in plain <figure> (not emu-figure); the <object>
+   embed keeps its attribute width, so give the figure the same scroll
+   treatment as emu-figure. */
+.ecma-spec figure {
+  overflow-x: auto;
+}
 .ecma-spec table.real-table th,
 .ecma-spec table.real-table td {
   border: 1px solid var(--rule);
@@ -2571,12 +2604,14 @@ html.dark
 :is(.ecma-es1, .ecma-es2) table.lightweight-table {
   margin: 0.25em 0 1em 10ex;
 }
-/* Mobile: a table can exceed the viewport (the keyword grids at their
-   grammar indent, the §7.7.4 escape-sequence table). Drop the grammar
-   indent and let tables scroll internally instead of widening the page
-   (display:block keeps the row layout via the anonymous table box). */
+/* Mobile: a table can exceed the viewport (the ES1/ES2 keyword grids at
+   their grammar indent, the §7.7.4 escape-sequence table, es5.1's
+   .real-table code-unit tables, es3's bare tables). Let tables scroll
+   internally instead of widening the page (display:block keeps the row
+   layout via the anonymous table box). emu-table's inner table already
+   lives in its own scroll container and is excluded. */
 @media (max-width: 767px) {
-  :is(.ecma-es1, .ecma-es2) table {
+  .ecma-spec table:not(emu-table table) {
     display: block;
     overflow-x: auto;
   }

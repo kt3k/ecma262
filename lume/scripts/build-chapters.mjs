@@ -32,7 +32,13 @@ let src = fs.readFileSync(SPEC_FILE, "utf8");
 // paths in the source. Chapter pages render one level below the edition root
 // (/<base>/<slug>/), so a bare "img/…" would resolve to /<slug>/img/… and 404.
 // Bake the deploy basePath in, the same way xref hrefs do (see pathFor).
+// ES2015 references its figures by bare filename (src="figure-1.png", no
+// img/ prefix) — point those at the img/ dir too.
 src = src.replace(/\b(src|data)="img\//g, `$1="${BASE_PATH}/img/`);
+src = src.replace(
+  /\b(src|data)="([^"/:]+\.(?:svg|png|jpe?g|gif))"/gi,
+  (_m, attr, file) => `${attr}="${BASE_PATH}/img/${file}"`,
+);
 
 // The early ecmarkup editions (ES2015/ES2016) carry hand-authored inline table
 // styling — per-cell black borders and grey header backgrounds (#A6A6A6 /
