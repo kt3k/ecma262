@@ -1383,6 +1383,16 @@ h1 .secnum:empty {
 .ecma-spec pre {
   overflow-x: auto;
 }
+/* Code blocks get the shared panel surface — this is the framing the
+   hljs-zeroing rule below assumes the surrounding <pre> provides (tc39.es
+   likewise frames pre and strips the theme's inner chrome). The .es2-math
+   formula pres are typeset math, not code — no box in print, none here. */
+.ecma-spec pre:not(.es2-math) {
+  background: var(--ecma-panel-bg);
+  border: 1px solid var(--ecma-panel-border);
+  border-radius: var(--ecma-panel-radius);
+  padding: 0.75em 1em;
+}
 .ecma-spec emu-table,
 .ecma-spec emu-table + * {
   margin-top: calc(2em * var(--ecma-rhythm, 1));
