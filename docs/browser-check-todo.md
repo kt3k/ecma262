@@ -82,10 +82,15 @@ plus the apt libraries listed in the project memory.
    (`[> but only if the MV of |Hex4Digits| …]`) should render as plain prose
    with |NT|s resolved; we leak the `[>` marker and the pipes (sec-patterns,
    sec-regular-expressions-patterns).
-8. **SDO/host-hook boilerplate drift** — we emit ecmarkup's old "It is defined
-   piecewise over the following productions:" (v24 dropped it) and duplicate "It
-   performs the following steps when called:" on host hooks
-   (sec-hostcalljobcallback shows it twice).
+8. ~~**SDO/host-hook boilerplate drift**~~ _Fixed — the real rule (ecmarkup
+   header-parser): the "It performs the following steps when called:" / "It is
+   defined piecewise…" sentence is emitted only when the element directly
+   following the header dl — skipping emu-notes — is the clause's own emu-alg
+   (sans replaces-step) / emu-grammar. Our looser "any alg before the next
+   subsection" condition invented the sentence on host hooks and doubled it
+   where the source hand-writes the connective
+   (FunctionDeclarationInstantiation). Adjacency rule ported verbatim; 63 → 52
+   mismatches, all three boilerplate signatures at zero._
 9. **Structured-header table cells** — Table 14's method column includes
    parameter types (`( name : a String, )`) where the oracle strips them; its
    caption also arrives empty.

@@ -427,16 +427,34 @@ function buildStructuredBody(clauseType, parsed, dlEntries, rest) {
     ? "It is defined piecewise over the following productions:"
     : "It performs the following steps when called:";
   const targetTag = isSdo ? "<emu-grammar" : "<emu-alg";
-  // The algorithm/grammar must belong to THIS clause (appear before any nested
-  // sub-clause), else there's nothing to attach the trailing sentence to.
-  const sub = findNextSection(rest, 0);
-  const subIdx = sub ? sub.idx : rest.length;
-  const tIdx = rest.indexOf(targetTag);
-  if (tIdx >= 0 && tIdx < subIdx) {
-    const notesPresent = /<emu-note\b/.test(rest.slice(0, tIdx));
-    if (blockParas.length > 0 || notesPresent) {
-      const newRest = rest.slice(0, tIdx) + `<p>${lastSentence}</p>\n` +
-        rest.slice(tIdx);
+  // ecmarkup's adjacency rule (header-parser.ts): the sentence is emitted
+  // only when the element DIRECTLY following the header dl — skipping
+  // <emu-note>s — is the operation's <emu-alg> (without replaces-step) /
+  // the SDO's <emu-grammar>. When prose intervenes, the source carries any
+  // connective itself (FunctionDeclarationInstantiation hand-writes it; the
+  // host hooks have none), so anything else here would double or invent it.
+  let pos = 0;
+  let skippedNotes = false;
+  for (;;) {
+    pos += rest.slice(pos).match(/^\s*/)[0].length;
+    if (rest.startsWith("<emu-note", pos)) {
+      const end = rest.indexOf("</emu-note>", pos);
+      if (end === -1) break;
+      pos = end + "</emu-note>".length;
+      skippedNotes = true;
+      continue;
+    }
+    break;
+  }
+  const openTag = rest.startsWith(targetTag, pos)
+    ? rest.slice(pos, rest.indexOf(">", pos) + 1)
+    : null;
+  if (openTag && !(!isSdo && /\breplaces-step\b/.test(openTag))) {
+    // Standalone paragraph when the intro isn't the immediately preceding
+    // block (block description or skipped notes); else append to the intro.
+    if (blockParas.length > 0 || skippedNotes) {
+      const newRest = rest.slice(0, pos) + `<p>${lastSentence}</p>\n` +
+        rest.slice(pos);
       return `<p>${main}</p>` + blockParas.join("") + newRest;
     }
     main += " " + lastSentence;
