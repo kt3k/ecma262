@@ -70,8 +70,18 @@ plus the apt libraries listed in the project memory.
 6. **emu-xref auto-text** — empty xref to a clause with `aoid`-less title
    renders the slug ("use-strict-directive") instead of the title; some
    clause-number xrefs render empty (sec-code-realms loses "16.2.1.10").
-7. **Table auto-numbering drift** — our global counter is 3 behind by Table ~98
-   (prose xrefs say "Table 95" where the oracle says "Table 98").
+7. ~~**Table auto-numbering drift**~~ _Fixed — the real cause: `<emu-import>`
+   was unsupported, so the three imported Unicode property tables (table-\*.html
+   fragments) never rendered and every later table number ran behind. Imports
+   are now inlined at load; the fragments are vendored for es2018–es2026
+   (fetched from the tc39 release tags). Same sweep also normalised
+   `<emu-caption>` elements and `type=… of=…` synthesised captions onto the
+   caption attribute, and renders informative floats as "Table N (Informative):
+   …". 118 → 63 mismatches; table-number category is at zero._ 7b. **`[> …]`
+   prose constraints render raw** — grammarkdown's RHS prose annotation
+   (`[> but only if the MV of |Hex4Digits| …]`) should render as plain prose
+   with |NT|s resolved; we leak the `[>` marker and the pipes (sec-patterns,
+   sec-regular-expressions-patterns).
 8. **SDO/host-hook boilerplate drift** — we emit ecmarkup's old "It is defined
    piecewise over the following productions:" (v24 dropped it) and duplicate "It
    performs the following steps when called:" on host hooks

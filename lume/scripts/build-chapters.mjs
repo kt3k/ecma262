@@ -28,6 +28,49 @@ const BASE_PATH = values["base-path"];
 
 let src = fs.readFileSync(SPEC_FILE, "utf8");
 
+// <emu-import> pulls in an external fragment (the large Unicode property
+// tables live in table-*.html next to spec.html); ecmarkup inlines them at
+// build time. Without this the imported emu-tables never render AND the
+// global Table-N counter runs behind ecmarkup's, shifting every later
+// "Table N" xref. The fragments are vendored alongside each edition's
+// spec.html.
+src = src.replace(
+  /<emu-import\b[^>]*href="([^"]+)"[^>]*>\s*<\/emu-import>/g,
+  (full, href) => {
+    const p = path.join(path.dirname(SPEC_FILE), href);
+    if (!fs.existsSync(p)) {
+      console.warn(`[build-chapters] emu-import not vendored: ${href}`);
+      return full;
+    }
+    return fs.readFileSync(p, "utf8");
+  },
+);
+
+// Table captions arrive three ways; normalise the first two onto the caption
+// attribute the float-numbering + caption CSS already consume:
+//   • <emu-caption> child element (the imported Unicode tables, Table 91)
+//   • type="abstract methods" of="X" → ecmarkup synthesises "Abstract
+//     Methods of X" (Table 14, 39, …)
+//   • the informative attribute renders as "Table N (Informative): …"
+//     (handled in numberFloats via the data-num attribute).
+const stripTags = (s) =>
+  s.replace(/<[^>]+>/g, "").replace(/`/g, "").replace(/\s+/g, " ").trim();
+src = src.replace(
+  /<emu-table\b([^>]*)>(\s*)<emu-caption>([\s\S]*?)<\/emu-caption>/g,
+  (_m, attrs, ws, cap) =>
+    `<emu-table${attrs} caption="${
+      stripTags(cap).replace(/"/g, "&quot;")
+    }">${ws}`,
+);
+src = src.replace(/<emu-table\b[^>]*>/g, (tag) => {
+  if (/\bcaption="/.test(tag)) return tag;
+  const type = tag.match(/\btype="([^"]+)"/)?.[1];
+  const of = tag.match(/\bof="([^"]+)"/)?.[1];
+  if (!type || !of) return tag;
+  const title = type.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  return tag.replace(/>$/, ` caption="${title} of ${of}">`);
+});
+
 // Spec images (`<img src="img/…">`, `<object data="img/…">`) use root-relative
 // paths in the source. Chapter pages render one level below the edition root
 // (/<base>/<slug>/), so a bare "img/…" would resolve to /<slug>/img/… and 404.
@@ -813,13 +856,17 @@ const aoTargets = new Map(); // exact aoid name → { slug, id }
 }
 
 // Add data-num="N" to <emu-table>/<emu-figure> so the caption CSS can render
-// "Table N: <caption>" / "Figure N: <caption>".
+// "Table N: <caption>" / "Figure N: <caption>". An informative float renders
+// as "Table N (Informative): …" (ecmarkup's wording), carried through the
+// same attribute.
 function applyFloatNum(html) {
   return html.replace(/<emu-(table|figure)\b([^>]*)>/g, (full, kind, attrs) => {
     const idm = attrs.match(/\bid="([^"]+)"/);
     if (!idm) return full;
-    const num = (kind === "table" ? tableNum : figureNum).get(idm[1]);
-    return num ? `<emu-${kind}${attrs} data-num="${num}">` : full;
+    let num = (kind === "table" ? tableNum : figureNum).get(idm[1]);
+    if (!num) return full;
+    if (/\binformative\b/.test(attrs)) num += " (Informative)";
+    return `<emu-${kind}${attrs} data-num="${num}">`;
   });
 }
 
