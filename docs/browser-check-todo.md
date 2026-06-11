@@ -22,8 +22,9 @@ plus the apt libraries listed in the project memory.
       links. _Done: `tools/browser-checks/check-links.mjs`; first run found 28
       broken links (all es3 — markdown-link-mangled `[[Get]](P)` headings, named
       anchors `#_Value_`/`#annex-a` not rewritten cross-page, bclary metabottom
-      chrome with dead site links, source typo `#-a13`, missing URIError section
-      target) — fixed in build-chapters-es3.mjs; now 47k links / 0 broken._
+      chrome with dead site links, source typos `#-a13` and the URIError section
+      anchored as `a-15.1.6.6` instead of `a-15.11.6.6`) — fixed in
+      build-chapters-es3.mjs; now 47k links / 0 broken._
 - [ ] **2. Dark-mode audit** Toggle `html.dark` (and emulate
       `prefers-color-scheme`), walk visible text nodes, flag computed fg/bg
       contrast below threshold. Guards the themeColors inline-style rewrites

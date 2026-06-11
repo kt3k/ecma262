@@ -46,14 +46,17 @@ fs.mkdirSync(CONTENT_DIR, { recursive: true });
 
 // Source repairs (all verified against the bclary HTML):
 //   • "#-a13" is a typo for "#a-13" (the FormalParameterList gsee).
-//   • "#a-15.11.6.6" (URIError) has no target — the bclary conversion lost
-//     that section entirely; point the lone xref at its 15.11.6 parent.
+//   • the URIError section IS present but its anchor and printed number are
+//     typo'd "15.1.6.6" (one dot short of 15.11.6.6) — which also left the
+//     "See 15.11.6.6" xref in §15.1 dangling. No real 15.1.6 exists, so the
+//     global rename is unambiguous.
 //   • the metabottom navigation tables (Home / Index / Top / Feedback) are
 //     bclary site chrome at the document tail; they'd land in the last
 //     chapter with dead site-relative links.
 const src = fs.readFileSync(INPUT, "utf8")
   .replace(/href="#-a13"/g, 'href="#a-13"')
-  .replace(/href="#a-15\.11\.6\.6"/g, 'href="#a-15.11.6"')
+  .replace(/a-15\.1\.6\.6/g, "a-15.11.6.6")
+  .replace(/>15\.1\.6\.6</g, ">15.11.6.6<")
   .replace(/<table class="metabottom"[\s\S]*?<\/table>/g, "");
 
 const plain = (html) =>
