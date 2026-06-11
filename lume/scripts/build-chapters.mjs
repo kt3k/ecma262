@@ -191,6 +191,26 @@ for (let i = 0; i < starts.length; i++) {
 // Locate the first nested section opener (<emu-clause or <emu-annex) at or
 // after `from`. Returns { idx, tag } or null. Skips matches that are inside
 // attribute values by requiring the next char to terminate the tag name.
+// Clause/step annotations that render as an uppercase tag + tinted region
+// (ecmarkup's SPECIAL_KINDS): carried as attributes on <emu-clause>, on
+// algorithm steps (leading [normative-optional] annotations), and on inline
+// <span>/<ul> elements (which pass through the pipeline verbatim).
+const SPECIAL_KINDS = [
+  ["normative-optional", "Normative Optional"],
+  ["legacy", "Legacy"],
+  ["deprecated", "Deprecated"],
+];
+// Match a kind as a standalone token (id="sec-conformance-legacy" must not
+// count); strip quoted values first so ids/oldids can't false-positive.
+const kindsIn = (attrText) => {
+  const bare = attrText.replace(/"[^"]*"/g, '""');
+  return SPECIAL_KINDS.filter(([a]) =>
+    new RegExp(`(?:^|[\\s[,])${a}(?=[\\s\\],=]|$)`).test(bare)
+  );
+};
+const attributesTag = (kinds) =>
+  `<div class="attributes-tag">${kinds.map(([, l]) => l).join(", ")}</div>`;
+
 function findNextSection(html, from) {
   let i = from;
   while (i < html.length) {
@@ -547,7 +567,12 @@ function parseTree(html) {
     else if (preText.trim() !== "") {
       children[children.length - 1].tree.pre += preText;
     }
-    children.push({ id, title, tree: parseTree(innerStripped) });
+    children.push({
+      id,
+      title,
+      kinds: kindsIn(attrs),
+      tree: parseTree(innerStripped),
+    });
     i = j;
   }
   return { pre, children };
@@ -628,8 +653,14 @@ function renderMdxTree(tree, chapterPrefix, secPath, depth) {
     // render time mdx-components.jsx aliases h2-h6 to <h1>, so the rendered
     // DOM has only <h1>s (matching tc39.es/ecma262); depth-based sizing then
     // comes from the emu-clause-nesting CSS rules.
-    lines.push(`<emu-clause${idAttr}>`);
+    const kindAttrs = (child.kinds ?? []).map(([a]) => ` ${a}=""`).join("");
+    lines.push(`<emu-clause${idAttr}${kindAttrs}>`);
     lines.push("");
+    if (child.kinds?.length) {
+      // ecmarkup prepends the tag inside the clause, above the heading.
+      lines.push(attributesTag(child.kinds).replace("class=", "className="));
+      lines.push("");
+    }
     lines.push(
       `${hashes} <span className="secnum">${childNum}</span> ${
         transformInlineText(child.title)
@@ -1147,6 +1178,7 @@ function buildAlgTree(inner) {
     const ann = raw.match(/^(?:\[[^\]]+\]\s*)+/);
     const idm = ann && ann[0].match(/\bid="(step-[^"]+)"/);
     const id = idm ? idm[1] : null;
+    const kinds = ann ? kindsIn(ann[0]) : [];
     let text = raw.replace(/^(?:\[[^\]]+\]\s*)+/, "");
     // Continuation lines: any non-bullet line at deeper indent belongs to this
     // item (commonly embedded <figure>/<table> blocks).
@@ -1164,7 +1196,7 @@ function buildAlgTree(inner) {
       text += "\n" + lines[j];
       j++;
     }
-    items.push({ depth, type, id, text: text.replace(/\s+$/, "") });
+    items.push({ depth, type, id, kinds, text: text.replace(/\s+$/, "") });
     i = j;
   }
   if (!items.length) return null;
@@ -1181,6 +1213,7 @@ function buildAlgTree(inner) {
           type: it.type,
           text: "",
           id: null,
+          kinds: [],
           children: [],
         });
       }
@@ -1190,6 +1223,7 @@ function buildAlgTree(inner) {
       type: it.type,
       text: it.text,
       id: it.id,
+      kinds: it.kinds,
       children: [],
     });
   }
@@ -1210,7 +1244,8 @@ function parseAlg(inner) {
   function attrsFor(n) {
     const isExit = /^(Return|Throw)\b/.test(n.text) ||
       /,\s+(return|throw)\s+[A-Za-z<*_!?]/i.test(n.text);
-    return (n.id ? ` id="${n.id}"` : "") + (isExit ? ' class="exit"' : "");
+    return (n.id ? ` id="${n.id}"` : "") + (isExit ? ' class="exit"' : "") +
+      (n.kinds ?? []).map(([a]) => ` ${a}=""`).join("");
   }
   function serialize(nodes) {
     let html = "";
@@ -1223,7 +1258,9 @@ function parseAlg(inner) {
         k++;
       }
       html += `<${t}>` + group.map((n) =>
-        `<li${attrsFor(n)}>${n.text}${serialize(n.children)}</li>`
+        `<li${attrsFor(n)}>${
+          n.kinds?.length ? attributesTag(n.kinds) : ""
+        }${n.text}${serialize(n.children)}</li>`
       ).join("") + `</${t}>`;
     }
     return html;

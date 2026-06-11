@@ -1862,6 +1862,49 @@ html.dark .ecma-spec emu-table tbody tr:nth-child(even) {
   margin-bottom: 0;
 }
 
+/* Normative Optional / Legacy / Deprecated annotations. tc39 tints the
+   annotated region with a saturated orange wash (ecmarkup
+   `[normative-optional] { border-left: 5px solid; background: #ffeedd }`);
+   recast that on the site's panel grammar — a soft amber wash, 3px accent
+   edge, the shared panel radius — with the uppercase tag label in the same
+   voice as the NOTE label. Carriers: annotated clauses (the whole region,
+   heading included), algorithm steps (<li>), lists, and inline <span>s. */
+.ecma-spec {
+  --ecma-kind-accent: #b45309;
+  --ecma-kind-bg: rgba(217, 119, 6, 0.07);
+}
+html.dark .ecma-spec {
+  --ecma-kind-accent: #fbbf24;
+  --ecma-kind-bg: rgba(251, 191, 36, 0.08);
+}
+.ecma-spec :is([normative-optional], [legacy], [deprecated]) {
+  background: var(--ecma-kind-bg);
+  border-left: 3px solid var(--ecma-kind-accent);
+  border-radius: 0 var(--ecma-panel-radius) var(--ecma-panel-radius) 0;
+}
+.ecma-spec emu-clause:is([normative-optional], [legacy], [deprecated]),
+.ecma-spec li:is([normative-optional], [legacy], [deprecated]) {
+  padding: 0.75em 1em;
+}
+.ecma-spec li:is([normative-optional], [legacy], [deprecated]) {
+  margin-block: 0.5em;
+}
+.ecma-spec ul:is([normative-optional], [legacy], [deprecated]) {
+  padding-block: 0.5em;
+}
+.ecma-spec span:is([normative-optional], [legacy], [deprecated]) {
+  border-left: none;
+  border-radius: 3px;
+  padding: 0.05em 0.3em;
+}
+.ecma-spec .attributes-tag {
+  font-weight: 600;
+  font-size: 0.74em;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ecma-kind-accent);
+}
+
 /* Inline ecmarkup markup, expanded by build-chapters.mjs from |Foo|, ~enum~,
    %intrinsic%, etc. Browsers have no default style for these custom elements,
    so add the typographic conventions ecmarkup uses. */

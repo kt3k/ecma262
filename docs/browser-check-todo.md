@@ -57,9 +57,15 @@ plus the apt libraries listed in the project memory.
 2. ~~**Backslash artifacts (18 clauses)**~~ _Fixed: backslash-escaped formatting
    characters (`\*`, `\~`, …) are protected before the inline transforms and
    restored as bare characters; `\\` inside inline code is one backslash._
-3. **Clause badges not rendered (12 clauses)** — `normative-optional` / `legacy`
-   clause attributes get no "Normative Optional" / "Legacy" badge
-   (sec-conformance-*, sec-toboolean, sec-islooselyequal, …).
+3. ~~**Clause badges not rendered (12 clauses)**~~ _Fixed — the
+   normative-optional / legacy / deprecated attributes now carry through to
+   the rendered emu-clause wrapper, algorithm steps (leading […] step
+   annotations) and the pass-through inline span/ul carriers, each prepended
+   with ecmarkup's `<div class="attributes-tag">` label (auto-linked to §2
+   like tc39). Styled on the site's panel grammar: soft amber wash, 3px
+   accent edge, panel radius, uppercase tag (light #b45309 / dark #fbbf24).
+   52 → 39 mismatches; note that the one remaining "badge-looking" diff in
+   sec-conformance is actually finding 4's misattributed paragraph._
 4. **Clause-boundary misattribution** — a paragraph that follows a nested clause
    is emitted inside that child instead of the parent (sec-conformance's "A
    conforming implementation … Legacy subclauses…").
