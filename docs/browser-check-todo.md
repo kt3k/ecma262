@@ -106,6 +106,13 @@ plus the apt libraries listed in the project memory.
    caption also arrives empty.
 10. sec-intro / sec-copyright-and-software-license absent from our rendering —
     verify intentional (front matter) and exclude from the check if so.
+11. **`__proto__`-style headings** — ~~the MDX heading line read `__proto__` as
+    markdown strong emphasis ("Object.prototype.<strong>proto</strong>") across
+    six clauses~~ _fixed: underscores left after the inline transforms are
+    literal title text and are entity-escaped in the heading line._
+12. **Numeric character references in code blocks** — `&#x212B;` in
+    sec-string.prototype.localecompare's example comments renders literally; the
+    oracle decodes it to Å before highlighting.
 
 - [ ] **4. Deep-link scroll position** Navigate to `/<chapter>/#sec-x.y.z` URLs
       and assert the heading lands visible below the sticky navbar

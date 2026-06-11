@@ -671,9 +671,14 @@ function renderMdxTree(tree, chapterPrefix, secPath, depth) {
       lines.push(attributesTag(child.kinds).replace("class=", "className="));
       lines.push("");
     }
+    // After the inline transforms, any remaining underscore is literal title
+    // text (__proto__, __defineGetter__, SQRT1_2) — escape it or the MDX
+    // heading line reads __proto__ as markdown strong emphasis and renders
+    // "Object.prototype.<strong>proto</strong>". Entity-escaping is safe
+    // inside emitted hrefs too (it decodes back to the same character).
     lines.push(
       `${hashes} <span className="secnum">${childNum}</span> ${
-        transformInlineText(child.title)
+        transformInlineText(child.title).replace(/_/g, "&#95;")
       }`,
     );
     lines.push("");
