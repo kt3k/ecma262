@@ -1339,17 +1339,38 @@ for (const c of pages) {
 }
 
 // Full per-section transform: grammar swap → algorithms → cleanup → re-skin.
-const processBody = (body) =>
-  ocrFixes(
-    reskin(
-      dropCoverImages(
-        dropEmptyTables(
-          dropBlockType(
-            demathify(
-              mergeNotationProductions(
-                demoteGrammarHeadings(
-                  dropContinuationMarks(
-                    mergeSplitAlgs(algoLists(swapGrammar(body))),
+// §15.9.1.x (the Date computation model) sets its formulas as typeset math
+// in the PDFs — roman with italic variables, never monospace — but Marker
+// emits them variously as <math> (→ .es2-math spans), <pre>, or plain
+// paragraphs, so the rendered font split by accident. Tag the other two
+// forms so CSS can give all three the modern emu-eqn voice. (Every <pre> in
+// these sections is a formula; code examples live elsewhere, e.g. §15.9.4.2.)
+const tagDateMath = (html, id) => {
+  if (!/^sec-15\.9\.1\./.test(id)) return html;
+  return html
+    .replace(/<pre>/g, '<pre class="es2-math">')
+    .replace(
+      /<p>((?:(?!<\/p>)[\s\S])*?)<\/p>/g,
+      (m, inner) =>
+        /^[A-Za-z][A-Za-z0-9]*\s*(?:\([^)]*\))?\s*=/.test(plain(inner))
+          ? `<p class="es2-math">${inner}</p>`
+          : m,
+    );
+};
+
+const processBody = (body, id) =>
+  tagDateMath(
+    ocrFixes(
+      reskin(
+        dropCoverImages(
+          dropEmptyTables(
+            dropBlockType(
+              demathify(
+                mergeNotationProductions(
+                  demoteGrammarHeadings(
+                    dropContinuationMarks(
+                      mergeSplitAlgs(algoLists(swapGrammar(body))),
+                    ),
                   ),
                 ),
               ),
@@ -1358,6 +1379,7 @@ const processBody = (body) =>
         ),
       ),
     ),
+    id,
   );
 
 // ===========================================================================
@@ -1374,7 +1396,9 @@ for (const chapter of pages) {
   const slug = chapter.slug;
   const secMap = {};
   (function collect(n) {
-    secMap[n.id] = tagOpt(SECTION_OVERRIDE[n.id] ?? processBody(n.body));
+    secMap[n.id] = tagOpt(
+      SECTION_OVERRIDE[n.id] ?? processBody(n.body, n.id),
+    );
     n.children.forEach(collect);
   })(chapter);
 

@@ -2588,6 +2588,21 @@ html.dark
 :is(.ecma-es1, .ecma-es2) ol.ecma-alg > li {
   margin: 0.15em 0;
 }
+/* Math formulas (demathify's .es2-math spans, and the §15.9.1.x Date
+   formulas Marker emitted as <pre>/<p>) — the PDFs typeset these as math
+   (roman + italic variables), never monospace; give all forms the same
+   math-serif voice as the modern emu-eqn. The pre keeps its line breaks
+   (DaysInYear's aligned cases) and the overflow-x from the generic rule. */
+:is(.ecma-es1, .ecma-es2) .es2-math,
+:is(.ecma-es1, .ecma-es2) pre.es2-math {
+  font-style: italic;
+  font-family:
+    "Cambria Math", "Latin Modern Math", "STIX Two Math",
+    "TeX Gyre Termes Math", Cambria, "Times New Roman", serif;
+}
+:is(.ecma-es1, .ecma-es2) :is(p, pre).es2-math {
+  margin-inline-start: 4em;
+}
 /* Bulleted value lists (the Math special cases, the §7.7.4 SV/CV lists) —
    printed as • items in the PDFs, not numbered steps. Same spacing as the
    algorithm lists; list-style restored against the preflight reset. */
