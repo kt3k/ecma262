@@ -1113,6 +1113,9 @@ const OCR_FIXES = [
   [/\bfunctionlocal\b/g, "function-local"],
   [/\bdoubleprecision\b/g, "double-precision"],
   [/\bNon-a-Number\b/g, "Not-a-Number"],
+  // ES1 §15.9.1.8: the text layer reads "whether \t is in a leap year" — a
+  // stray backslash before the italic t (ES2/ES3 read "whether t is…").
+  [/whether \\(?=\s*<i>)/g, "whether"],
 ];
 const ocrFixes = (html) =>
   OCR_FIXES.reduce((s, [re, to]) => s.replace(re, to), html);
@@ -1351,10 +1354,16 @@ const tagDateMath = (html, id) => {
     .replace(/<pre>/g, '<pre class="es2-math">')
     .replace(
       /<p>((?:(?!<\/p>)[\s\S])*?)<\/p>/g,
-      (m, inner) =>
-        /^[A-Za-z][A-Za-z0-9]*\s*(?:\([^)]*\))?\s*=/.test(plain(inner))
-          ? `<p class="es2-math">${inner}</p>`
-          : m,
+      (m, inner) => {
+        const t = plain(inner);
+        // a definition (Identifier(args)? = …) or a bare call-expression
+        // display (§15.9.1.8's InLeapYear(t) / WeekDay(…) dependencies)
+        const isFormula =
+          /^[A-Za-z][A-Za-z0-9]*\s*(?:\([^)]*\))?\s*=/.test(t) ||
+          (/^[A-Za-z][A-Za-z0-9]*\s*\([\s\S]*\)$/.test(t) &&
+            !/\b[a-z]{3,}\s+[a-z]{3,}/.test(t));
+        return isFormula ? `<p class="es2-math">${inner}</p>` : m;
+      },
     );
 };
 
