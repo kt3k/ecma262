@@ -1265,6 +1265,11 @@ function tokenizeGrammarLine(line) {
   // drops it from the rendered output.
   const descM = line.match(/^([ \t]*)&gt;\s+(.*)$/);
   if (descM) return `${descM[1]}<emu-gprose>${descM[2]}</emu-gprose>`;
+  // Production annotations (#parencover, #callcover) are grammarkdown
+  // bookkeeping for cover-grammar refinement, not grammar — ecmarkup hides
+  // them. A bare " #word" can only appear at the end of an alternative (the
+  // `#` terminal of PrivateIdentifier is backtick-quoted).
+  line = line.replace(/\s+#[a-zA-Z]+\s*$/, "");
 
   let out = "";
   let i = 0;
@@ -1276,13 +1281,21 @@ function tokenizeGrammarLine(line) {
       continue;
     }
     if (ch === "`") {
+      // grammarkdown writes a terminal consisting of one backtick as ```
+      // (the template-literal productions); a backslash inside a terminal is
+      // escaped as \\ .
+      if (line[i + 1] === "`" && line[i + 2] === "`") {
+        out += "<emu-t>`</emu-t>";
+        i += 3;
+        continue;
+      }
       const end = line.indexOf("`", i + 1);
       if (end === -1) {
         out += ch;
         i++;
         continue;
       }
-      out += `<emu-t>${line.slice(i + 1, end)}</emu-t>`;
+      out += `<emu-t>${line.slice(i + 1, end).replace(/\\\\/g, "\\")}</emu-t>`;
       i = end + 1;
       continue;
     }
@@ -1299,12 +1312,21 @@ function tokenizeGrammarLine(line) {
       //   `[+Foo]` / `[~Foo]` / etc. → <emu-constraints> (alternative guards)
       // Annotations and modifications carry inner NTs/terminals so the
       // contents get a recursive tokenize pass; constraints stay raw.
-      const content = line.slice(i + 1, end);
+      let content = line.slice(i + 1, end);
       const tag = /^\s*lookahead\b/.test(content)
         ? "emu-gann"
         : /^\s*no\s+/.test(content)
         ? "emu-gmod"
         : "emu-constraints";
+      // grammarkdown lookahead operators render as their mathematical glyphs
+      // (ecmarkup: == → =, != → ≠, <- → ∈, <! → ∉).
+      if (tag === "emu-gann") {
+        content = content
+          .replace(/(lookahead\s*)==/, "$1=")
+          .replace(/(lookahead\s*)!=/, "$1≠")
+          .replace(/(lookahead\s*)&lt;-/, "$1∈")
+          .replace(/(lookahead\s*)&lt;!/, "$1∉");
+      }
       const inner = tag === "emu-constraints"
         ? content
         : tokenizeGrammarLine(content);
@@ -1563,11 +1585,20 @@ function transformInlineText(text) {
   // Pull backtick-wrapped runs out first and replace them with a NUL-marker
   // placeholder so the later `*` / `_` regexes can't reach across the
   // generated <code>…</code> boundaries (e.g. `*` adjacent to `**` is the
-  // case in ApplyStringOrNumericBinaryOperator's heading).
+  // case in ApplyStringOrNumericBinaryOperator's heading). An escaped
+  // backslash inside code (`\\`) is one literal backslash.
   const code = [];
   let out = text.replace(/`([^`\n]+)`/g, (_, c) => {
-    code.push(c);
+    code.push(c.replace(/\\\\/g, "\\"));
     return `\x00${code.length - 1}\x00`;
+  });
+  // Backslash-escaped formatting characters ("\*default\*", "[\~parameter]")
+  // suppress the markup transforms below and render as the bare character —
+  // protect them now, restore (sans backslash) at the end.
+  const lit = [];
+  out = out.replace(/\\([*_~|\\])/g, (_, c) => {
+    lit.push(c);
+    return `\x01${lit.length - 1}\x01`;
   });
   // |Foo|, |Foo[X]|, |Foo?|, |Foo[X]?| → <emu-nt>…</emu-nt>; the bare NT name
   // (Foo) is the link target, so split it from any [params] / ? suffix and
@@ -1607,6 +1638,12 @@ function transformInlineText(text) {
   out = out.replace(
     /\[\[([A-Z][A-Za-z0-9_]*)\]\]/g,
     '<var class="field">[[$1]]</var>',
+  );
+  // The \x01 sentinel marks protected escapes — restore the bare character.
+  out = out.replace(
+    // deno-lint-ignore no-control-regex
+    /\x01(\d+)\x01/g,
+    (_, i) => lit[Number(i)],
   );
   // The \x00 placeholder sentinel (set above) marks pulled-out backtick runs;
   // it never occurs in real spec text, so matching it directly is safe.

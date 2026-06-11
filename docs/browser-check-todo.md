@@ -50,22 +50,23 @@ plus the apt libraries listed in the project memory.
 
 ### Check-3 findings (draft, 2026-06-11) — resolver bugs to fix
 
-1. **Template-literal grammar mis-tokenised** — backtick terminals break
-   tokenizeGrammarLine, leaking raw grammarkdown (`TemplateCharacters?`, fused
-   `` ${` ``) and dropping the backtick terminals
-   (sec-template-literal-lexical-components, sec-static-semantics-sv/tv/trv).
-2. **Backslash artifacts (18 clauses)** — `\` doubled in grammar-adjacent prose
-   (sec-terminal-symbols etc.); escaped markdown leaks as `"\ default\ "` where
-   the oracle shows `"*default*"` (sec-static-semantics-boundnames).
+1. ~~**Template-literal grammar mis-tokenised**~~ _Fixed: `` ``` is the
+   grammarkdown spelling of a backtick terminal; `\\` inside a terminal is an
+   escaped backslash. Bonus from the same sweep: lookahead operators now render
+   as their glyphs (`==` → `=`, `!=` → `≠`) like ecmarkup._
+2. ~~**Backslash artifacts (18 clauses)**~~ _Fixed: backslash-escaped formatting
+   characters (`\*`, `\~`, …) are protected before the inline transforms and
+   restored as bare characters; `\\` inside inline code is one backslash._
 3. **Clause badges not rendered (12 clauses)** — `normative-optional` / `legacy`
    clause attributes get no "Normative Optional" / "Legacy" badge
    (sec-conformance-*, sec-toboolean, sec-islooselyequal, …).
 4. **Clause-boundary misattribution** — a paragraph that follows a nested clause
    is emitted inside that child instead of the parent (sec-conformance's "A
    conforming implementation … Legacy subclauses…").
-5. **Grammarkdown production annotations leak** — `#parencover` / `#callcover`
-   render as text (sec-primary-expression,
-   sec-rules-of-automatic-semicolon-insertion).
+5. ~~**Grammarkdown production annotations leak**~~ _Fixed: a trailing " #word"
+   on a grammar line is cover-grammar bookkeeping and is stripped before
+   tokenising (the `#` terminal of PrivateIdentifier is backtick-quoted, so it
+   is unaffected)._
 6. **emu-xref auto-text** — empty xref to a clause with `aoid`-less title
    renders the slug ("use-strict-directive") instead of the title; some
    clause-number xrefs render empty (sec-code-realms loses "16.2.1.10").
