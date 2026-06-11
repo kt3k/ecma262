@@ -35,10 +35,52 @@ plus the apt libraries listed in the project memory.
       and title/number/literal/attr below 3:1; the site footer (gray-600) and
       the skip-nav button (white on blue-400) sat ~2.3–2.5:1. All fixed; re-run
       is clean at 550 pages / 0 findings._
-- [ ] **3. Text fidelity vs tc39.es (modern editions)** For draft/es2026,
+- [x] **3. Text fidelity vs tc39.es (modern editions)** For draft/es2026,
       compare normalised `innerText` per section against the official tc39.es
       rendering to detect text loss/duplication from the custom ecmarkup
-      resolver (the modern-edition analogue of the ES1/ES2 Marker bugs).
+      resolver (the modern-edition analogue of the ES1/ES2 Marker bugs). _Check
+      done: `tools/browser-checks/check-fidelity.mjs` — the oracle is the SAME
+      vendored spec.html rendered by real ecmarkup (v24, dev-only test oracle;
+      no upstream drift), both renderings reduced to per-clause text (text nodes
+      attributed to the nearest emu-clause id; ecmarkup.js's aria-hidden
+      copy/paste list markers excluded; our CSS-generated table/figure captions
+      materialised in place; whitespace-free compare). draft: 2273 clauses, 149
+      mismatches → real resolver bugs, fixes pending — see the findings list
+      below._
+
+### Check-3 findings (draft, 2026-06-11) — resolver bugs to fix
+
+1. **Template-literal grammar mis-tokenised** — backtick terminals break
+   tokenizeGrammarLine, leaking raw grammarkdown (`TemplateCharacters?`, fused
+   `` ${` ``) and dropping the backtick terminals
+   (sec-template-literal-lexical-components, sec-static-semantics-sv/tv/trv).
+2. **Backslash artifacts (18 clauses)** — `\` doubled in grammar-adjacent prose
+   (sec-terminal-symbols etc.); escaped markdown leaks as `"\ default\ "` where
+   the oracle shows `"*default*"` (sec-static-semantics-boundnames).
+3. **Clause badges not rendered (12 clauses)** — `normative-optional` / `legacy`
+   clause attributes get no "Normative Optional" / "Legacy" badge
+   (sec-conformance-*, sec-toboolean, sec-islooselyequal, …).
+4. **Clause-boundary misattribution** — a paragraph that follows a nested clause
+   is emitted inside that child instead of the parent (sec-conformance's "A
+   conforming implementation … Legacy subclauses…").
+5. **Grammarkdown production annotations leak** — `#parencover` / `#callcover`
+   render as text (sec-primary-expression,
+   sec-rules-of-automatic-semicolon-insertion).
+6. **emu-xref auto-text** — empty xref to a clause with `aoid`-less title
+   renders the slug ("use-strict-directive") instead of the title; some
+   clause-number xrefs render empty (sec-code-realms loses "16.2.1.10").
+7. **Table auto-numbering drift** — our global counter is 3 behind by Table ~98
+   (prose xrefs say "Table 95" where the oracle says "Table 98").
+8. **SDO/host-hook boilerplate drift** — we emit ecmarkup's old "It is defined
+   piecewise over the following productions:" (v24 dropped it) and duplicate "It
+   performs the following steps when called:" on host hooks
+   (sec-hostcalljobcallback shows it twice).
+9. **Structured-header table cells** — Table 14's method column includes
+   parameter types (`( name : a String, )`) where the oracle strips them; its
+   caption also arrives empty.
+10. sec-intro / sec-copyright-and-software-license absent from our rendering —
+    verify intentional (front matter) and exclude from the check if so.
+
 - [ ] **4. Deep-link scroll position** Navigate to `/<chapter>/#sec-x.y.z` URLs
       and assert the heading lands visible below the sticky navbar
       (scroll-margin-top class of bugs). Rides along with check 1's crawl.
