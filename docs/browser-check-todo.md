@@ -129,6 +129,47 @@ plus the apt libraries listed in the project memory.
 
 **2026-06-11: the draft fidelity check is at ZERO mismatches (2271 clauses).**
 
+#### When to re-run the fidelity check (draft-update routine)
+
+Re-running against unchanged inputs just reproduces the zero — the check earns
+its keep exactly when an input changes:
+
+1. **On every draft submodule bump** (the main case): new spec text can carry
+   ecmarkup constructs the custom resolver has never seen, and this check is
+   what catches them being silently mangled.
+2. **After any build-chapters.mjs change**, as a regression guard.
+
+Routine (each step from the repo root unless noted):
+
+```sh
+# 1. bump the vendored draft to upstream main
+git -C ecma262/draft fetch origin main && git -C ecma262/draft checkout origin/main
+
+# 2. rebuild the edition
+cd lume && EDITION=draft BASE_PATH=/ecma262/draft deno task pages && \
+  EDITION=draft BASE_PATH=/ecma262/draft deno task build && \
+  EDITION=draft BASE_PATH=/ecma262/draft deno task pagefind && \
+  rm -rf ../dist/draft && cp -r _site ../dist/draft && cd ..
+
+# 3. regenerate the oracle with REAL ecmarkup (dev-only; the site build
+#    stays on the custom resolver) — in the playwright sandbox dir:
+#    npm i ecmarkup@24, then render the SAME vendored spec.html and serve
+#    the output next to dist (e.g. /tmp/serve-root/oracle-draft.html)
+cd /tmp/pwtest && npx ecmarkup /workspace/ecma262/ecma262/draft/spec.html \
+  /tmp/serve-root/oracle-draft.html
+
+# 4. compare (server: python3 -m http.server 8907 in /tmp/serve-root,
+#    with ecma262 -> dist symlinked)
+node check-fidelity.mjs http://localhost:8907/oracle-draft.html \
+  http://localhost:8907/ecma262/draft /workspace/ecma262/dist/draft
+```
+
+Expected: `0 missing, 0 extra, 0 text mismatches` (sec-intro and the copyright
+annex are known-intentional exclusions). On a mismatch,
+`FIDELITY_DUMP=<clause-id>` writes both sides' full text for one clause to
+/tmp/pwtest/fidelity-dump.json. Then commit the submodule bump and push — CI
+rebuilds and deploys all editions.
+
 - [x] **4. Deep-link scroll position** Navigate to `/<chapter>/#sec-x.y.z` URLs
       and assert the heading lands visible below the sticky navbar
       (scroll-margin-top class of bugs). _Done:
