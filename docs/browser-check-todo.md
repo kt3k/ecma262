@@ -177,8 +177,40 @@ plus the apt libraries listed in the project memory.
       (pages+build without the pagefind task) leave dist without an index — CI's
       assemble-dist always runs all three tasks, so only the local dist needs
       the full rebuild before checking._
-- [ ] **7. Accessibility scan (axe-core)** Missing alt, landmarks, contrast,
-      focus visibility.
+- [x] **7. Accessibility scan (axe-core)** Missing alt, landmarks, contrast,
+      focus visibility. _Check done: `tools/browser-checks/check-axe.mjs` —
+      axe-core 4.12.1 over all 550 pages (light mode; the color-contrast rule is
+      disabled: it dominates runtime on these huge DOMs and contrast has its own
+      audit, check 2). 10 violated rules — findings below, fixes pending._
+
+### Check-7 findings (axe, 2026-06-12) — to fix
+
+1. **link-in-text-block** [serious] 67k nodes / 498 pages — prose links
+   (emu-xref etc.) are distinguished from body text by colour alone (WCAG
+   1.4.1). Fix candidates: underline content links (MDN-style, possibly with a
+   soft `text-decoration-color`), or give the link colour ≥ 3:1 contrast against
+   the body text colour.
+2. **landmark-unique** [moderate] 549 pages — `#sidebar` (aside) shares its
+   implicit `complementary` role with another landmark on the page; needs
+   distinct `aria-label`s (e.g. "Chapters" on the sidebar, "On this page" on the
+   TOC).
+3. **scrollable-region-focusable** [serious] 174 nodes / 88 pages — horizontally
+   scrollable `pre > .hljs` blocks and overflow figures are not
+   keyboard-reachable per axe (needs `tabindex="0"` + a role/label on the scroll
+   container; Chrome's native focusable-scroller behaviour is not assumed by the
+   rule).
+4. **heading-order** [moderate] 85 nodes / 12 pages (es1/es2/es3) — old editions
+   emit h3 directly under the chapter h1 (depth-derived heading levels skip h2).
+5. **dlitem / definition-list** [serious] 36+12 nodes (es1/es2/es3) — bclary
+   markup uses `<dl>` with bare `<dt>`s (no `<dd>`) for layout in
+   compatibility/errors/grammar-summary; es1/es2 §11.2.1 has a `<dl>` with
+   invalid children.
+6. **object-alt** [serious] 10 pages (es2015–es2026 overview) — the module-graph
+   `<object>` SVG figures carry no accessible name.
+7. **image-alt** [critical] 2 pages (es1/es2 overview) — figure `<img>`s without
+   `alt`.
+8. **region / landmark-one-main** [moderate] /about/ — page content sits outside
+   any landmark and there is no `<main>` (assemble-dist about shell).
 
 ## Low priority
 
