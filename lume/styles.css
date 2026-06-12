@@ -268,11 +268,16 @@ body {
 
 /* Offset in-page anchor jumps (#sec-…, dfn / step / prodref targets, etc.) by
    the sticky header's height so the target lands below the bar instead of
-   hidden under it. Matches Nextra's
-   `html:not(:has(*:focus)) { scroll-padding-top: var(--nextra-navbar-height) }`;
-   the :focus guard keeps a focused field's scroll-into-view from gaining the
-   offset. */
-html:not(:has(*:focus)) {
+   hidden under it. Adapted from Nextra's
+   `html:not(:has(*:focus)) { scroll-padding-top: var(--nextra-navbar-height) }`,
+   but the guard is narrowed to input-like elements: Chrome makes scrollable
+   containers keyboard-focusable, so a fragment jump to a wide emu-table
+   focuses the table itself — with Nextra's `*:focus` guard that very jump
+   lost the offset and the table landed under the header. Only a focused
+   field's scroll-into-view should skip the offset. */
+html:not(
+  :has(input:focus, textarea:focus, select:focus, [contenteditable]:focus)
+) {
   scroll-padding-top: var(--header-h);
 }
 
