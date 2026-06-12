@@ -110,7 +110,7 @@ export default function Page(
               currentSlug={slug ?? ""}
             />
           </main>
-          <aside class="toc">
+          <aside class="toc" aria-label="On this page">
             <h2>On This Page</h2>
             <ol></ol>
             {

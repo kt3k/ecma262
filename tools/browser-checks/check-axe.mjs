@@ -9,14 +9,17 @@
 // disabled here. This run covers structure: alt text, landmarks,
 // names/roles, focus order, ARIA validity.
 //
-// Usage: node check-axe.mjs <distDir> <baseURL>
+// Usage: node check-axe.mjs <distDir> <baseURL> [edition,edition,…]
 //        (run from a directory with axe-core installed: npm i axe-core)
+//        The optional third arg restricts the sweep to those top-level
+//        directories — handy for re-checking just-rebuilt editions.
 import { chromium } from "playwright";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 
-const [distDir, baseURL] = process.argv.slice(2);
+const [distDir, baseURL, only] = process.argv.slice(2);
+const onlySet = only ? new Set(only.split(",")) : null;
 const require = createRequire(import.meta.url);
 const axeSource = fs.readFileSync(
   require.resolve("axe-core/axe.min.js"),
@@ -27,6 +30,9 @@ const pages = [];
 const walk = (dir, rel) => {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (e.name === "nextra-poc" || e.name === "pagefind") continue;
+    if (onlySet && rel === "/" && e.isDirectory() && !onlySet.has(e.name)) {
+      continue;
+    }
     const p = path.join(dir, e.name);
     if (e.isDirectory()) walk(p, `${rel}${e.name}/`);
     else if (e.name === "index.html") pages.push(rel);

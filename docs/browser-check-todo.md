@@ -190,27 +190,36 @@ plus the apt libraries listed in the project memory.
    1.4.1). Fix candidates: underline content links (MDN-style, possibly with a
    soft `text-decoration-color`), or give the link colour ≥ 3:1 contrast against
    the body text colour.
-2. **landmark-unique** [moderate] 549 pages — `#sidebar` (aside) shares its
-   implicit `complementary` role with another landmark on the page; needs
-   distinct `aria-label`s (e.g. "Chapters" on the sidebar, "On this page" on the
-   TOC).
+2. ~~**landmark-unique**~~ _Fixed: `aria-label="Chapters"` on the sidebar aside
+   (sidebar.tsx), `aria-label="On this page"` on the right-rail aside.toc
+   (page.tsx)._
 3. **scrollable-region-focusable** [serious] 174 nodes / 88 pages — horizontally
    scrollable `pre > .hljs` blocks and overflow figures are not
    keyboard-reachable per axe (needs `tabindex="0"` + a role/label on the scroll
    container; Chrome's native focusable-scroller behaviour is not assumed by the
    rule).
-4. **heading-order** [moderate] 85 nodes / 12 pages (es1/es2/es3) — old editions
-   emit h3 directly under the chapter h1 (depth-derived heading levels skip h2).
+4. ~~**heading-order**~~ _Fixed (es1/es2 only — es3 was clean): Marker body HTML
+   carries its own `<h1>`/`<h3>` run-in headings ("Syntax", "Description", …) at
+   whatever level the PDF's font size suggested; all embedded body headings are
+   now normalised to `<h2>`, matching the es5.1 ingester's existing
+   `<h2>Syntax</h2>` convention._
 5. **dlitem / definition-list** [serious] 36+12 nodes (es1/es2/es3) — bclary
    markup uses `<dl>` with bare `<dt>`s (no `<dd>`) for layout in
    compatibility/errors/grammar-summary; es1/es2 §11.2.1 has a `<dl>` with
    invalid children.
-6. **object-alt** [serious] 10 pages (es2015–es2026 overview) — the module-graph
-   `<object>` SVG figures carry no accessible name.
-7. **image-alt** [critical] 2 pages (es1/es2 overview) — figure `<img>`s without
-   `alt`.
-8. **region / landmark-one-main** [moderate] /about/ — page content sits outside
-   any landmark and there is no `<main>` (assemble-dist about shell).
+6. ~~**object-alt**~~ _Fixed: `<object>` SVG figures get
+   `role="img" aria-label="<caption>"` from the enclosing emu-figure's caption
+   (the `<img>` fallback inside is inert once the object loads, so it never
+   supplied a name)._
+7. ~~**image-alt**~~ _Fixed: the kept Marker figures (both are the §4.2.1
+   object/prototype diagram) get a descriptive `alt` via the ingester's
+   FIGURE_ALT map._
+8. ~~**region / landmark-one-main**~~ _Fixed: the /about/ article body is
+   wrapped in `<main>` (assemble-dist writeArticle)._
+
+Items 1, 3 and 5 remain open; everything else re-ran clean on the rebuilt
+es1/es2/es2015 + /about/ subset (the other modern editions pick the template
+fixes up on the next CI build).
 
 ## Low priority
 

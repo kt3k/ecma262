@@ -116,6 +116,14 @@ src = src.replace(
   (_m, attr, file) => `${attr}="${BASE_PATH}/img/${file}"`,
 );
 
+// An <object> SVG figure exposes no accessible name — its <img> fallback is
+// inert once the object loads (axe object-alt). Name it after the enclosing
+// emu-figure's caption.
+src = src.replace(
+  /(<emu-figure\b[^>]*\bcaption="([^"]*)"[^>]*>\s*)<object\b/g,
+  (_m, pre, cap) => `${pre}<object role="img" aria-label="${cap}"`,
+);
+
 // The early ecmarkup editions (ES2015/ES2016) carry hand-authored inline table
 // styling — per-cell black borders and grey header backgrounds (#A6A6A6 /
 // #BFBFBF) — that breaks in dark mode and looks unlike every later edition's

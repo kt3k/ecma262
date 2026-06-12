@@ -1127,6 +1127,22 @@ const dropCoverImages = (html) =>
   html.replace(/<p>\s*<img[^>]*_Picture_[^>]*>\s*<\/p>/gi, "")
     .replace(/<img[^>]*_Picture_[^>]*>/gi, "");
 
+// The kept spec figures (`_page_N_Figure_*`) carry no alt text (axe
+// image-alt). Both PDFs keep exactly one: the §4.2.1 object/prototype
+// diagram, the same figure the modern editions caption "Object/Prototype
+// Relationships".
+const FIGURE_ALT = {
+  page_14_Figure_4: // ES1 §4.2.1
+    "Object/Prototype Relationships: constructor CF and objects cf1 to cf5 sharing the prototype CFp",
+  page_14_Figure_5: // ES2 §4.2.1 (same diagram)
+    "Object/Prototype Relationships: constructor CF and objects cf1 to cf5 sharing the prototype CFp",
+};
+const addFigureAlt = (html) =>
+  html.replace(/<img(?![^>]*\balt=)([^>]*)>/gi, (_m, attrs) => {
+    const name = attrs.match(/_?(page_\d+_Figure_\d+)/)?.[1];
+    return `<img alt="${FIGURE_ALT[name] ?? "Figure"}"${attrs}>`;
+  });
+
 // Marker sometimes emits a contentless <table> grid (e.g. trailing §16). Drop
 // any table with no text in any cell.
 const dropEmptyTables = (html) =>
@@ -1371,14 +1387,16 @@ const processBody = (body, id) =>
   tagDateMath(
     ocrFixes(
       reskin(
-        dropCoverImages(
-          dropEmptyTables(
-            dropBlockType(
-              demathify(
-                mergeNotationProductions(
-                  demoteGrammarHeadings(
-                    dropContinuationMarks(
-                      mergeSplitAlgs(algoLists(swapGrammar(body))),
+        addFigureAlt(
+          dropCoverImages(
+            dropEmptyTables(
+              dropBlockType(
+                demathify(
+                  mergeNotationProductions(
+                    demoteGrammarHeadings(
+                      dropContinuationMarks(
+                        mergeSplitAlgs(algoLists(swapGrammar(body))),
+                      ),
                     ),
                   ),
                 ),
@@ -1400,13 +1418,23 @@ const processBody = (body, id) =>
 const tagOpt = (html) =>
   html.replace(/<sub>opt<\/sub>/g, '<sub class="g-opt">opt</sub>');
 
+// Marker's body HTML carries its own <h1>/<h3> run-in headings ("Syntax",
+// "Description", …) at whatever level the PDF's font size suggested. The
+// section heading itself is emitted separately (always h1 on the page), so
+// normalise every embedded body heading to h2: no h1→h3 skips (axe
+// heading-order) and one consistent style for the run-in headings.
+const normalizeBodyHeadings = (html) =>
+  html.replace(/<h[1-6](\s|>)/gi, "<h2$1").replace(/<\/h[1-6]>/gi, "</h2>");
+
 const meta = {};
 for (const chapter of pages) {
   const slug = chapter.slug;
   const secMap = {};
   (function collect(n) {
     secMap[n.id] = tagOpt(
-      SECTION_OVERRIDE[n.id] ?? processBody(n.body, n.id),
+      normalizeBodyHeadings(
+        SECTION_OVERRIDE[n.id] ?? processBody(n.body, n.id),
+      ),
     );
     n.children.forEach(collect);
   })(chapter);

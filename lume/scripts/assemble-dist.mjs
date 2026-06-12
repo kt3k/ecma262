@@ -202,7 +202,9 @@ const writeArticle = (slug, title, main) => {
   fs.mkdirSync(path.join(distDir, slug), { recursive: true });
   fs.writeFileSync(
     path.join(distDir, slug, "index.html"),
-    page(title, `${main}\n${articleFooter}`, articleCss),
+    // <main> landmark so the article body isn't outside every landmark
+    // (axe region / landmark-one-main); the footer is its own landmark.
+    page(title, `<main>\n${main}\n</main>\n${articleFooter}`, articleCss),
   );
 };
 

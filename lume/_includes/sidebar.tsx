@@ -12,8 +12,10 @@ export default function Sidebar(
     currentSlug: string;
   },
 ) {
+  // aria-label distinguishes this complementary landmark from the
+  // right-rail aside.toc (axe landmark-unique).
   return (
-    <aside id="sidebar" class="sidebar">
+    <aside id="sidebar" class="sidebar" aria-label="Chapters">
       {
         /* In-sidebar search — visible only ≤767px (CSS) so it stands in
           for the navbar search that's hidden at mobile widths. Mirrors
