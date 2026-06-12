@@ -223,9 +223,20 @@ fixes up on the next CI build).
 
 ## Low priority
 
-- [ ] **8. Visual regression** Baseline screenshots of representative pages
+- [x] **8. Visual regression** Baseline screenshots of representative pages
       (§5.1.5 notation, §7.4.2 keyword grid, ch.15 formulas, emu-table, code
-      blocks); pixelmatch on ingester/CSS changes.
+      blocks); pixelmatch on ingester/CSS changes. _Done:
+      `tools/browser-checks/check-visual.mjs` — element screenshots of 9
+      bug-prone widgets (es1 §5.1.5 notation, es2 §7.4.2 keyword grid, es1
+      §15.9.1.2 date maths, draft emu-table / production / badges+**proto**
+      heading / hljs panel, plus dark-mode table & badges), pinned rendering
+      (fixed viewport, deviceScaleFactor 1, fonts awaited, animations disabled),
+      pixelmatch vs committed baselines in `tools/browser-checks/baselines/`
+      (>0.1% differing pixels or a size change fails; diffs land in
+      /tmp/pwtest/visual-diff/). `baseline` mode re-records on INTENDED visual
+      changes — commit the new PNGs with the change. Verified: two consecutive
+      compares clean (deterministic), and a planted badge-colour change is
+      caught on exactly the right target (0.55% diff)._
 - [ ] **9. Extra viewports / zoom** 320px, tablet widths, 200% zoom (WCAG
       reflow) overflow re-check.
 - [ ] **10. JS-disabled rendering** Body content fully visible without JS
