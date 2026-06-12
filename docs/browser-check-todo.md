@@ -237,7 +237,26 @@ fixes up on the next CI build).
       changes — commit the new PNGs with the change. Verified: two consecutive
       compares clean (deterministic), and a planted badge-colour change is
       caught on exactly the right target (0.55% diff)._
-- [ ] **9. Extra viewports / zoom** 320px, tablet widths, 200% zoom (WCAG
-      reflow) overflow re-check.
-- [ ] **10. JS-disabled rendering** Body content fully visible without JS
-      (search inert is expected).
+- [x] **9. Extra viewports / zoom** 320px, tablet widths, 200% zoom (WCAG
+      reflow) overflow re-check. _Done:
+      `tools/browser-checks/check-viewports.mjs` — every page loaded once and
+      measured at 320px (= 1280 @ 400% zoom, the WCAG 1.4.10 reflow
+      breakpoint), 640px (= 200%) and 768px (tablet) by viewport resize;
+      fails on horizontal document scroll. First run: 38 problems, ALL at
+      exactly 768px — the band where the mobile (≤767px) wrap/scroll rules
+      stop but the content column is even narrower than a phone's. Two
+      width-gated rules made width-independent: inline `code` is now
+      `white-space: pre-wrap` everywhere (was `pre` outside mobile), and
+      in-body tables scroll in place at every width via
+      `display:block; overflow-x:auto; width:fit-content; max-width:100%`
+      (fit-content keeps margin-auto centering; the es1/es2 keyword grids
+      additionally subtract their 10ex grammar indent from max-width).
+      Re-run clean: 550 pages × 3 widths / 0 problems, visual-regression
+      suite unchanged (0 diffs — the rules are no-ops where nothing
+      overflowed)._
+- [x] **10. JS-disabled rendering** Body content fully visible without JS
+      (search inert is expected). _Done: `tools/browser-checks/check-nojs.mjs`
+      — JS-off context over every edition's index + first chapter page plus
+      /about/ (35 pages): h1 visible, page text substantial, sidebar chapter
+      links present, body not opacity/visibility-hidden. Clean on first run:
+      0 problems._

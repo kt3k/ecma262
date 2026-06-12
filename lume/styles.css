@@ -1708,16 +1708,13 @@ html.dark .ecma-spec .hljs-attr {
 .ecma-spec :not(pre) > code {
   font-family: var(--font-mono);
   font-weight: 700;
-  white-space: pre;
-}
-/* Mobile: a long inline code run (`(Math.exp(x) - Math.exp(-x)) / …`) is
-   wider than the viewport and, unlike a pre, has no scroll container — it
-   was the main source of page-level horizontal panning. pre-wrap keeps the
-   meaningful interior spaces while allowing wraps. */
-@media (max-width: 767px) {
-  .ecma-spec :not(pre) > code {
-    white-space: pre-wrap;
-  }
+  /* pre-wrap, not pre: a long inline code run (`(Math.exp(x) -
+     Math.exp(-x)) / …`) has no scroll container, so with `pre` it pans the
+     whole page at any width where the content column is narrower than the
+     run (first seen on phones, then again at 768–1023px tablet widths).
+     pre-wrap keeps the meaningful interior spaces and only breaks when the
+     line genuinely doesn't fit. */
+  white-space: pre-wrap;
 }
 /* tc39 itself walks back the `white-space: pre` inside regular tables
    so long identifiers don't blow the cell wide (ecmarkup.css
@@ -2676,18 +2673,26 @@ html.dark
    label. */
 :is(.ecma-es1, .ecma-es2) table.lightweight-table {
   margin: 0.25em 0 1em 10ex;
+  /* the generic scroll rule's max-width:100% doesn't account for this
+     indent — without the subtraction the grid's right edge pans the page
+     at tablet widths */
+  max-width: calc(100% - 10ex);
 }
-/* Mobile: a table can exceed the viewport (the ES1/ES2 keyword grids at
-   their grammar indent, the §7.7.4 escape-sequence table, es5.1's
-   .real-table code-unit tables, es3's bare tables). Let tables scroll
-   internally instead of widening the page (display:block keeps the row
-   layout via the anonymous table box). emu-table's inner table already
-   lives in its own scroll container and is excluded. */
+/* In-body tables (the ES1/ES2 keyword grids, the §7.7.4 escape-sequence
+   table, es5.1's .real-table code-unit tables, es3's bare tables) scroll in
+   place at EVERY width — this was mobile-only, but the 768–1023px band has
+   an even narrower content column than a phone and overflowed the page.
+   display:block keeps the row layout via the anonymous table box;
+   fit-content + max-width keeps `margin: auto` centering working and is a
+   no-op for tables narrower than the column. emu-table's inner table is
+   excluded — emu-table itself is the scroll container there. */
+.ecma-spec table:not(emu-table table) {
+  display: block;
+  overflow-x: auto;
+  width: fit-content;
+  max-width: 100%;
+}
 @media (max-width: 767px) {
-  .ecma-spec table:not(emu-table table) {
-    display: block;
-    overflow-x: auto;
-  }
   :is(.ecma-es1, .ecma-es2) table.lightweight-table {
     margin-left: 0;
   }
