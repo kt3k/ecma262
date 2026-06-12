@@ -129,9 +129,25 @@ plus the apt libraries listed in the project memory.
 
 **2026-06-11: the draft fidelity check is at ZERO mismatches (2271 clauses).**
 
-- [ ] **4. Deep-link scroll position** Navigate to `/<chapter>/#sec-x.y.z` URLs
+- [x] **4. Deep-link scroll position** Navigate to `/<chapter>/#sec-x.y.z` URLs
       and assert the heading lands visible below the sticky navbar
-      (scroll-margin-top class of bugs). Rides along with check 1's crawl.
+      (scroll-margin-top class of bugs). _Done:
+      `tools/browser-checks/check-deeplink.mjs` — samples first/middle/last
+      clause anchors per page plus a `#step-`/`#prod-`/table id when present,
+      jumps to each and asserts the target's top sits between the sticky
+      header's bottom edge and the fold. First run: 1753 deep links / 473 pages,
+      34 bad — every one a WIDE `emu-table` target hidden under the header. Root
+      cause: Chrome makes scrollable containers keyboard-focusable, so a
+      fragment jump to a horizontally-scrolling table focuses the table itself,
+      which defeated the Nextra-derived `html:not(:has(*:focus))` guard and
+      turned `scroll-padding-top` off for exactly that jump. Fixed by narrowing
+      the guard to input-like elements
+      (`input/textarea/select/[contenteditable]:focus`); verified top=64 on the
+      failing tables with no double offset on the rest. Memory note: the first
+      version of this checker (6 workers × ~2000 full page loads) OOM-killed the
+      host — the rewrite loads each page once, exercises fragments via in-page
+      hash jumps, runs 2 workers, and recycles the browser context every 25
+      pages._
 
 ## Medium priority — UI behaviour
 
