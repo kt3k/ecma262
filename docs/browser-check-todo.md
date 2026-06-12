@@ -151,9 +151,20 @@ plus the apt libraries listed in the project memory.
 
 ## Medium priority — UI behaviour
 
-- [ ] **5. Navigation wiring** prev/next links chain in chapter order; sidebar
+- [x] **5. Navigation wiring** prev/next links chain in chapter order; sidebar
       lists every chapter; version switcher lands on the right edition; mobile
-      hamburger opens/closes.
+      hamburger opens/closes. _Done: `tools/browser-checks/check-nav.mjs` —
+      static pass over all 548 pages / 17 editions (sidebar lists exactly the
+      edition's pages in index order on every page; prev/next links chain that
+      order with absent ends; the switcher menu lists exactly the editions in
+      dist with one aria-current item pointing at the edition root) plus a light
+      browser pass (one chapter per edition: hamburger opens/closes the mobile
+      sidebar with body.menu-open + aria-expanded, the switcher trigger
+      shows/hides the menu, and one real click-through lands on /es2026/). Clean
+      on first valid run: 0 problems — the only findings were checker bugs (the
+      active chapter's nested section `<ol>` defeating a lazy `…*?</ol>` match
+      again, and the mobile sidebar hiding by sliding UP, so visibility needs a
+      both-axes viewport overlap test)._
 - [ ] **6. Search (Pagefind) smoke test** Per edition: type a query, results
       render, result links resolve. Catches missing/stale pagefind indexes.
 - [ ] **7. Accessibility scan (axe-core)** Missing alt, landmarks, contrast,
