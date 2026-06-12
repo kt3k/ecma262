@@ -71,7 +71,13 @@ const worker = async () => {
         axe.run(document, {
           resultTypes: ["violations"],
           reporter: "v2",
-          rules: { "color-contrast": { enabled: false } },
+          rules: {
+            "color-contrast": { enabled: false },
+            // WONTFIX (docs/browser-check-todo.md): spec prose is saturated
+            // with xrefs; colour-only links are a deliberate typographic
+            // choice (same as tc39.es).
+            "link-in-text-block": { enabled: false },
+          },
         })
       );
       for (const v of res.violations) {

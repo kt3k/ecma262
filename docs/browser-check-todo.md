@@ -187,9 +187,11 @@ plus the apt libraries listed in the project memory.
 
 1. **link-in-text-block** [serious] 67k nodes / 498 pages — prose links
    (emu-xref etc.) are distinguished from body text by colour alone (WCAG
-   1.4.1). Fix candidates: underline content links (MDN-style, possibly with a
-   soft `text-decoration-color`), or give the link colour ≥ 3:1 contrast against
-   the body text colour.
+   1.4.1). **WONTFIX (deliberate, 2026-06-12):** a spec page is saturated with
+   xrefs — underlining all of them (or recolouring to ≥ 3:1 against body text)
+   would dominate the typography for marginal benefit; tc39.es renders the same
+   colour-only links. Accepted as a known deviation; exclude
+   `link-in-text-block` from future check-axe runs when triaging.
 2. ~~**landmark-unique**~~ _Fixed: `aria-label="Chapters"` on the sidebar aside
    (sidebar.tsx), `aria-label="On this page"` on the right-rail aside.toc
    (page.tsx)._
@@ -240,23 +242,22 @@ fixes up on the next CI build).
 - [x] **9. Extra viewports / zoom** 320px, tablet widths, 200% zoom (WCAG
       reflow) overflow re-check. _Done:
       `tools/browser-checks/check-viewports.mjs` — every page loaded once and
-      measured at 320px (= 1280 @ 400% zoom, the WCAG 1.4.10 reflow
-      breakpoint), 640px (= 200%) and 768px (tablet) by viewport resize;
-      fails on horizontal document scroll. First run: 38 problems, ALL at
-      exactly 768px — the band where the mobile (≤767px) wrap/scroll rules
-      stop but the content column is even narrower than a phone's. Two
-      width-gated rules made width-independent: inline `code` is now
-      `white-space: pre-wrap` everywhere (was `pre` outside mobile), and
-      in-body tables scroll in place at every width via
+      measured at 320px (= 1280 @ 400% zoom, the WCAG 1.4.10 reflow breakpoint),
+      640px (= 200%) and 768px (tablet) by viewport resize; fails on horizontal
+      document scroll. First run: 38 problems, ALL at exactly 768px — the band
+      where the mobile (≤767px) wrap/scroll rules stop but the content column is
+      even narrower than a phone's. Two width-gated rules made
+      width-independent: inline `code` is now `white-space: pre-wrap` everywhere
+      (was `pre` outside mobile), and in-body tables scroll in place at every
+      width via
       `display:block; overflow-x:auto; width:fit-content; max-width:100%`
       (fit-content keeps margin-auto centering; the es1/es2 keyword grids
-      additionally subtract their 10ex grammar indent from max-width).
-      Re-run clean: 550 pages × 3 widths / 0 problems, visual-regression
-      suite unchanged (0 diffs — the rules are no-ops where nothing
-      overflowed)._
+      additionally subtract their 10ex grammar indent from max-width). Re-run
+      clean: 550 pages × 3 widths / 0 problems, visual-regression suite
+      unchanged (0 diffs — the rules are no-ops where nothing overflowed)._
 - [x] **10. JS-disabled rendering** Body content fully visible without JS
-      (search inert is expected). _Done: `tools/browser-checks/check-nojs.mjs`
-      — JS-off context over every edition's index + first chapter page plus
+      (search inert is expected). _Done: `tools/browser-checks/check-nojs.mjs` —
+      JS-off context over every edition's index + first chapter page plus
       /about/ (35 pages): h1 visible, page text substantial, sidebar chapter
-      links present, body not opacity/visibility-hidden. Clean on first run:
-      0 problems._
+      links present, body not opacity/visibility-hidden. Clean on first run: 0
+      problems._
