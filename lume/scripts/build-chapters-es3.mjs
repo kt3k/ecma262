@@ -89,13 +89,21 @@ while ((m = dtRe.exec(src)) !== null) {
 }
 if (raw.length === 0) throw new Error("no <dt> sections found");
 
+// The numbered list ends where Annex A begins — without this cap the LAST
+// section's body (§16's final clause) ran to the end of the document and
+// duplicated both annexes inside the errors chapter.
+const annexStart = (() => {
+  const p = src.search(/<dt>\s*<a\s+name="annex-a"/);
+  return p >= 0 ? p : src.length;
+})();
+
 const sections = raw.map((s, i) => {
   const num = s.id.slice(2); // "a-9.3" -> "9.3"
   // Body = slice from this </dt> to the START of the next *section* <dt> (not
   // any <dt> — the body's own <dl class="grammar"> contains grammar <dt>s, so
   // stopping at the first <dt> would truncate the Syntax block). Strip the
   // wrapping <dd>…</dd>; inner grammar <dl>s are carried through.
-  const end = i + 1 < raw.length ? raw[i + 1].start : src.length;
+  const end = i + 1 < raw.length ? raw[i + 1].start : annexStart;
   const body = src.slice(s.dtEnd, end)
     .replace(/^\s*<dd>/i, "").replace(/<\/dd>\s*$/i, "").trim();
   const title = `${s.anchor}${s.rest}`
@@ -148,6 +156,53 @@ const frontMatter = () => {
     note + src.slice(start, next < 0 ? src.length : next),
   );
 };
+// Annex bodies arrive as bclary's flat top-level <dt>/<dd> list with the
+// wrapping <dl> sliced away: each orphaned <dt> is really a section heading
+// ("B.1 Additional Syntax") and the <dd> after it is that section's body
+// (axe dlitem flags the orphans). Promote the headings — level from the
+// dotted number, B.1 → h2, B.1.1 → h3 — and unwrap the <dd>s to divs.
+// Nested <dl class="grammar"> blocks are valid definition lists and pass
+// through untouched (tracked by depth); bare top-level <dl>/</dl> are
+// remnants of the sliced wrapper and are dropped.
+const promoteAnnexSections = (body) => {
+  let out = "";
+  let i = 0;
+  let depth = 0;
+  const re = /<(\/?)(dl|dt|dd)\b[^>]*>/gi;
+  let m;
+  while ((m = re.exec(body)) !== null) {
+    out += body.slice(i, m.index);
+    i = re.lastIndex;
+    const close = m[1] === "/";
+    const kind = m[2].toLowerCase();
+    if (kind === "dl") {
+      if (close) {
+        if (depth > 0) {
+          depth--;
+          out += m[0];
+        } // depth 0: wrapper remnant — drop
+      } else if (depth > 0 || /class=/.test(m[0])) {
+        depth++;
+        out += m[0];
+      } // bare <dl> at depth 0: wrapper remnant — drop
+    } else if (depth > 0) {
+      out += m[0]; // inside a real grammar <dl> — untouched
+    } else if (kind === "dt") {
+      out += close ? "\x00/DT\x00" : "\x00DT\x00";
+    } else {
+      out += close ? "</div>" : '<div class="annex-sec">';
+    }
+  }
+  out += body.slice(i);
+  return out.replace(/\x00DT\x00([\s\S]*?)\x00\/DT\x00/g, (_m, inner) => {
+    const text = plain(inner);
+    const dots = (text.match(/^[A-Z]((?:\.\d+)+)/)?.[1].match(/\./g) ?? [])
+      .length;
+    const level = Math.min(1 + Math.max(dots, 1), 6);
+    return `<h${level}>${inner.replace(/<\/?b>/g, "")}</h${level}>`;
+  });
+};
+
 const annex = (letter, id, endPos) => {
   const open = new RegExp(
     `<dt>\\s*<a\\s+name="${id}"[\\s\\S]*?</dt>\\s*<dd>\\(informative\\)</dd>`,
@@ -163,7 +218,7 @@ const annex = (letter, id, endPos) => {
     id,
     slugify(titleText) || `annex-${letter.toLowerCase()}`,
     `Annex ${letter} (informative): ${titleText}`,
-    body,
+    promoteAnnexSections(body),
   );
 };
 

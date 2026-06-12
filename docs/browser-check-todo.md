@@ -212,10 +212,18 @@ plus the apt libraries listed in the project memory.
    whatever level the PDF's font size suggested; all embedded body headings are
    now normalised to `<h2>`, matching the es5.1 ingester's existing
    `<h2>Syntax</h2>` convention._
-5. **dlitem / definition-list** [serious] 36+12 nodes (es1/es2/es3) — bclary
-   markup uses `<dl>` with bare `<dt>`s (no `<dd>`) for layout in
-   compatibility/errors/grammar-summary; es1/es2 §11.2.1 has a `<dl>` with
-   invalid children.
+5. ~~**dlitem / definition-list**~~ _Fixed, and the investigation surfaced a
+   real slicing bug: es3's LAST numbered section ran to the end of the document,
+   so the errors chapter silently duplicated BOTH annexes (the link check never
+   noticed because the duplicated anchors resolved). The numbered-section list
+   is now capped at the annex-a position. The annex bodies' orphaned top-level
+   `<dt>`s (bclary writes the whole annex as one flat dt/dd list) are promoted
+   to real headings — level from the dotted number, B.1 → h2, B.1.1 → h3 — and
+   their `<dd>`s unwrap to divs, with nested `<dl class="grammar">` (valid dt+dd
+   pairs) passing through untouched. es1/es2 §11.2.1's LHS-less displays emit
+   `div.grammar` instead of a dt-less `<dl>`, sharing the dl.grammar indent CSS.
+   Verified: axe clean on es1+es2+es3 (54 pages), 47k links / 0 broken, visual
+   baselines unchanged._
 6. ~~**object-alt**~~ _Fixed: `<object>` SVG figures get
    `role="img" aria-label="<caption>"` from the enclosing emu-figure's caption
    (the `<img>` fallback inside is inert once the object loads, so it never

@@ -1001,10 +1001,13 @@ const mergeNotationProductions = (html) =>
       /<p[^>]*>\s*Properties are accessed by name, using either the dot notation:\s*<\/p>[\s\S]*?(?=<p[^>]*>\s*where &lt;identifier-string&gt;)/,
       () => {
         const behave = EDITION === "es1" ? "behavior" : "behaviour";
+        // div, not <dl><dd>: these displays have no LHS, and a dt-less dl
+        // is invalid markup (axe definition-list). div.grammar > div gets
+        // the same indent via the shared grammar CSS.
         const dd = (lines) =>
-          `<dl class="grammar"><dd>${
+          `<div class="grammar"><div>${
             lines.join("\n      <br />\n      ")
-          }</dd>\n    </dl>`;
+          }</div>\n    </div>`;
         const dot = (nt) => `<i>${nt}</i> <b><tt>.</tt></b> <i>Identifier</i>`;
         const idx = (nt, inner) =>
           `<i>${nt}</i> <b><tt>[</tt></b> ${inner} <b><tt>]</tt></b>`;

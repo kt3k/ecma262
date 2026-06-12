@@ -2559,14 +2559,17 @@ html.dark .ecma-spec table.real-table tbody tr:nth-child(even) {
 
 /* Grammar productions: <dl class="grammar"> — LHS in <dt>, each RHS in a <dd>.
    The source already carries italic nonterminals / monospace terminals via
-   <i>/<b><tt>, so this only supplies the production layout. */
-.ecma-spec dl.grammar {
+   <i>/<b><tt>, so this only supplies the production layout. div.grammar is
+   the LHS-less variant (es1/es2 §11.2.1 displays) — a dt-less dl is invalid
+   markup, so those emit divs with the same layout. */
+.ecma-spec :is(dl, div).grammar {
   margin: 1em 0 1em 5ex;
 }
 .ecma-spec dl.grammar > dt {
   font-style: italic;
 }
-.ecma-spec dl.grammar > dd {
+.ecma-spec dl.grammar > dd,
+.ecma-spec div.grammar > div {
   margin: 0.15em 0 0.15em 5ex;
 }
 .ecma-spec .nonterminal {
