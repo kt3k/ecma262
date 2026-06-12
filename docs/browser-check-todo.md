@@ -165,8 +165,18 @@ plus the apt libraries listed in the project memory.
       active chapter's nested section `<ol>` defeating a lazy `…*?</ol>` match
       again, and the mobile sidebar hiding by sliding UP, so visibility needs a
       both-axes viewport overlap test)._
-- [ ] **6. Search (Pagefind) smoke test** Per edition: type a query, results
+- [x] **6. Search (Pagefind) smoke test** Per edition: type a query, results
       render, result links resolve. Catches missing/stale pagefind indexes.
+      _Done: `tools/browser-checks/check-search.mjs` — per edition asserts the
+      pagefind bundle exists in dist, types "string" into the navbar search,
+      waits for the dropdown to render result links, and verifies every link
+      stays inside the SAME edition and resolves to an existing page
+      (stale-index guard); one real click-through on draft must land on the
+      link's URL; any HTTP ≥ 400 during the session is flagged. Clean: 17
+      editions / 0 problems. Note for local runs: partial edition rebuilds
+      (pages+build without the pagefind task) leave dist without an index — CI's
+      assemble-dist always runs all three tasks, so only the local dist needs
+      the full rebuild before checking._
 - [ ] **7. Accessibility scan (axe-core)** Missing alt, landmarks, contrast,
       focus visibility.
 
