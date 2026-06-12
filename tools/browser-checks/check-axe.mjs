@@ -77,6 +77,11 @@ const worker = async () => {
             // with xrefs; colour-only links are a deliberate typographic
             // choice (same as tc39.es).
             "link-in-text-block": { enabled: false },
+            // WONTFIX (docs/browser-check-todo.md): modern engines make
+            // scroll containers keyboard-focusable natively; static
+            // tabindex on every pre/figure would add permanent tab stops
+            // for a transient, viewport-dependent state.
+            "scrollable-region-focusable": { enabled: false },
           },
         })
       );

@@ -197,9 +197,16 @@ plus the apt libraries listed in the project memory.
    (page.tsx)._
 3. **scrollable-region-focusable** [serious] 174 nodes / 88 pages — horizontally
    scrollable `pre > .hljs` blocks and overflow figures are not
-   keyboard-reachable per axe (needs `tabindex="0"` + a role/label on the scroll
-   container; Chrome's native focusable-scroller behaviour is not assumed by the
-   rule).
+   keyboard-reachable per axe (the rule wants `tabindex="0"` + role/label on
+   each scroll container). **WONTFIX (deliberate, 2026-06-12):** Chromium has
+   shipped keyboard-focusable scroll containers natively since 2024 (we even had
+   to work around it in the deep-link check — fragment jumps focus wide tables),
+   and Firefox has the same behaviour, so the keyboard gap the rule guards
+   against is closed in practice; whether a block scrolls is also
+   content/viewport-dependent, so static tabindex would add hundreds of
+   permanent tab stops to fix a transient state. Accepted as a known deviation;
+   the rule is disabled in check-axe.mjs alongside the other deliberate
+   exclusions.
 4. ~~**heading-order**~~ _Fixed (es1/es2 only — es3 was clean): Marker body HTML
    carries its own `<h1>`/`<h3>` run-in headings ("Syntax", "Description", …) at
    whatever level the PDF's font size suggested; all embedded body headings are
