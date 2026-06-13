@@ -153,6 +153,10 @@ const articleCss =
     strong { font-weight: 600; color: #15171a; }
     a { color: inherit; text-decoration: underline; text-decoration-color: rgba(0,0,0,0.28); text-underline-offset: 3px; }
     a:hover { text-decoration-color: currentColor; }
+    .lede { color: #737a82; font-size: 2.2rem; font-weight: 600; margin: -1rem 0 0; }
+    hr { border: none; border-top: 1px solid #ebedf0; margin: 3.2rem 0; }
+    .eds { display: flex; flex-wrap: wrap; gap: 0.2rem 2.6rem; margin: 1.6rem 0 0; font-size: 1.8rem; line-height: 2.3; }
+    .eds a { font-weight: 700; white-space: nowrap; }
     footer { margin-top: 4rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; font-size: 1.6rem; }
     footer a { color: #15171a; text-decoration: none; }
     footer a:hover { text-decoration: underline; }
@@ -168,7 +172,10 @@ const articleCss =
     html.dark a { text-decoration-color: rgba(255,255,255,0.3); }
     html.dark .flow li span { color: #9aa0ab; }
     html.dark .flow li:not(:last-child)::after { color: #555; }
-    html.dark figcaption, html.dark footer .copyright { color: #8a8f99; }`;
+    html.dark figcaption, html.dark footer .copyright { color: #8a8f99; }
+    html.dark .lede { color: #9aa0ab; }
+    html.dark hr { border-top-color: #2e323a; }
+    html.dark .eds a { color: #f0f1f3; }`;
 
 // Social-card metadata for the top-level pages (root redirect + /about) —
 // the site-wide og-site.png card. Per-edition cards are wired by the page
@@ -212,14 +219,9 @@ ${ogMeta("ECMA-262 Restyled")}
 `,
 );
 
-// Footer shared by the article pages: the edition list (styled like the site
-// footer) plus the copyright line. Edition links are relative to a /<page>/ dir.
+// Footer shared by the article pages — just the copyright line; the edition
+// links live in the body's Editions section now.
 const articleFooter = `  <footer>
-${
-  editions.map((s) => `    <a href="../${s.id}/">${escape(s.title)}</a>`).join(
-    "\n",
-  )
-}
     <span class="copyright">${
   new Date().getFullYear()
 } © <a href="https://github.com/kt3k/ecma262">ECMA-262 Restyled</a></span>
@@ -235,11 +237,22 @@ const writeArticle = (slug, title, main) => {
   );
 };
 
+// Edition link label: the ES-year mark ("ES2024"); the pre-2015 editions
+// derive it from the id ("es5.1" -> "ES5.1").
+const markOf = (e) => e.title.match(/ES\d{4}/)?.[0] ?? `ES${e.id.slice(2)}`;
+
 writeArticle(
   "about",
   "About | ECMA-262 Restyled",
   `  <h1>About</h1>
-  <p><strong>ECMA-262 Restyled</strong> is an unofficial, reader-focused rendering of the ECMAScript® Language Specification. It mirrors the source from the official <a href="https://github.com/tc39/ecma262">tc39/ecma262</a> repository and restyles it for readability; it is <strong>not normative</strong>. For the authoritative text, see the official specification at <a href="https://tc39.es/ecma262/">tc39.es/ecma262</a>. The source for this site is at <a href="https://github.com/kt3k/ecma262">kt3k/ecma262</a>.</p>`,
+  <p class="lede">The ECMAScript® Language Specification, restyled for reading.</p>
+  <hr>
+  <p><strong>ECMA-262 Restyled</strong> is an unofficial, reader-focused rendering of the ECMAScript® Language Specification. It mirrors the source from the official <a href="https://github.com/tc39/ecma262">tc39/ecma262</a> repository and restyles it for readability; it is <strong>not normative</strong>. For the authoritative text, see the official specification at <a href="https://tc39.es/ecma262/">tc39.es/ecma262</a>. The source for this site is at <a href="https://github.com/kt3k/ecma262">kt3k/ecma262</a>.</p>
+  <p>All seventeen editions are here, from the editor's draft back to 1997. The early editions exist officially only as printed PDFs — ES1 and ES2 were restored to HTML for this site — and ES3 is re-skinned from the <a href="https://bclary.com/2004/11/07/ecma-262.html">bclary.com</a> community rendering. Every edition gets the same reading experience: full-text search, dark mode, per-section deep links.</p>
+  <h2>Editions</h2>
+  <div class="eds">
+${editions.map((e) => `    <a href="../${e.id}/">${markOf(e)}</a>`).join("\n")}
+  </div>`,
 );
 
 console.log(`[assemble-dist] assembled dist/ from ${editions.length} sites`);
