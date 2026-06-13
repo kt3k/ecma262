@@ -72,6 +72,14 @@ if (fs.existsSync(nextraVendored)) {
   );
 }
 
+// Social cards — committed PNGs (lume/og/, regenerate with
+// tools/og/generate-og.mjs when editions.json changes), shared by every
+// edition at /ecma262/og/.
+fs.cpSync(path.join(lumeDir, "og"), path.join(distDir, "og"), {
+  recursive: true,
+});
+console.log("[assemble-dist] og: social cards -> dist/og/");
+
 const escape = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -86,6 +94,7 @@ const page = (title, main, css) =>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escape(title)}</title>
+${ogMeta(title)}
   <script>(function(){var p=localStorage.getItem("theme");var d=p==="dark"||(p===null&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.classList.add("dark");})();</script>
   <style>
 ${css}
@@ -161,6 +170,23 @@ const articleCss =
     html.dark .flow li:not(:last-child)::after { color: #555; }
     html.dark figcaption, html.dark footer .copyright { color: #8a8f99; }`;
 
+// Social-card metadata for the top-level pages (root redirect + /about) —
+// the site-wide og-site.png card. Per-edition cards are wired by the page
+// shell (page.tsx); all of them live in dist/og/, copied from the committed
+// lume/og/ below (regenerate with tools/og/generate-og.mjs).
+const ogMeta = (title) =>
+  [
+    `  <meta name="description" content="The ECMAScript® Language Specification, restyled for reading.">`,
+    `  <meta property="og:site_name" content="ECMA-262 Restyled">`,
+    `  <meta property="og:type" content="website">`,
+    `  <meta property="og:title" content="${escape(title)}">`,
+    `  <meta property="og:description" content="The ECMAScript® Language Specification, restyled for reading.">`,
+    `  <meta property="og:image" content="https://kt3k.github.io/ecma262/og/og-site.png">`,
+    `  <meta property="og:image:width" content="1200">`,
+    `  <meta property="og:image:height" content="630">`,
+    `  <meta name="twitter:card" content="summary_large_image">`,
+  ].join("\n");
+
 // The root has no landing page; it redirects to the editor's draft (like
 // tc39.es/ecma262/). Every edition, plus /about, stays reachable
 // from each site's footer and version switcher.
@@ -176,6 +202,7 @@ fs.writeFileSync(
   <meta http-equiv="refresh" content="0; url=${redirectTo}">
   <link rel="canonical" href="${redirectTo}">
   <title>ECMA-262 Restyled</title>
+${ogMeta("ECMA-262 Restyled")}
   <script>location.replace(${JSON.stringify(redirectTo)});</script>
 </head>
 <body>

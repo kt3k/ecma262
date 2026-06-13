@@ -2,6 +2,7 @@ import Header from "./header.tsx";
 import Sidebar from "./sidebar.tsx";
 import Footer from "./footer.tsx";
 import PrevNext from "./prev-next.tsx";
+import { currentEditionId, titleMain, titleQual } from "./editions.ts";
 
 // Top-level layout: <header>, then a single .layout-wrapper holding the
 // sidebar / main / TOC trio, then <footer> as a sibling of the wrapper.
@@ -18,6 +19,15 @@ import PrevNext from "./prev-next.tsx";
 // VersionSwitcher dropdown points at.
 const basePath = Deno.env.get("BASE_PATH") ?? "";
 const deployBase = "/ecma262";
+// Social-card metadata needs ABSOLUTE urls (crawlers don't resolve relative
+// og:image), so the deploy origin is baked in regardless of BASE_PATH. The
+// per-edition cards live in dist/og/ (committed lume/og/, copied by
+// assemble-dist; regenerate with tools/og/generate-og.mjs).
+const siteOrigin = "https://kt3k.github.io";
+const ogImage = `${siteOrigin}${deployBase}/og/og-${currentEditionId}.png`;
+const ogDescription = `${titleMain}${
+  titleQual ? ` ${titleQual}` : ""
+} — The ECMAScript® Language Specification, restyled for reading.`;
 
 export default function Page(
   { children, title, slug }: {
@@ -32,6 +42,23 @@ export default function Page(
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title ?? "ECMA-262"}</title>
+        <meta name="description" content={ogDescription} />
+        <meta property="og:site_name" content="ECMA-262 Restyled" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title ?? "ECMA-262"} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        {slug !== undefined && (
+          <meta
+            property="og:url"
+            content={`${siteOrigin}${basePath}${
+              slug === "" || slug === "index" ? "" : `/${slug}`
+            }/`}
+          />
+        )}
+        <meta name="twitter:card" content="summary_large_image" />
         {
           /* The "JS" mark favicon — the same icon the Nextra build shipped
             (its app/icon.svg). basePath-prefixed so it resolves under a
