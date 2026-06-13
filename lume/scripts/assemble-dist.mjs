@@ -247,8 +247,7 @@ writeArticle(
   `  <h1>About</h1>
   <p class="lede">The ECMAScript® Language Specification, restyled for reading.</p>
   <hr>
-  <p><strong>ECMA-262 Restyled</strong> is an unofficial, reader-focused rendering of the ECMAScript® Language Specification. It mirrors the source from the official <a href="https://github.com/tc39/ecma262">tc39/ecma262</a> repository and restyles it for readability; it is <strong>not normative</strong>. For the authoritative text, see the official specification at <a href="https://tc39.es/ecma262/">tc39.es/ecma262</a>. The source for this site is at <a href="https://github.com/kt3k/ecma262">kt3k/ecma262</a>.</p>
-  <p>All seventeen editions are here, from the editor's draft back to 1997. The early editions exist officially only as printed PDFs — ES1 and ES2 were restored to HTML for this site — and ES3 is re-skinned from the <a href="https://bclary.com/2004/11/07/ecma-262.html">bclary.com</a> community rendering. Every edition gets the same reading experience: full-text search, dark mode, per-section deep links.</p>
+  <p><strong>ECMA-262 Restyled</strong> is an unofficial, reader-focused rendering of the ECMAScript® Language Specification. It mirrors the source from the official <a href="https://github.com/tc39/ecma262">tc39/ecma262</a> repository and restyles it for readability. It is not normative. For the authoritative text, see the official specification at <a href="https://tc39.es/ecma262/">tc39.es/ecma262</a>. The source for this site is at <a href="https://github.com/kt3k/ecma262">kt3k/ecma262</a>.</p>
   <h2>Editions</h2>
   <div class="eds">
 ${editions.map((e) => `    <a href="../${e.id}/">${markOf(e)}</a>`).join("\n")}
