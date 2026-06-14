@@ -100,6 +100,18 @@ export default function Page(
             the input will sit there inert (no CDN dependency either way). */
         }
         <script type="module" src={`${basePath}/search.js`}></script>
+        {
+          /* xref hover-cards: lazy-loads xref-index.json (written next to the
+            chapter pages by the build) on first hover and shows a definition
+            card for emu-xref / dfn links. Deferred + reads the index URL off
+            its own data attribute. */
+        }
+        <script
+          defer
+          src={`${basePath}/xref-hover.js`}
+          data-xref-index={`${basePath}/xref-index.json`}
+        >
+        </script>
       </head>
       <body>
         {

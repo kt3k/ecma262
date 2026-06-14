@@ -1,6 +1,7 @@
 import lume from "lume/mod.ts";
 import mdx from "lume/plugins/mdx.ts";
 import jsx from "lume/plugins/jsx.ts";
+import { writeXrefIndex } from "./scripts/xref-index.mjs";
 
 // Minimal Lume PoC for the notational-conventions page.
 // Goal: prove that Lume + MDX + Preact JSX can render the same DOM that
@@ -53,6 +54,9 @@ site.copy("search.js");
 // theme's white .hljs background so it sits on the page bg (tc39.es
 // uses the same trick in ecmarkup.css `pre code.hljs { background: 0 0 }`).
 site.copy("hljs-github.css");
+// xref hover-card client — lazy-fetches xref-index.json (written after the
+// build, below) on first hover and shows a definition card. See page.tsx.
+site.copy("xref-hover.js");
 // Spec figures (emu-figure images), copied in per-edition by
 // scripts/build-pages.ts from the spec's img/ dir. Gitignored; absent until
 // `deno task pages` runs (then served under <base>/img/).
@@ -164,6 +168,12 @@ site.process([".html"], (pages) => {
 // is fetched from deno.land.
 if (import.meta.main) {
   await site.build();
+  // The xref hover-card index is derived from the fully rendered HTML (clause
+  // ids + headings + dfns), so it runs after the build writes _site/. The
+  // dist assembler copies _site/ verbatim, so dist/<edition>/xref-index.json
+  // rides along with no extra step.
+  const n = writeXrefIndex(site.dest());
+  console.log(`✓ xref-index: ${n} entries`);
 }
 
 export default site;

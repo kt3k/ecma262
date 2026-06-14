@@ -2765,3 +2765,69 @@ html.dark
   border-left: 2px solid var(--rule);
   padding-left: 0.6ex;
 }
+
+/* xref hover-card (xref-hover.js) — a definition popover shown on hovering an
+   emu-xref / dfn link. It is appended to <body>, OUTSIDE .ecma-spec, so the
+   panel/kind tokens scoped there don't reach it; the surface tokens (--fg,
+   --muted, --chrome-bg) live at :root/html.dark and do. Border/radius and the
+   term-badge accent are inlined here with an explicit dark override. */
+.xref-card {
+  position: absolute;
+  z-index: 60;
+  max-width: 30rem;
+  padding: 0.7rem 0.85rem 0.8rem;
+  background: var(--chrome-bg, #fff);
+  border: 1px solid rgba(115, 115, 115, 0.25);
+  border-radius: 6px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--fg);
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  pointer-events: none;
+}
+html.dark .xref-card {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.xref-card.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.xref-card .xc-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  margin-bottom: 0.3em;
+}
+.xref-card .xc-num {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  color: var(--muted);
+}
+.xref-card .xc-title {
+  font-weight: 600;
+}
+.xref-card .xc-kind {
+  margin-left: auto;
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: 0.62em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b45309;
+  border: 1px solid rgba(180, 83, 9, 0.4);
+  background: rgba(180, 83, 9, 0.07);
+  border-radius: 5px;
+  padding: 0.1em 0.5em;
+}
+html.dark .xref-card .xc-kind {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+  background: rgba(251, 191, 36, 0.08);
+}
+.xref-card .xc-summary {
+  color: var(--muted);
+}
