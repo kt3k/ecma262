@@ -112,6 +112,12 @@ export default function Page(
           data-xref-index={`${basePath}/xref-index.json`}
         >
         </script>
+        {
+          /* In-chapter reading progress: a header bar on mobile, a
+            "section N / M" counter + read-dimming in the right-rail TOC on
+            desktop. Chrome only — nothing is inserted into the prose. */
+        }
+        <script defer src={`${basePath}/reading-progress.js`}></script>
       </head>
       <body>
         {

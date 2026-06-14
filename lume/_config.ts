@@ -57,6 +57,9 @@ site.copy("hljs-github.css");
 // xref hover-card client — lazy-fetches xref-index.json (written after the
 // build, below) on first hover and shows a definition card. See page.tsx.
 site.copy("xref-hover.js");
+// In-chapter reading-progress client (header bar on mobile, TOC counter +
+// read-dimming on desktop). See page.tsx.
+site.copy("reading-progress.js");
 // Spec figures (emu-figure images), copied in per-edition by
 // scripts/build-pages.ts from the spec's img/ dir. Gitignored; absent until
 // `deno task pages` runs (then served under <base>/img/).

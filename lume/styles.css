@@ -2831,3 +2831,54 @@ html.dark .xref-card .xc-kind {
 .xref-card .xc-summary {
   color: var(--muted);
 }
+
+/* Reading progress (reading-progress.js). Mobile/narrow: a thin bar pinned
+   under the sticky header, filled by the chapter scroll fraction. The desktop
+   indicator lives in the right-rail TOC, which is hidden ≤1100px, so the bar
+   is the fallback exactly where the TOC isn't — hide it once the TOC shows. */
+#reading-bar {
+  position: fixed;
+  left: 0;
+  top: var(--header-h, 64px);
+  height: 3px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--rp, 0));
+  background: linear-gradient(90deg, var(--accent), #fbbf24);
+  z-index: 40;
+  pointer-events: none;
+  transition: transform 0.08s linear;
+}
+@media (min-width: 1101px) {
+  #reading-bar {
+    display: none;
+  }
+}
+/* Desktop: "section N / M" counter in the TOC heading + a continuous fill on
+   the aside's left edge. The fill sits on the non-scrolling <aside> (sticky,
+   so it's the containing block) rather than inside the internally-scrolling
+   <ol>, so it stays put and visible as the TOC list scrolls. */
+aside.toc h2 .rp-count {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.8em;
+  color: var(--muted);
+  margin-left: 0.6em;
+}
+#reading-rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule);
+}
+#reading-rail-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: calc(var(--rp, 0) * 100%);
+  background: var(--accent);
+  transition: height 0.08s linear;
+}
