@@ -118,6 +118,11 @@ export default function Page(
             desktop. Chrome only — nothing is inserted into the prose. */
         }
         <script defer src={`${basePath}/reading-progress.js`}></script>
+        {
+          /* Context breadcrumb: sticky ancestor-clause chain under the
+            header for deeply nested sections (hidden ≤2 levels). */
+        }
+        <script defer src={`${basePath}/breadcrumb.js`}></script>
       </head>
       <body>
         {
@@ -271,6 +276,17 @@ export default function Page(
               (function(){
                 var header=document.querySelector(".site-header");
                 var navH=header?header.getBoundingClientRect().height:64;
+                // Keep the active entry visible in the right-rail TOC, which
+                // scrolls internally: when it lands above/below the list's
+                // viewport, nudge only the list's scrollTop (not the page).
+                // The 24px margins clear the list's top/bottom fade mask.
+                var tocOl=document.querySelector("aside.toc > ol");
+                function followToc(a){
+                  if(!a||!tocOl)return;
+                  var lr=a.getBoundingClientRect(),cr=tocOl.getBoundingClientRect();
+                  if(lr.top<cr.top+24)tocOl.scrollTop+=lr.top-cr.top-24;
+                  else if(lr.bottom>cr.bottom-24)tocOl.scrollTop+=lr.bottom-cr.bottom+24;
+                }
                 var io=new IntersectionObserver(function(entries){
                   var hit=entries.find(function(e){return e.isIntersecting;});
                   if(!hit)return;
@@ -278,9 +294,12 @@ export default function Page(
                   document.querySelectorAll(".sidebar-toc a.active, aside.toc a.active").forEach(function(a){
                     a.classList.remove("active");
                   });
+                  var railActive=null;
                   document.querySelectorAll(".sidebar-toc a[href='#"+id+"'], aside.toc a[href='#"+id+"']").forEach(function(a){
                     a.classList.add("active");
+                    if(a.closest("aside.toc"))railActive=a;
                   });
+                  followToc(railActive);
                 },{rootMargin:"-"+navH+"px 0px -80% 0px"});
                 document.querySelectorAll("#content emu-clause[id]").forEach(function(el){
                   io.observe(el);

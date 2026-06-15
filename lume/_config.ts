@@ -60,6 +60,9 @@ site.copy("xref-hover.js");
 // In-chapter reading-progress client (header bar on mobile, TOC counter +
 // read-dimming on desktop). See page.tsx.
 site.copy("reading-progress.js");
+// Context breadcrumb client — sticky ancestor-clause chain under the header,
+// shown only in deeply nested sections. See page.tsx.
+site.copy("breadcrumb.js");
 // Spec figures (emu-figure images), copied in per-edition by
 // scripts/build-pages.ts from the spec's img/ dir. Gitignored; absent until
 // `deno task pages` runs (then served under <base>/img/).

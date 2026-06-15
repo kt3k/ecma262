@@ -2897,3 +2897,53 @@ aside.toc h2 .rp-count {
   background: var(--accent);
   transition: height 0.08s linear;
 }
+
+/* Context breadcrumb (breadcrumb.js): a sticky bar under the header showing
+   the ancestor clause chain of the section being read. JS sets left/width/top
+   to align it to the content column; shown (display:flex) only when ≥3 levels
+   deep. Content scrolls under it (fixed), so the background is semi-opaque +
+   blurred. */
+#crumb-bar {
+  position: fixed;
+  z-index: 35;
+  display: none;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.4rem 0.25rem;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--chrome-bg) 86%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+#crumb-bar.show {
+  display: flex;
+}
+#crumb-bar .cb {
+  color: var(--muted);
+  text-decoration: none;
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#crumb-bar .cb:hover {
+  color: var(--fg);
+}
+#crumb-bar .cb:last-child {
+  color: var(--fg);
+  font-weight: 600;
+  max-width: 30rem;
+}
+#crumb-bar .sep {
+  flex: none;
+  margin: 0 0.25rem;
+  color: var(--muted);
+  opacity: 0.5;
+}
+#crumb-bar .cb-num {
+  font-family: var(--font-mono);
+  opacity: 0.7;
+  margin-right: 0.35em;
+}
