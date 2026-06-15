@@ -2909,7 +2909,7 @@ aside.toc h2 .rp-count {
   display: none;
   align-items: center;
   gap: 0.1rem;
-  padding: 0.4rem 0.25rem;
+  padding: 0.4rem 1rem;
   font-size: 0.78rem;
   white-space: nowrap;
   overflow: hidden;
@@ -2924,7 +2924,11 @@ aside.toc h2 .rp-count {
 #crumb-bar .cb {
   color: var(--muted);
   text-decoration: none;
-  max-width: 14rem;
+  /* Keep each crumb's full text — breadcrumb.js collapses the oldest
+     ancestors into a leading "…" when the row overflows, rather than letting
+     flexbox shrink every level into a meaningless "22 Te…". */
+  flex: 0 0 auto;
+  max-width: 20rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -2934,7 +2938,20 @@ aside.toc h2 .rp-count {
 #crumb-bar .cb:last-child {
   color: var(--fg);
   font-weight: 600;
-  max-width: 30rem;
+  /* The current section may be a long title on its own — let just this one
+     shrink and ellipsize so it never clips the right edge. */
+  flex: 0 1 auto;
+}
+#crumb-bar .cb-ellip {
+  flex: 0 0 auto;
+  color: var(--muted);
+  opacity: 0.6;
+  padding: 0 0.1rem;
+}
+@media (max-width: 767px) {
+  #crumb-bar {
+    display: none !important;
+  }
 }
 #crumb-bar .sep {
   flex: none;

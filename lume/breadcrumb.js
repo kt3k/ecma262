@@ -51,6 +51,12 @@
   };
 
   const render = () => {
+    // Mobile: crumbs squeeze to meaningless 2-char ellipses on a phone-width
+    // bar; the sidebar TOC is the right tool there. Hide entirely.
+    if (innerWidth <= 767) {
+      bar.classList.remove("show");
+      return;
+    }
     const chain = chainOf();
     if (chain.length <= 2) {
       bar.classList.remove("show");
@@ -60,13 +66,24 @@
     bar.style.left = r.left + "px";
     bar.style.width = r.width + "px";
     bar.style.top = headerH() + "px";
+    // Line the crumb text up with the prose, which sits inside main's
+    // inline padding (3rem on desktop) — otherwise the bar hangs out to the
+    // left of the body text.
+    bar.style.paddingLeft = (parseFloat(getComputedStyle(main).paddingLeft) ||
+      0) + "px";
     bar.textContent = "";
+    // Each crumb keeps its full text (no uniform flex-shrink that would chop
+    // every level to "22 Te…"); items[i].sep is the separator *before* crumb i
+    // (null for the first), so collapsing from the left can hide a crumb and
+    // its leading separator together.
+    const items = [];
     chain.forEach((c, i) => {
+      let sep = null;
       if (i) {
-        const s = document.createElement("span");
-        s.className = "sep";
-        s.textContent = "›";
-        bar.appendChild(s);
+        sep = document.createElement("span");
+        sep.className = "sep";
+        sep.textContent = "›";
+        bar.appendChild(sep);
       }
       const { num, title } = parse(c);
       const a = document.createElement("a");
@@ -80,8 +97,28 @@
       }
       a.appendChild(document.createTextNode(title));
       bar.appendChild(a);
+      items.push({ a, sep });
     });
     bar.classList.add("show");
+
+    // If the full chain overflows the content column, collapse the oldest
+    // ancestors into a leading "…" so the current section and its nearest
+    // parents stay fully readable (the right end is what matters most).
+    let lead = null;
+    let drop = 0;
+    while (
+      bar.scrollWidth > bar.clientWidth + 1 && drop < items.length - 2
+    ) {
+      if (!lead) {
+        lead = document.createElement("span");
+        lead.className = "cb-ellip";
+        lead.textContent = "…";
+        bar.insertBefore(lead, bar.firstChild);
+      }
+      items[drop].a.style.display = "none";
+      if (items[drop].sep) items[drop].sep.style.display = "none";
+      drop++;
+    }
   };
 
   render();
