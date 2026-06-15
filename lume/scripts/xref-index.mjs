@@ -23,7 +23,13 @@ const clauseRe =
 const dfnRe = /<dfn\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/dfn>/g;
 
 export function buildXrefIndex(siteDir) {
-  const index = {};
+  // Null-prototype map: spec ids include Object.prototype property names
+  // ("constructor", "toString", "__proto__", …). On a plain {} the
+  // `if (index[id])` guards would see the inherited member (truthy) and skip
+  // storing the real entry — "constructor" is a dfn referenced 600+ times —
+  // and `index["__proto__"] = …` would hit the prototype setter instead of
+  // adding a key. A null-proto object has none of those.
+  const index = Object.create(null);
   const pages = fs.readdirSync(siteDir, { withFileTypes: true })
     .filter((e) =>
       e.isDirectory() && !["img", "pagefind", "fonts"].includes(e.name) &&
@@ -37,24 +43,36 @@ export function buildXrefIndex(siteDir) {
       "utf8",
     );
 
-    // dfn terms first: title = the defined term, summary = its enclosing
-    // <p>/<li>/<dd> (the defining sentence). A clause with the same id (rare)
-    // overrides below.
+    // dfn terms first: title = the defined term, summary = the sentence that
+    // defines it. A clause with the same id (rare) overrides below.
     let d;
     while ((d = dfnRe.exec(html)) !== null) {
       const id = d[1];
-      if (index[id]) continue;
+      if (id in index) continue;
       const term = strip(d[2]);
+      // Enclosing block (<p>/<li>/<dd>): take its full text, not just up to
+      // the first child close tag, so multi-clause paragraphs aren't cut off.
       const before = html.slice(0, d.index);
-      const open = Math.max(
-        before.lastIndexOf("<p"),
+      const cands = [["p", before.lastIndexOf("<p")], [
+        "li",
         before.lastIndexOf("<li"),
-        before.lastIndexOf("<dd"),
-      );
-      const close = html.indexOf("</", d.index + d[0].length);
-      const summary = open >= 0 && close >= 0
-        ? strip(html.slice(open, close).replace(/^<[^>]+>/, ""))
-        : term;
+      ], ["dd", before.lastIndexOf("<dd")]].sort((a, b) => b[1] - a[1]);
+      const [tag, open] = cands[0];
+      let summary = term;
+      if (open >= 0) {
+        const contentStart = html.indexOf(">", open) + 1;
+        const blockClose = html.indexOf(`</${tag}`, d.index);
+        const text = strip(
+          html.slice(contentStart, blockClose >= 0 ? blockClose : d.index),
+        );
+        // Start at the sentence containing the term (a paragraph can define
+        // several terms — "constructor" sits after the "function object"
+        // sentence), so the card opens on "A constructor is …", not the
+        // paragraph's first, unrelated sentence.
+        const at = text.toLowerCase().indexOf(term.toLowerCase());
+        const dot = at > 0 ? text.lastIndexOf(". ", at) : -1;
+        summary = (dot >= 0 ? text.slice(dot + 2) : text).trim() || term;
+      }
       index[id] = {
         num: "",
         title: term,

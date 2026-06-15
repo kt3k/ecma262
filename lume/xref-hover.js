@@ -119,7 +119,13 @@
     if (!frag) return;
     const y = e.clientY; // pointer line, for wrapped-link placement
     if (index === null) await load();
-    const data = index[frag];
+    // own-property check: JSON.parse gives a plain object, so a bare
+    // index[frag] for a fragment that collides with an Object.prototype name
+    // ("toString", "constructor", …) would return the inherited member and
+    // render an empty card.
+    const data = Object.prototype.hasOwnProperty.call(index, frag)
+      ? index[frag]
+      : null;
     if (!data) return;
     if (hideTimer) {
       clearTimeout(hideTimer);
