@@ -2,7 +2,12 @@ import Header from "./header.tsx";
 import Sidebar from "./sidebar.tsx";
 import Footer from "./footer.tsx";
 import PrevNext from "./prev-next.tsx";
-import { currentEditionId, titleMain, titleQual } from "./editions.ts";
+import {
+  currentEditionId,
+  hasGlossary,
+  titleMain,
+  titleQual,
+} from "./editions.ts";
 
 // Top-level layout: <header>, then a single .layout-wrapper holding the
 // sidebar / main / TOC trio, then <footer> as a sibling of the wrapper.
@@ -143,6 +148,7 @@ export default function Page(
           <Sidebar
             basePath={basePath}
             currentSlug={slug ?? ""}
+            hasGlossary={hasGlossary}
           />
           {
             /* data-pagefind-body marks the indexable region for Pagefind

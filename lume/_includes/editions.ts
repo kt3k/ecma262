@@ -16,6 +16,13 @@ const editions = data as Edition[];
 // here one env var drives it.
 export const currentEditionId = Deno.env.get("EDITION") ?? "draft";
 
+// Whether this edition ships the generated /glossary/ page. The pre-2016
+// editions come from different source pipelines (PDF / bclary ingest) whose
+// <dfn> markup is sparse or absent, so the glossary is built only for the
+// ecmarkup-sourced editions: ES2016 onward, plus the draft.
+export const hasGlossary = currentEditionId === "draft" ||
+  /^es20(1[6-9]|2\d)$/.test(currentEditionId);
+
 // Header title parts: bold main string + dotted-underline status link
 // ("draft" / "candidate"). Matches the parsing the former Nextra spec-layout
 // used so the visual hierarchy is identical.

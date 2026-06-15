@@ -2974,3 +2974,90 @@ aside.toc h2 .rp-count {
   opacity: 0.7;
   margin-right: 0.35em;
 }
+
+/* Glossary page (scripts/glossary.mjs writes _site/glossary/index.html, which
+   reuses the spec page shell and tags <main> with .glossary). A–Z jump bar +
+   one definition list per initial. */
+.glossary .gl-h1 {
+  margin: 0.2rem 0 0.3rem;
+}
+.glossary .gl-lede {
+  color: var(--muted);
+  margin: 0 0 1.2rem;
+}
+.glossary .gl-az {
+  position: sticky;
+  top: var(--header-h, 64px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  background: color-mix(in srgb, var(--chrome-bg) 92%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+  z-index: 2;
+}
+.glossary .gl-az a {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 1.6em;
+  padding: 0.15em 0.3em;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+.glossary .gl-az a:hover {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.glossary .gl-letter {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.2rem;
+  margin: 2rem 0 0.6rem;
+}
+.glossary .gl-list {
+  margin: 0;
+}
+.glossary .gl-list dt {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.glossary .gl-term {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--fg);
+  text-decoration: none;
+}
+.glossary .gl-term:hover {
+  color: var(--accent);
+}
+.glossary .gl-var {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+.glossary .gl-list dd {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.glossary .gl-loc {
+  display: inline-block;
+  margin-top: 0.15rem;
+  font-size: 0.82rem;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.glossary .gl-loc:hover {
+  text-decoration: underline;
+}

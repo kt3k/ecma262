@@ -2,6 +2,12 @@ import lume from "lume/mod.ts";
 import mdx from "lume/plugins/mdx.ts";
 import jsx from "lume/plugins/jsx.ts";
 import { writeXrefIndex } from "./scripts/xref-index.mjs";
+import { writeGlossary } from "./scripts/glossary.mjs";
+import {
+  currentEditionId,
+  hasGlossary,
+  titleMain,
+} from "./_includes/editions.ts";
 
 // Minimal Lume PoC for the notational-conventions page.
 // Goal: prove that Lume + MDX + Preact JSX can render the same DOM that
@@ -180,6 +186,13 @@ if (import.meta.main) {
   // rides along with no extra step.
   const n = writeXrefIndex(site.dest());
   console.log(`✓ xref-index: ${n} entries`);
+  // Glossary page, derived from the same rendered HTML. Only the ecmarkup-
+  // sourced editions (ES2016+ / draft) carry the <dfn> markup it needs.
+  if (hasGlossary) {
+    const basePath = Deno.env.get("BASE_PATH") ?? "";
+    const g = writeGlossary(site.dest(), basePath, titleMain);
+    console.log(`✓ glossary (${currentEditionId}): ${g} terms`);
+  }
 }
 
 export default site;

@@ -7,9 +7,10 @@ import chapters from "./chapters.ts";
 // Every chapter is Lume-rendered (see scripts/build-pages.ts), so all entries
 // link to their local page under basePath.
 export default function Sidebar(
-  { basePath, currentSlug }: {
+  { basePath, currentSlug, hasGlossary }: {
     basePath: string;
     currentSlug: string;
+    hasGlossary?: boolean;
   },
 ) {
   // aria-label distinguishes this complementary landmark from the
@@ -59,6 +60,18 @@ export default function Sidebar(
             </li>
           );
         })}
+        {
+          /* Generated glossary page (ES2016+ / draft only); set apart from the
+            chapter list with a group divider. See scripts/glossary.mjs. */
+        }
+        {hasGlossary && (
+          <li
+            class={"group-start" +
+              (currentSlug === "glossary" ? " current" : "")}
+          >
+            <a href={`${basePath}/glossary/`}>Glossary</a>
+          </li>
+        )}
       </ol>
       <div class="sidebar-footer">
         {
