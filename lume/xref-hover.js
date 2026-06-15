@@ -80,18 +80,35 @@
     }
     const t = document.createElement("span");
     t.className = "xc-title";
+    // Grammar/equation titles are code-like (nonterminal names, abstract-op
+    // ids); render them in the mono face so they read as the spec does.
+    if (data.kind === "grammar" || data.kind === "equation") {
+      t.classList.add("xc-mono");
+    }
     t.textContent = data.title;
     head.appendChild(t);
-    if (data.kind === "term") {
+    // Kind chip: label the non-clause entries so the reader knows whether the
+    // card describes a term, a grammar production, an equation or a table.
+    const KIND = {
+      term: "term",
+      grammar: "grammar",
+      equation: "notation",
+      table: "table",
+      step: "step",
+    };
+    if (KIND[data.kind]) {
       const k = document.createElement("span");
       k.className = "xc-kind";
-      k.textContent = "term";
+      k.textContent = KIND[data.kind];
       head.appendChild(k);
     }
     card.appendChild(head);
     if (data.summary) {
       const s = document.createElement("div");
       s.className = "xc-summary";
+      if (data.kind === "grammar" || data.kind === "equation") {
+        s.classList.add("xc-mono");
+      }
       s.textContent = data.summary;
       card.appendChild(s);
     }
