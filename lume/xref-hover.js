@@ -36,8 +36,28 @@
     return i >= 0 ? decodeURIComponent(h.slice(i + 1)) : null;
   };
 
-  const place = (a) => {
-    const r = a.getBoundingClientRect();
+  // Anchor to the line fragment under the pointer, not the whole link. A
+  // wrapped link's getBoundingClientRect() is the union box of both lines, so
+  // positioning off it floats the card above line 1 even when the pointer is
+  // on line 2 (disconnected, and beyond the hover bridge). getClientRects()
+  // gives a rect per line; pick the one the pointer is on.
+  const lineRect = (a, y) => {
+    const rects = a.getClientRects();
+    if (rects.length <= 1) return rects[0] || a.getBoundingClientRect();
+    let best = rects[0], bestD = Infinity;
+    for (const r of rects) {
+      if (y >= r.top && y <= r.bottom) return r;
+      const d = Math.min(Math.abs(y - r.top), Math.abs(y - r.bottom));
+      if (d < bestD) {
+        bestD = d;
+        best = r;
+      }
+    }
+    return best;
+  };
+
+  const place = (a, y) => {
+    const r = lineRect(a, y);
     const cw = card.offsetWidth, ch = card.offsetHeight;
     const docW = document.documentElement.clientWidth;
     let left = window.scrollX + Math.min(r.left, docW - cw - 12);
@@ -77,7 +97,7 @@
     }
   };
 
-  const show = (a, data) => {
+  const show = (a, data, y) => {
     anchor = a;
     if (!appended) {
       document.body.appendChild(card);
@@ -85,7 +105,7 @@
     }
     render(data);
     card.classList.add("show");
-    place(a);
+    place(a, y);
   };
   const hide = () => {
     card.classList.remove("show");
@@ -97,25 +117,67 @@
     if (!a || a === card || card.contains(a)) return;
     const frag = fragOf(a);
     if (!frag) return;
+    const y = e.clientY; // pointer line, for wrapped-link placement
     if (index === null) await load();
     const data = index[frag];
     if (!data) return;
-    if (hideTimer) clearTimeout(hideTimer);
-    if (anchor !== a) show(a, data);
+    if (hideTimer) {
+      clearTimeout(hideTimer);
+      hideTimer = null;
+    }
+    if (anchor !== a) show(a, data, y);
   };
-  const onOut = (e) => {
-    const to = e.relatedTarget;
-    if (to && (card.contains(to) || (anchor && anchor.contains(to)))) return;
-    hideTimer = setTimeout(hide, 220);
+
+  // Whether the pointer is over the anchor or the card. The anchor check uses
+  // getClientRects() (one box per line) so a WRAPPED link counts as hovered on
+  // either line — keeping the card open while the pointer is anywhere on the
+  // link, instead of the old relatedTarget test that misfired between lines.
+  const PAD = 3;
+  const overAnchor = (x, y) => {
+    if (!anchor) return false;
+    const rects = anchor.getClientRects();
+    for (let i = 0; i < rects.length; i++) {
+      const r = rects[i];
+      if (
+        x >= r.left - PAD && x <= r.right + PAD &&
+        y >= r.top - PAD && y <= r.bottom + PAD
+      ) return true;
+    }
+    return false;
+  };
+  const overCard = (x, y) => {
+    if (!appended || !card.classList.contains("show")) return false;
+    const r = card.getBoundingClientRect();
+    // wider vertical pad bridges the link↔card gap
+    return x >= r.left - 4 && x <= r.right + 4 &&
+      y >= r.top - 12 && y <= r.bottom + 12;
+  };
+
+  // Hide decisions are driven by pointer geometry, not mouseout/relatedTarget:
+  // keep the card while the pointer is on the link (any line) or the card,
+  // start a short grace timer otherwise.
+  let moveRaf = null;
+  const onMove = (e) => {
+    if (!anchor || moveRaf) return;
+    const x = e.clientX, y = e.clientY;
+    moveRaf = requestAnimationFrame(() => {
+      moveRaf = null;
+      if (overAnchor(x, y) || overCard(x, y)) {
+        if (hideTimer) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+      } else if (!hideTimer) {
+        hideTimer = setTimeout(hide, 220);
+      }
+    });
   };
 
   document.body.addEventListener("mouseover", onOver);
-  document.body.addEventListener("mouseout", onOut);
-  card.addEventListener("mouseenter", () => {
-    if (hideTimer) clearTimeout(hideTimer);
-  });
-  card.addEventListener("mouseleave", () => {
-    hideTimer = setTimeout(hide, 220);
+  document.addEventListener("mousemove", onMove, { passive: true });
+  // Pointer left the document entirely — dismiss.
+  document.addEventListener("mouseleave", () => {
+    if (anchor && !hideTimer) hideTimer = setTimeout(hide, 220);
   });
   // Esc dismisses (keyboard parity).
   document.addEventListener("keydown", (e) => {
