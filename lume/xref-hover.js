@@ -106,7 +106,7 @@
   const onOut = (e) => {
     const to = e.relatedTarget;
     if (to && (card.contains(to) || (anchor && anchor.contains(to)))) return;
-    hideTimer = setTimeout(hide, 120);
+    hideTimer = setTimeout(hide, 220);
   };
 
   document.body.addEventListener("mouseover", onOver);
@@ -115,7 +115,7 @@
     if (hideTimer) clearTimeout(hideTimer);
   });
   card.addEventListener("mouseleave", () => {
-    hideTimer = setTimeout(hide, 120);
+    hideTimer = setTimeout(hide, 220);
   });
   // Esc dismisses (keyboard parity).
   document.addEventListener("keydown", (e) => {

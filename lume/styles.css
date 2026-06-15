@@ -2796,6 +2796,21 @@ html.dark .xref-card {
   transform: translateY(0);
   pointer-events: auto;
 }
+/* Bridge the gap between the link and the card: a transparent hit-area that
+   extends the card's interactive box ~10px above and below (the card sits ~8px
+   off the link). Without it, moving the pointer toward the card crosses dead
+   space that triggers the hide timer ("the card closes on the slightest
+   move"). Vertical only — no horizontal halo to swallow clicks. Behind the
+   content (z-index:-1) so it never covers the card's own text. */
+.xref-card.show::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  bottom: -10px;
+  z-index: -1;
+}
 .xref-card .xc-head {
   display: flex;
   align-items: baseline;
