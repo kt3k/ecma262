@@ -3039,6 +3039,11 @@ aside.toc h2 .rp-count {
   font-size: 1.05rem;
   color: var(--fg);
   text-decoration: none;
+  /* Long intrinsic names (%AsyncGeneratorFunction.prototype.prototype%) are
+     unbreakable tokens; as a flex item they keep min-width:auto and push the
+     row past a phone's width. Let them shrink and wrap. */
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .glossary .gl-term:hover {
   color: var(--accent);
@@ -3059,7 +3064,9 @@ aside.toc h2 .rp-count {
   font-size: 0.82rem;
   color: var(--accent);
   text-decoration: none;
-  white-space: nowrap;
+  /* The §reference is a multi-word section title; let it wrap on narrow
+     screens rather than forcing a horizontal scrollbar. */
+  overflow-wrap: anywhere;
 }
 .glossary .gl-loc:hover {
   text-decoration: underline;
