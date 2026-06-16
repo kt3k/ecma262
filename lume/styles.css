@@ -2982,8 +2982,16 @@ aside.toc h2 .rp-count {
   margin: 0.2rem 0 0.3rem;
 }
 .glossary .gl-lede {
+  /* Note panel, in the spirit of the ES1/ES2 Introduction's source note:
+     bordered + lightly tinted, muted and slightly smaller, to read as an
+     editorial aside rather than spec prose. */
+  margin: 0 0 1.4rem;
+  padding: 0.7em 1em;
+  border: 1px solid var(--rule);
+  border-radius: var(--ecma-panel-radius, 8px);
+  background: color-mix(in srgb, var(--muted) 7%, transparent);
   color: var(--muted);
-  margin: 0 0 1.2rem;
+  font-size: 0.9em;
 }
 .glossary .gl-az {
   position: sticky;
