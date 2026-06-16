@@ -63,5 +63,41 @@ cluttered or misleading reading surface.
 ## Open — aids for reading the spec end-to-end
 
 A separate track from the per-section/per-term aids above: helping a reader get
-_through_ the whole specification. Candidates under discussion (not yet
-committed); see the chat thread for the latest thinking.
+_through_ the whole specification. Candidates under consideration (not yet
+committed). All ride on the site's existing footing — static generation,
+`localStorage`, the single-source per-edition build, and the existing prev/next
+links — and are chosen to stay non-intrusive.
+
+- **A — Resume reading.** Remember the last section read and the in-chapter
+  scroll position in `localStorage`; offer a "continue from §22.2.6" entry on
+  the landing page / header. Removes the main friction of a multi-session
+  read-through ("where was I"). State is per edition (see the editioning note
+  below). Essentially zero added on-page chrome.
+- **B — Whole-spec reading map / read-completion.** Idea 5 tracks progress
+  _within_ a chapter; this tracks the _whole_ spec. Mark a chapter read once it
+  has been scrolled to the end, show a check / faint heatmap in the sidebar and
+  an overall "N% read". Local-only, so nothing is imposed on the reader.
+- **C — Estimated reading time.** A muted "~12 min" per chapter (from word
+  count, computed at build time) in the sidebar/TOC, plus a spec-wide total, so
+  a read-through can be planned. One small number — low noise.
+- **D — Keyboard sequential navigation.** `j`/`k` for next/previous section,
+  `n`/`p` for next/previous chapter, `?` for a help overlay — read through
+  without the mouse. Adds nothing to the page surface.
+- **E — "Up next" chapter preview.** Extend the chapter-end prev/next with a
+  short teaser of the next chapter (its opening sentences or subsection list) to
+  pull the reader forward. Only at chapter boundaries, never in the prose.
+- **F — Whole-spec position indicator.** Distinct from Idea 4 (the tree-depth
+  breadcrumb): a thin overall progress marker showing how far through the entire
+  spec the current position is, for a sense of "early vs late".
+
+Front-runners: **A + B** (the core read-through pair); C/D are light
+reinforcements; E guards against drop-off.
+
+### Editioning note (applies to A and B)
+
+Per-reader state must be keyed by edition. Section slugs and ids differ across
+editions, so a position or read-flag from one edition is meaningless in another;
+a global key would resume to the wrong place (or nowhere) after a version
+switch. Plan: namespace the `localStorage` keys by edition id (e.g.
+`ecma262:resume:<editionId>`, `ecma262:read:<editionId>`), so each edition keeps
+its own independent reading state.
