@@ -2987,16 +2987,19 @@ aside.toc h2 .rp-count {
 }
 .glossary .gl-az {
   position: sticky;
-  top: var(--header-h, 64px);
+  top: calc(var(--header-h, 64px) + 0.5rem);
   display: flex;
   flex-wrap: wrap;
   gap: 0.15rem;
-  padding: 0.5rem 0;
-  margin-bottom: 1rem;
+  padding: 0.4rem 0.5rem;
+  margin-bottom: 1.2rem;
   background: color-mix(in srgb, var(--chrome-bg) 92%, transparent);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--rule);
+  /* A self-contained toolbar box (border on all four sides + radius) reads as
+     deliberate chrome rather than a strip floating in the column. */
+  border: 1px solid var(--rule);
+  border-radius: 10px;
   z-index: 2;
 }
 .glossary .gl-az a {
