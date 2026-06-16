@@ -2,48 +2,66 @@
 
 Ideas for non-intrusive reading aids on the restyled ECMA-262 site — metadata
 and guides placed so they support reading without disrupting the prose. Tracks
-which are shipped and which remain.
+what shipped, what was declined, and what's still open.
 
 ## Shipped
 
 - **Idea 3 — Xref hover preview cards.** Hovering a cross-reference link shows a
   small card with the target definition / clause summary. Works across pages
-  (cross-page xrefs resolve through the same `#frag` index), and handles wrapped
-  (two-line) links and `Object.prototype`-named ids (e.g. `constructor`). Files:
-  `lume/xref-hover.js`, `lume/scripts/xref-index.mjs`.
+  (cross-page xrefs resolve through the same `#frag` index), handles wrapped
+  (two-line) links and `Object.prototype`-named ids (e.g. `constructor`), and
+  covers clauses, dfns, grammar productions, equations, tables and algorithm
+  steps (99.8% of linked fragments). Files: `lume/xref-hover.js`,
+  `lume/scripts/xref-index.mjs`.
+- **Idea 4 — Context breadcrumb.** A full-width sub-header strip showing the
+  ancestor-clause chain of the section being read; shown only when ≥3 levels
+  deep, text aligned to the prose column, long chains collapse from the left
+  into a leading "…", hidden on mobile. File: `lume/breadcrumb.js`.
 - **Idea 5 — In-chapter reading progress.** A header-anchored progress bar on
   mobile; on desktop a "N / M" counter plus a progress fill in the right-rail
   TOC. File: `lume/reading-progress.js`.
-- **Idea 4 — Context breadcrumb.** A sticky bar under the header showing the
-  ancestor-clause chain of the section being read; shown only when ≥3 levels
-  deep, aligned to the prose column, long chains collapse from the left into a
-  leading "…", hidden on mobile. File: `lume/breadcrumb.js`.
+- **Idea 6 — Glossary (page form).** A generated per-edition `/glossary/` page
+  (ES2016+ / draft): an A–Z list of every `<dfn>` term, with variants, defining
+  sentence and a link to where it is defined. Reuses the spec page shell, is
+  searchable via Pagefind, and carries a note making its provenance and
+  non-normative status explicit. Files: `lume/scripts/glossary.mjs`,
+  `lume/glossary.js`. (The _inline-tooltip_ form of this idea was declined — see
+  below.)
 
-## Not yet implemented
+## Declined (would add noise)
 
-- **Idea 1 — Edition provenance (Added in / Changed in).** Show, unobtrusively,
-  which edition each clause/definition was added or changed in. Plays to this
-  site's distinctive strength: it builds every edition from one source, so the
-  data is already on hand.
-- **Idea 2 — Referenced by (inbound xrefs).** "Where is this definition
-  referenced from?" — a reverse-lookup list. Uses the xref index in the opposite
-  direction.
-- **Idea 6 — Glossary tooltips for defined terms.** Underline defined terms
-  (`<dfn>`) in the prose; hover/tap reveals a short definition. Reuses the dfn
-  summaries already collected for Idea 3's index — low cost.
-- **Idea 7 — MDN links.** Add a side link to MDN for major APIs / syntax forms.
-- **Idea 8 — Algorithm step count / overview.** For `<emu-alg>` blocks, show a
-  total step count and/or collapsing, to help survey long procedures.
+These were considered but rejected: the value is marginal and the cost is a
+cluttered or misleading reading surface.
 
-## Follow-up groundwork
+- **Idea 1 — Edition provenance (Added in / Changed in).** Per-clause "added in
+  ESXXXX" badges would need a cross-edition diff, and would sprinkle badges
+  across most clauses. High risk of inaccurate or noisy annotations for little
+  gain while reading.
+- **Idea 2 — Referenced by (inbound xrefs).** A reverse-lookup list appended to
+  each definition clutters the prose, and the heavily-referenced definitions
+  (e.g. Completion Record, referenced hundreds of times) produce unusable walls
+  of back-links.
+- **Idea 6 (inline-tooltip / autolink variant).** Underlining defined terms in
+  the running prose, or autolinking unlinked mentions, was measured to be
+  dominated by ambiguous common words ("constructor", "list", "object",
+  "integer") — marking them would litter the prose with false positives. The
+  genuinely useful linked mentions are already covered by Idea 3. Shipped the
+  standalone glossary page instead.
+- **Idea 7 — MDN links.** Mapping spec clauses to MDN is fuzzy and manual, the
+  links rot over time, and they inject editorial content that isn't in the spec.
+- **Idea 8 — Algorithm step count / overview.** Step counts and collapse toggles
+  add chrome to every `<emu-alg>` for marginal benefit; the step numbers are
+  already visible inline.
 
-- **Extend xref-index coverage.** The index currently misses ids that originate
-  from tables and algorithm steps (~7% gap). Closing it also benefits Ideas 2
-  and 6.
+## Completed groundwork
 
-## Priority notes
+- **Xref-index coverage.** Extended from clauses/dfns to grammar productions,
+  equations, tables and algorithm steps — 69% → 99.8% of linked fragments
+  resolve to a card. The remainder are genuinely external (WHATWG/Unicode)
+  references.
 
-- **Idea 1 (provenance)** best exploits the site's cross-edition build, which no
-  other ECMA-262 rendering offers.
-- **Idea 6 (glossary)** is the cheapest win — the dfn index from Idea 3 already
-  exists.
+## Open — aids for reading the spec end-to-end
+
+A separate track from the per-section/per-term aids above: helping a reader get
+_through_ the whole specification. Candidates under discussion (not yet
+committed); see the chat thread for the latest thinking.
