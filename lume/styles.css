@@ -2987,7 +2987,7 @@ aside.toc h2 .rp-count {
 }
 .glossary .gl-az {
   position: sticky;
-  top: calc(var(--header-h, 64px) + 0.5rem);
+  top: var(--header-h, 64px);
   display: flex;
   flex-wrap: wrap;
   gap: 0.15rem;
@@ -3001,6 +3001,15 @@ aside.toc h2 .rp-count {
   border: 1px solid var(--rule);
   border-radius: 10px;
   z-index: 2;
+  transition: border-radius 0.12s, border-top-color 0.12s;
+}
+/* Pinned to the header (toggled by glossary.js): merge with it by dropping the
+   top border + top corners so the box hangs off the header instead of floating
+   under it. */
+.glossary .gl-az.stuck {
+  border-top-color: transparent;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 .glossary .gl-az a {
   display: inline-flex;

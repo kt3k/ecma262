@@ -69,6 +69,10 @@ site.copy("reading-progress.js");
 // Context breadcrumb client — sticky ancestor-clause chain under the header,
 // shown only in deeply nested sections. See page.tsx.
 site.copy("breadcrumb.js");
+// Glossary A–Z bar "stuck" detector — loaded only by the generated glossary
+// page (scripts/glossary.mjs injects the tag), so it ships as an asset but
+// isn't referenced elsewhere.
+site.copy("glossary.js");
 // Spec figures (emu-figure images), copied in per-edition by
 // scripts/build-pages.ts from the spec's img/ dir. Gitignored; absent until
 // `deno task pages` runs (then served under <base>/img/).

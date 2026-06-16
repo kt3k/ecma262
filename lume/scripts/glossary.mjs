@@ -218,6 +218,14 @@ export function writeGlossary(siteDir, basePath, editionLabel = "ECMA-262") {
     `<title>Glossary — ${esc(editionLabel)}</title>`,
   );
 
+  // Glossary-only client: flattens the A–Z bar's top when it sticks (see
+  // glossary.js + the .gl-az.stuck CSS). Injected here so it loads only on
+  // this page rather than across the whole site.
+  html = html.replace(
+    "</body>",
+    `<script defer src="${basePath}/glossary.js"></script></body>`,
+  );
+
   const dir = path.join(siteDir, "glossary");
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, "index.html"), html);
