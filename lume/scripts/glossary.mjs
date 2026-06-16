@@ -169,8 +169,11 @@ function renderMain(entries) {
   }
 
   return `<h1 class="gl-h1">Glossary</h1>` +
-    `<p class="gl-lede">${entries.length} terms defined in this edition. ` +
-    `Jump by initial; each entry links to where it is defined.</p>` +
+    `<p class="gl-lede">Each entry is derived from a <code>&lt;dfn&gt;</code> ` +
+    `element in the official ECMAScript <code>spec.html</code> ` +
+    `(${entries.length} terms in this edition) and links to where the term is ` +
+    `defined. This glossary page is generated as a reading aid and is not ` +
+    `itself part of the specification.</p>` +
     `<nav class="gl-az" aria-label="Jump to letter">${az}</nav>${body}`;
 }
 
