@@ -30,6 +30,15 @@ const attrOf = (t, n) => {
   return m ? m[1] : "";
 };
 
+// Alphabetical key that ignores symbols: "%Array%" sorts and groups as
+// "Array", "[[HTMLDDA]] internal slot" as "HTMLDDA …". Terms with no
+// letters/digits fall back to the "#" group.
+const sortKey = (term) => term.toLowerCase().replace(/[^a-z0-9]+/g, "");
+const groupLetter = (term) => {
+  const k = sortKey(term);
+  return k && /[a-z]/.test(k[0]) ? k[0].toUpperCase() : "#";
+};
+
 // Walk every page's <dfn>s into glossary entries: term, inflected variants,
 // the defining sentence, and a link to where the term is defined (its own
 // dfn id, else the enclosing clause).
@@ -115,7 +124,10 @@ export function buildGlossary(siteDir, basePath) {
     seen.add(k);
     return true;
   });
-  uniq.sort((a, b) => a.term.toLowerCase().localeCompare(b.term.toLowerCase()));
+  uniq.sort((a, b) =>
+    sortKey(a.term).localeCompare(sortKey(b.term)) ||
+    a.term.toLowerCase().localeCompare(b.term.toLowerCase())
+  );
   return uniq;
 }
 
@@ -123,8 +135,7 @@ export function buildGlossary(siteDir, basePath) {
 function renderMain(entries) {
   const groups = new Map();
   for (const e of entries) {
-    let L = (e.term[0] || "#").toUpperCase();
-    if (!/[A-Z]/.test(L)) L = "#";
+    const L = groupLetter(e.term);
     if (!groups.has(L)) groups.set(L, []);
     groups.get(L).push(e);
   }
