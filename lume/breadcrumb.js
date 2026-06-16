@@ -62,15 +62,17 @@
       bar.classList.remove("show");
       return;
     }
+    // Span the full width like the header (a sub-header strip), but pad the
+    // text in so the crumbs line up with the prose — i.e. clear the sidebar
+    // and main's own inline padding. Confining the bar to the content column
+    // instead made it look like a stray segment floating right of the sidebar.
     const r = main.getBoundingClientRect();
-    bar.style.left = r.left + "px";
-    bar.style.width = r.width + "px";
+    const padL = parseFloat(getComputedStyle(main).paddingLeft) || 0;
+    bar.style.left = "0";
+    bar.style.right = "0";
+    bar.style.width = "auto";
     bar.style.top = headerH() + "px";
-    // Line the crumb text up with the prose, which sits inside main's
-    // inline padding (3rem on desktop) — otherwise the bar hangs out to the
-    // left of the body text.
-    bar.style.paddingLeft = (parseFloat(getComputedStyle(main).paddingLeft) ||
-      0) + "px";
+    bar.style.paddingLeft = r.left + padL + "px";
     bar.textContent = "";
     // Each crumb keeps its full text (no uniform flex-shrink that would chop
     // every level to "22 Te…"); items[i].sep is the separator *before* crumb i
