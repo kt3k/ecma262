@@ -3,7 +3,6 @@ import mdx from "lume/plugins/mdx.ts";
 import jsx from "lume/plugins/jsx.ts";
 import { writeXrefIndex } from "./scripts/xref-index.mjs";
 import { writeGlossary } from "./scripts/glossary.mjs";
-import chapters from "./_includes/chapters.ts";
 import {
   currentEditionId,
   hasGlossary,
@@ -102,54 +101,15 @@ site.process([".html"], (pages) => {
   const slugOf = (url: string) => url.replace(/^\/+|\/+$/g, "") || "index";
   const minutes: Record<string, number> = {};
   let totalMin = 0;
-  // For the "Up next" preview (idea E): each chapter's top-level sections, so a
-  // page can show what the *following* chapter covers. Built here because that
-  // data belongs to a different page than the one being rendered.
-  const sectionsBySlug: Record<string, { id: string; title: string }[]> = {};
-  const ledeBySlug: Record<string, string> = {};
   for (const page of pages) {
     const main = page.document?.querySelector("main");
     if (!main) continue;
-    const slug = slugOf(page.data.url as string);
     const words =
       (main.textContent ?? "").trim().split(/\s+/).filter(Boolean).length;
-    minutes[slug] = Math.max(1, Math.round(words / 200));
-    totalMin += minutes[slug];
-
-    const secs: { id: string; title: string }[] = [];
-    for (const clause of main.querySelectorAll("emu-clause[id]")) {
-      let depth = 0;
-      let p = clause.parentElement;
-      while (p) {
-        if (p.tagName?.toLowerCase() === "emu-clause") depth++;
-        p = p.parentElement;
-      }
-      if (depth !== 1) continue; // top-level sections only
-      let h: Element | null = null;
-      for (const ch of clause.children) {
-        if (/^h[1-6]$/i.test(ch.tagName)) {
-          h = ch;
-          break;
-        }
-      }
-      if (h) {
-        secs.push({
-          id: clause.id,
-          title: (h.textContent ?? "").replace(/\s+/g, " ").trim(),
-        });
-      }
-    }
-    sectionsBySlug[slug] = secs;
-    if (!secs.length) {
-      const t = (main.querySelector("p")?.textContent ?? "").replace(
-        /\s+/g,
-        " ",
-      ).trim();
-      if (t) ledeBySlug[slug] = t.length > 180 ? t.slice(0, 179) + "…" : t;
-    }
+    const m = Math.max(1, Math.round(words / 200));
+    minutes[slugOf(page.data.url as string)] = m;
+    totalMin += m;
   }
-  const hrefFor = (slug: string) =>
-    slug === "index" ? `${basePath}/` : `${basePath}/${slug}/`;
   const fmtTime = (m: number) =>
     m >= 60
       ? `${Math.floor(m / 60)}h${m % 60 ? " " + (m % 60) + "m" : ""}`
@@ -265,62 +225,6 @@ site.process([".html"], (pages) => {
       aside?.querySelector("h2")?.remove();
       tocOl.remove();
       aside?.classList.add("toc-empty");
-    }
-
-    // "Up next" preview (idea E): a teaser of the following chapter — its
-    // top-level sections (or, failing that, its opening sentence) — inserted
-    // just above the prev/next links to carry a cover-to-cover reader forward.
-    const here = slugOf(page.data.url as string);
-    const ci = chapters.findIndex((c: { slug: string }) => c.slug === here);
-    const nextCh = ci >= 0 && ci + 1 < chapters.length
-      ? chapters[ci + 1]
-      : null;
-    if (nextCh) {
-      const nextHref = hrefFor(nextCh.slug);
-      const box = document.createElement("aside");
-      box.setAttribute("class", "up-next");
-
-      const label = document.createElement("span");
-      label.setAttribute("class", "un-label");
-      label.textContent = "Up next";
-      box.appendChild(label);
-
-      const title = document.createElement("a");
-      title.setAttribute("class", "un-title");
-      title.setAttribute("href", nextHref);
-      title.textContent = nextCh.title;
-      box.appendChild(title);
-
-      const secs = sectionsBySlug[nextCh.slug] ?? [];
-      const SHOW = 6;
-      if (secs.length) {
-        const ul = document.createElement("ul");
-        ul.setAttribute("class", "un-secs");
-        for (const s of secs.slice(0, SHOW)) {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.setAttribute("href", `${nextHref}#${s.id}`);
-          a.textContent = s.title;
-          li.appendChild(a);
-          ul.appendChild(li);
-        }
-        if (secs.length > SHOW) {
-          const li = document.createElement("li");
-          li.setAttribute("class", "un-more");
-          li.textContent = `+${secs.length - SHOW} more`;
-          ul.appendChild(li);
-        }
-        box.appendChild(ul);
-      } else if (ledeBySlug[nextCh.slug]) {
-        const p = document.createElement("p");
-        p.setAttribute("class", "un-lede");
-        p.textContent = ledeBySlug[nextCh.slug];
-        box.appendChild(p);
-      }
-
-      const nav = main.querySelector("nav.prev-next");
-      if (nav) main.insertBefore(box, nav);
-      else main.appendChild(box);
     }
   }
 });
