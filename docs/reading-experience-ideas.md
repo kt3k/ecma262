@@ -95,9 +95,19 @@ reinforcements; E guards against drop-off.
 
 ### Editioning note (applies to A and B)
 
-Per-reader state must be keyed by edition. Section slugs and ids differ across
-editions, so a position or read-flag from one edition is meaningless in another;
-a global key would resume to the wrong place (or nowhere) after a version
-switch. Plan: namespace the `localStorage` keys by edition id (e.g.
-`ecma262:resume:<editionId>`, `ecma262:read:<editionId>`), so each edition keeps
-its own independent reading state.
+Per-reader state must be keyed by edition, and a single global "last position"
+record is _not_ enough. A reader part-way through the draft who briefly opens
+another edition would have their draft position clobbered — peeking must not
+destroy the main reading place. So:
+
+- **Per-edition records.** Namespace the `localStorage` keys by edition id
+  (`ecma262:resume:<editionId>`, `ecma262:read:<editionId>`). Opening edition B
+  only ever writes B's key; edition A's resume point stays intact.
+- **Update only on meaningful reading.** Write/move a resume point only after
+  real engagement (scrolled past a threshold, or dwelled beyond a few seconds),
+  not on a quick open. This keeps a brief peek from disturbing the bookmark even
+  within the same edition.
+- **Global "continue" CTA picks the last _substantial_ read.** The landing /
+  about entry surfaces the edition with the most recent meaningful reading (not
+  merely the last edition touched), optionally listing other in-progress
+  editions. So "read the draft → peek ES2015 → return" still resumes the draft.
