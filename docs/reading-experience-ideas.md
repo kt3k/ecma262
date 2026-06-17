@@ -56,6 +56,12 @@ cluttered or misleading reading surface.
 - **Idea 8 — Algorithm step count / overview.** Step counts and collapse toggles
   add chrome to every `<emu-alg>` for marginal benefit; the step numbers are
   already visible inline.
+- **D — Keyboard sequential navigation (end-to-end track).** `j`/`k`/`n`/`p`
+  read-through shortcuts. Very few readers would use them, they're hard to
+  discover, and unmodified single-key shortcuts trip WCAG 2.1 SC 2.1.4
+  (Character Key Shortcuts) — risky for speech-input users. Existing means
+  (Space/PageDown to scroll, prev/next links, `/` to find) already cover the
+  need.
 
 ## Completed groundwork
 
@@ -81,9 +87,6 @@ links — and are chosen to stay non-intrusive.
   _within_ a chapter; this tracks the _whole_ spec. Mark a chapter read once it
   has been scrolled to the end, show a check / faint heatmap in the sidebar and
   an overall "N% read". Local-only, so nothing is imposed on the reader.
-- **D — Keyboard sequential navigation.** `j`/`k` for next/previous section,
-  `n`/`p` for next/previous chapter, `?` for a help overlay — read through
-  without the mouse. Adds nothing to the page surface.
 - **E — "Up next" chapter preview.** Extend the chapter-end prev/next with a
   short teaser of the next chapter (its opening sentences or subsection list) to
   pull the reader forward. Only at chapter boundaries, never in the prose.
@@ -91,8 +94,8 @@ links — and are chosen to stay non-intrusive.
   breadcrumb): a thin overall progress marker showing how far through the entire
   spec the current position is, for a sense of "early vs late".
 
-Front-runners: **A + B** (the core read-through pair); D is a light
-reinforcement; E guards against drop-off. (C shipped — see above.)
+Front-runners: **A + B** (the core read-through pair); E guards against
+drop-off. (C shipped, D declined — see above.)
 
 ### Editioning note (applies to A and B)
 
