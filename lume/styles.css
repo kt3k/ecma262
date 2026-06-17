@@ -708,7 +708,7 @@ aside.sidebar .sidebar-list a .ch-time {
   opacity: 0.6;
 }
 aside.sidebar .sidebar-readtime {
-  padding: 0 1rem 0.4rem;
+  padding: 0.85rem 1rem 0.4rem;
   color: var(--muted);
   font-size: 0.72rem;
   letter-spacing: 0.02em;
