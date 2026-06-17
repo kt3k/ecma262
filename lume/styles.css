@@ -696,6 +696,24 @@ aside.sidebar .sidebar-list a:hover {
   background: rgba(127, 127, 127, 0.12);
   color: var(--fg);
 }
+/* Reading-time labels (idea C, injected in _config.ts): a muted "~12 min" on
+   each chapter link, plus a spec-wide total line above the list. */
+aside.sidebar .sidebar-list a .ch-time {
+  float: right;
+  margin-left: 0.5em;
+  font-weight: 400;
+  font-size: 0.78em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  opacity: 0.6;
+}
+aside.sidebar .sidebar-readtime {
+  padding: 0 1rem 0.4rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
 /* Active item — Nextra's x:bg-primary-100 x:font-semibold x:text-primary-800
    (and the dark-mode primary-400/10 + primary-600). The HSL values fall out
    of Nextra's --nextra-primary-* tokens; lume-poc doesn't share that token

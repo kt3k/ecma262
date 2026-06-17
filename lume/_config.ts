@@ -93,9 +93,59 @@ site.copy("favicon.svg");
 // Using the <emu-clause> structure (rather than scanning h2/h3 directly) gets
 // us anchor ids that match the spec's `#sec-…` convention out of the box.
 site.process([".html"], (pages) => {
+  // Reading-time estimates (idea C): count the words in each chapter's <main>
+  // once, turn them into minutes (~200 wpm), and total the whole edition. The
+  // labels are injected into the sidebar below, so every page needs all the
+  // chapter times up front — hence this first pass over `pages`.
+  const basePath = Deno.env.get("BASE_PATH") ?? "";
+  const slugOf = (url: string) => url.replace(/^\/+|\/+$/g, "") || "index";
+  const minutes: Record<string, number> = {};
+  let totalMin = 0;
+  for (const page of pages) {
+    const main = page.document?.querySelector("main");
+    if (!main) continue;
+    const words =
+      (main.textContent ?? "").trim().split(/\s+/).filter(Boolean).length;
+    const m = Math.max(1, Math.round(words / 200));
+    minutes[slugOf(page.data.url as string)] = m;
+    totalMin += m;
+  }
+  const fmtTime = (m: number) =>
+    m >= 60
+      ? `${Math.floor(m / 60)}h${m % 60 ? " " + (m % 60) + "m" : ""}`
+      : `${m} min`;
+
   for (const page of pages) {
     const document = page.document;
     if (!document) continue;
+
+    // Annotate the sidebar: a "~12 min" label per chapter and a spec-wide
+    // total line above the list. Runs on every page (the sidebar is shared).
+    const list = document.querySelector(".sidebar-list");
+    if (list) {
+      for (const li of Array.from(list.children)) {
+        if (li.tagName?.toLowerCase() !== "li") continue;
+        const a = li.querySelector("a");
+        if (!a) continue;
+        const href = a.getAttribute("href") ?? "";
+        const rel = href.startsWith(basePath)
+          ? href.slice(basePath.length)
+          : href;
+        const m = minutes[slugOf(rel)];
+        if (!m) continue;
+        const span = document.createElement("span");
+        span.setAttribute("class", "ch-time");
+        span.textContent = fmtTime(m);
+        a.appendChild(span);
+      }
+      if (totalMin && !document.querySelector(".sidebar-readtime")) {
+        const tot = document.createElement("div");
+        tot.setAttribute("class", "sidebar-readtime");
+        tot.textContent = `Full read · ~${fmtTime(totalMin)}`;
+        list.parentElement?.insertBefore(tot, list);
+      }
+    }
+
     const tocOl = document.querySelector("aside.toc > ol");
     const main = document.querySelector("main");
     if (!tocOl || !main) continue;
