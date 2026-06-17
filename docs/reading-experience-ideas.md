@@ -31,6 +31,11 @@ what shipped, what was declined, and what's still open.
   build time, ~200 wpm) on the sidebar links, plus a "Full read · ~21h 29m"
   total above the chapter list — to help plan an end-to-end read-through.
   Computed in `lume/_config.ts`'s `site.process` pass.
+- **E — "Up next" chapter preview.** A bordered card above the prev/next links
+  teasing the following chapter — its title plus its top-level sections
+  (linked), or its opening sentence when it has no subsections — to carry a
+  reader forward at chapter boundaries. Built in `lume/_config.ts`'s
+  `site.process` pass.
 
 ## Declined (would add noise)
 
@@ -87,15 +92,12 @@ links — and are chosen to stay non-intrusive.
   _within_ a chapter; this tracks the _whole_ spec. Mark a chapter read once it
   has been scrolled to the end, show a check / faint heatmap in the sidebar and
   an overall "N% read". Local-only, so nothing is imposed on the reader.
-- **E — "Up next" chapter preview.** Extend the chapter-end prev/next with a
-  short teaser of the next chapter (its opening sentences or subsection list) to
-  pull the reader forward. Only at chapter boundaries, never in the prose.
 - **F — Whole-spec position indicator.** Distinct from Idea 4 (the tree-depth
   breadcrumb): a thin overall progress marker showing how far through the entire
   spec the current position is, for a sense of "early vs late".
 
-Front-runners: **A + B** (the core read-through pair); E guards against
-drop-off. (C shipped, D declined — see above.)
+Front-runners: **A + B** (the core read-through pair). (C and E shipped, D
+declined — see above.)
 
 ### Editioning note (applies to A and B)
 
