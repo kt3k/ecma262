@@ -27,6 +27,10 @@ what shipped, what was declined, and what's still open.
   non-normative status explicit. Files: `lume/scripts/glossary.mjs`,
   `lume/glossary.js`. (The _inline-tooltip_ form of this idea was declined — see
   below.)
+- **C — Reading-time estimates.** Per-chapter "~12 min" labels (word count at
+  build time, ~200 wpm) on the sidebar links, plus a "Full read · ~21h 29m"
+  total above the chapter list — to help plan an end-to-end read-through.
+  Computed in `lume/_config.ts`'s `site.process` pass.
 
 ## Declined (would add noise)
 
@@ -77,9 +81,6 @@ links — and are chosen to stay non-intrusive.
   _within_ a chapter; this tracks the _whole_ spec. Mark a chapter read once it
   has been scrolled to the end, show a check / faint heatmap in the sidebar and
   an overall "N% read". Local-only, so nothing is imposed on the reader.
-- **C — Estimated reading time.** A muted "~12 min" per chapter (from word
-  count, computed at build time) in the sidebar/TOC, plus a spec-wide total, so
-  a read-through can be planned. One small number — low noise.
 - **D — Keyboard sequential navigation.** `j`/`k` for next/previous section,
   `n`/`p` for next/previous chapter, `?` for a help overlay — read through
   without the mouse. Adds nothing to the page surface.
@@ -90,8 +91,8 @@ links — and are chosen to stay non-intrusive.
   breadcrumb): a thin overall progress marker showing how far through the entire
   spec the current position is, for a sense of "early vs late".
 
-Front-runners: **A + B** (the core read-through pair); C/D are light
-reinforcements; E guards against drop-off.
+Front-runners: **A + B** (the core read-through pair); D is a light
+reinforcement; E guards against drop-off. (C shipped — see above.)
 
 ### Editioning note (applies to A and B)
 
