@@ -945,6 +945,63 @@ main {
   }
 }
 
+/* "Up next" chapter preview (idea E, injected in _config.ts): a bordered,
+   lightly-tinted card just above the prev/next links, teasing the following
+   chapter's top-level sections to pull a cover-to-cover reader forward. */
+.up-next {
+  margin-top: 3rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--ecma-panel-radius, 10px);
+  background: color-mix(in srgb, var(--muted) 5%, transparent);
+}
+.up-next .un-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.up-next .un-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--fg);
+  text-decoration: none;
+}
+.up-next .un-title:hover {
+  color: var(--accent);
+}
+.up-next .un-secs {
+  margin: 0.7rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+}
+.up-next .un-secs li {
+  font-size: 0.85rem;
+}
+.up-next .un-secs a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.up-next .un-secs a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.up-next .un-more {
+  color: var(--muted);
+  opacity: 0.7;
+}
+.up-next .un-lede {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 /* Right-rail TOC — port of nextra-theme-docs' <nav class="nextra-toc">:
    sticky 3-row grid (heading / list / footer), borderless, 14px text.
    Same trick as the sidebar: let the row stretch this to its cell
