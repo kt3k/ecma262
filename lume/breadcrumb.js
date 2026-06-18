@@ -62,18 +62,18 @@
       bar.classList.remove("show");
       return;
     }
-    // Anchored to the left like the header (so it doesn't read as a stray
-    // segment floating right of the sidebar), but ended at the content column's
-    // right edge rather than full-width — otherwise the bar runs over the
-    // right-rail TOC and covers the whole-spec position timeline at its top.
+    // Confine the bar to the content column (main): starting at the viewport
+    // left ran it over the sidebar, and full-width ran it over the right-rail
+    // TOC. Sitting within main — with a left border + bottom-left radius (CSS)
+    // — reads as a panel hanging under the header inside the reading column.
     // The crumb text is padded in to line up with the prose.
     const r = main.getBoundingClientRect();
     const padL = parseFloat(getComputedStyle(main).paddingLeft) || 0;
-    bar.style.left = "0";
+    bar.style.left = r.left + "px";
     bar.style.right = "auto";
-    bar.style.width = r.right + "px";
+    bar.style.width = r.width + "px";
     bar.style.top = headerH() + "px";
-    bar.style.paddingLeft = r.left + padL + "px";
+    bar.style.paddingLeft = padL + "px";
     bar.textContent = "";
     // Each crumb keeps its full text (no uniform flex-shrink that would chop
     // every level to "22 Te…"); items[i].sep is the separator *before* crumb i

@@ -3059,7 +3059,12 @@ aside.toc h2 .rp-count {
   background: color-mix(in srgb, var(--chrome-bg) 86%, transparent);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+  /* Sits within the content column: left + bottom borders, with only the
+     bottom-left corner rounded, so it reads as a panel hanging off the header
+     inside the reading column. */
+  border-left: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
+  border-bottom-left-radius: 8px;
 }
 #crumb-bar.show {
   display: flex;
