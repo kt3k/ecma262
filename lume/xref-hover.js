@@ -132,6 +132,10 @@
   const onOver = async (e) => {
     const a = e.target.closest && e.target.closest("a[href]");
     if (!a || a === card || card.contains(a)) return;
+    // Only the spec prose gets cards. The right-rail TOC, breadcrumb and
+    // sidebar links also point at "#sec-…" fragments, but a card there is just
+    // noise — those lists already show the section title.
+    if (!a.closest("#content")) return;
     const frag = fragOf(a);
     if (!frag) return;
     const y = e.clientY; // pointer line, for wrapped-link placement
