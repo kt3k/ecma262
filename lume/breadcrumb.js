@@ -62,15 +62,16 @@
       bar.classList.remove("show");
       return;
     }
-    // Span the full width like the header (a sub-header strip), but pad the
-    // text in so the crumbs line up with the prose — i.e. clear the sidebar
-    // and main's own inline padding. Confining the bar to the content column
-    // instead made it look like a stray segment floating right of the sidebar.
+    // Anchored to the left like the header (so it doesn't read as a stray
+    // segment floating right of the sidebar), but ended at the content column's
+    // right edge rather than full-width — otherwise the bar runs over the
+    // right-rail TOC and covers the whole-spec position timeline at its top.
+    // The crumb text is padded in to line up with the prose.
     const r = main.getBoundingClientRect();
     const padL = parseFloat(getComputedStyle(main).paddingLeft) || 0;
     bar.style.left = "0";
-    bar.style.right = "0";
-    bar.style.width = "auto";
+    bar.style.right = "auto";
+    bar.style.width = r.right + "px";
     bar.style.top = headerH() + "px";
     bar.style.paddingLeft = r.left + padL + "px";
     bar.textContent = "";

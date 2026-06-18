@@ -1155,8 +1155,10 @@ aside.toc .spec-pos .sp-dot {
 }
 aside.toc .spec-pos .sp-pop {
   position: absolute;
-  bottom: calc(100% + 3px);
-  z-index: 10;
+  /* Below the timeline, not above: the strip sits right under the header, so a
+     popover above would slip behind the (higher-stacked, blurred) header. */
+  top: calc(100% + 6px);
+  z-index: 36;
   transform: translateX(-50%);
   max-width: 210px;
   padding: 0.3rem 0.5rem;
