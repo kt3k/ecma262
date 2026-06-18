@@ -167,56 +167,54 @@ export default function Page(
             />
           </main>
           <aside class="toc" aria-label="On this page">
+            {
+              /* Whole-spec position strip (idea F), pinned at the top of the
+                rail above "On This Page" so its position is the same on every
+                page. Skeleton only — _config.ts injects the per-page position
+                (data-before/-span + ticks + chapter segments) and
+                reading-progress.js advances it on scroll. aria-hidden: an
+                orientation aid duplicating what the chapter list already gives. */
+            }
+            <div id="spec-pos" class="spec-pos" aria-hidden="true">
+              <span class="sp-track">
+                <i class="sp-done"></i>
+                <i class="sp-dot"></i>
+                <span class="sp-pop"></span>
+              </span>
+              <span class="sp-label"></span>
+            </div>
             <h2>On This Page</h2>
             <ol></ol>
             {
-              /* Pinned rail footer: the whole-spec position strip (idea F) above
-                the feedback link, so both stay at the bottom of the sticky rail
-                while the list scrolls. The strip is a skeleton — _config.ts
-                injects the per-page position (data-before/-span + ticks) and
-                reading-progress.js advances it on scroll. aria-hidden: it's an
-                orientation aid duplicating what the chapter list already gives. */
+              /* "Question? Give us feedback →" — Nextra's default link below
+                the on-this-page list. URL mirrors the format nextra-theme-docs
+                generates from docsRepositoryBase: /issues/new with a
+                pre-filled title + labels=feedback. */
             }
-            <div class="toc-foot">
-              <div id="spec-pos" class="spec-pos" aria-hidden="true">
-                <span class="sp-track">
-                  <i class="sp-done"></i>
-                  <i class="sp-dot"></i>
-                  <span class="sp-pop"></span>
-                </span>
-                <span class="sp-label"></span>
-              </div>
-              {
-                /* "Question? Give us feedback →" — Nextra's default link below
-                  the on-this-page list. URL mirrors the format nextra-theme-docs
-                  generates from docsRepositoryBase: /issues/new with a
-                  pre-filled title + labels=feedback. */
-              }
-              <a
-                class="toc-feedback"
-                href={`https://github.com/kt3k/ecma262/issues/new?title=${
-                  encodeURIComponent(`Feedback for "${title ?? "ECMA-262"}"`)
-                }&labels=feedback`}
-                target="_blank"
-                rel="noreferrer"
+            <a
+              class="toc-feedback"
+              href={`https://github.com/kt3k/ecma262/issues/new?title=${
+                encodeURIComponent(`Feedback for "${title ?? "ECMA-262"}"`)
+              }&labels=feedback`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Question? Give us feedback
+              {/* 45° external-link arrow, matches Nextra's TOC feedback icon. */}
+              <svg
+                class="toc-feedback-arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
               >
-                Question? Give us feedback
-                {/* 45° external-link arrow, matches Nextra's TOC feedback icon. */}
-                <svg
-                  class="toc-feedback-arrow"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M7 17L17 7"></path>
-                  <path d="M7 7h10v10"></path>
-                </svg>
-              </a>
-            </div>
+                <path d="M7 17L17 7"></path>
+                <path d="M7 7h10v10"></path>
+              </svg>
+            </a>
           </aside>
         </div>
         <Footer />

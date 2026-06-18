@@ -958,14 +958,17 @@ aside.toc {
   height: calc(100vh - var(--header-h));
   height: calc(100dvh - var(--header-h));
   display: grid;
-  grid-template-rows: min-content 1fr min-content;
+  /* position strip (top) / heading / scrolling list / feedback (bottom) */
+  grid-template-rows: min-content min-content 1fr min-content;
   font-size: 0.875rem; /* x:text-sm */
 }
 /* "On This Page" heading — plain semibold label, no uppercase / muted /
    spacing, matching Nextra's <p class="x:pt-6 x:px-4 x:font-semibold">. */
 aside.toc h2 {
   margin: 0;
-  padding: 1.5rem 1rem 0;
+  /* The position strip above now carries the top clearance, so the heading
+     sits a smaller gap below it. */
+  padding: 0.9rem 1rem 0;
   font-size: inherit;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -1050,19 +1053,13 @@ html.dark aside.sidebar .sidebar-toc a.active {
 /* Footer row under the TOC list: thin top border, x:py-4 x:mx-4 inset,
    x:gap-2. Holds the "Question? Give us feedback" external link (and a
    stub scroll-to-top button later if we want it). */
-/* Pinned footer of the right rail (grid's last min-content row): the
-   whole-spec position strip (idea F) sits above the feedback link, so both
-   stay at the bottom of the rail while the TOC list scrolls between. */
-aside.toc .toc-foot {
-  display: flex;
-  flex-direction: column;
-}
 aside.toc .toc-feedback {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   margin: 0 1rem;
-  padding: 0.85rem 0 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--rule);
   color: var(--muted);
   font-size: 0.75rem; /* x:text-xs */
   font-weight: 500;
@@ -1072,14 +1069,20 @@ aside.toc .toc-feedback {
 aside.toc .toc-feedback:hover {
   color: var(--fg);
 }
+/* On a page with no sections the TOC heading + list are removed (see the
+   .toc-empty flag in _config.ts), so the feedback link's top rule is dropped. */
+aside.toc.toc-empty .toc-feedback {
+  border-top: none;
+}
 /* Whole-spec position strip (idea F): a thin V3 tick timeline + dot showing how
-   far through the entire spec the current position is. The top rule separates
-   the footer from the scrolling TOC list; reading-progress.js advances the
-   dot/fill/label, per-page data (data-before/-span) comes from _config.ts. */
+   far through the entire spec the current position is. Pinned at the top of the
+   rail (above "On This Page"); the bottom rule separates it from the heading.
+   reading-progress.js advances the dot/fill/label; per-page data (data-before/
+   -span) + ticks + chapter segments come from _config.ts. */
 aside.toc .spec-pos {
   margin: 0 1rem;
-  padding-top: 0.85rem;
-  border-top: 1px solid var(--rule);
+  padding: 1.5rem 0 0.9rem;
+  border-bottom: 1px solid var(--rule);
 }
 /* Taller than the visible line so each chapter segment is comfortable to hover;
    the 2px line itself is drawn by ::before, the dot/fill/ticks ride its centre. */
@@ -1179,12 +1182,6 @@ aside.toc .spec-pos .sp-label {
   font-size: 0.72rem;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-}
-/* On a page with no sections the TOC heading + list are removed (see the
-   .toc-empty flag set in _config.ts); the footer is then the only child — drop
-   the strip's top rule since there's nothing above it. */
-aside.toc.toc-empty .spec-pos {
-  border-top: none;
 }
 aside.toc .toc-feedback-arrow {
   width: 1em;
