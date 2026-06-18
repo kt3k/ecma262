@@ -182,6 +182,7 @@ export default function Page(
                 <span class="sp-track">
                   <i class="sp-done"></i>
                   <i class="sp-dot"></i>
+                  <span class="sp-pop"></span>
                 </span>
                 <span class="sp-label"></span>
               </div>

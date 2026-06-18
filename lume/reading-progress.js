@@ -36,15 +36,36 @@
     aside.appendChild(track);
   }
 
-  // Whole-spec position strip (idea F, skeleton from header.tsx, per-page data
-  // from _config.ts). The dot sits at `before + chapterFraction * span` of the
-  // entire spec; advance it as this chapter is read.
+  // Whole-spec position strip (idea F; skeleton in page.tsx, per-page data +
+  // chapter segments injected in _config.ts). The dot sits at `before +
+  // chapterFraction * span` of the entire spec; advance it as this chapter is
+  // read.
   const sp = document.getElementById("spec-pos");
   const spDone = sp && sp.querySelector(".sp-done");
   const spDot = sp && sp.querySelector(".sp-dot");
   const spLabel = sp && sp.querySelector(".sp-label");
   const spBefore = sp ? parseFloat(sp.dataset.before) : NaN;
   const spSpan = sp ? parseFloat(sp.dataset.span) : NaN;
+
+  // Hover a chapter segment → CSS highlights its span; show its name in the
+  // shared popover, clamped to the track so long titles don't run off the rail.
+  const spTrack = sp && sp.querySelector(".sp-track");
+  const spPop = sp && sp.querySelector(".sp-pop");
+  if (sp && spTrack && spPop) {
+    for (const seg of sp.querySelectorAll(".sp-seg")) {
+      seg.addEventListener("mouseenter", () => {
+        spPop.textContent = seg.dataset.name || "";
+        spPop.classList.add("show");
+        const tw = spTrack.clientWidth;
+        const left = parseFloat(seg.style.left) / 100 * tw;
+        const w = parseFloat(seg.style.width) / 100 * tw;
+        const pw = spPop.offsetWidth;
+        const cx = Math.max(pw / 2, Math.min(tw - pw / 2, left + w / 2));
+        spPop.style.left = cx + "px";
+      });
+      seg.addEventListener("mouseleave", () => spPop.classList.remove("show"));
+    }
+  }
 
   const frac = () => {
     const top = window.scrollY + main.getBoundingClientRect().top;

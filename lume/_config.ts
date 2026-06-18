@@ -141,6 +141,13 @@ site.process([".html"], (pages) => {
   // Internal chapter-boundary positions (0% and 100% are the track ends), the
   // ticks of the V3 timeline — constant across pages.
   const tickPos = beforeW.slice(1).map((w) => (w / totalW * 100).toFixed(2));
+  // One hover segment per chapter (its span of the track + its name), for the
+  // hover highlight + name popover. Constant across pages.
+  const segs = order.map((slug, i) => ({
+    left: (beforeW[i] / totalW * 100).toFixed(3),
+    width: (weights[i] / totalW * 100).toFixed(3),
+    name: chapters[i]?.title ?? slug,
+  }));
 
   for (const page of pages) {
     const document = page.document;
@@ -194,6 +201,15 @@ site.process([".html"], (pages) => {
             tick.setAttribute("class", "sp-tick");
             tick.setAttribute("style", `left:${x}%`);
             track.insertBefore(tick, dotEl);
+          }
+          // Per-chapter hover segments (transparent; CSS highlights on hover,
+          // reading-progress.js shows the name popover).
+          for (const s of segs) {
+            const seg = document.createElement("span");
+            seg.setAttribute("class", "sp-seg");
+            seg.setAttribute("style", `left:${s.left}%;width:${s.width}%`);
+            seg.setAttribute("data-name", s.name);
+            track.insertBefore(seg, dotEl);
           }
         }
         const label = sp.querySelector(".sp-label");
