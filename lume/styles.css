@@ -107,13 +107,7 @@
   --sidebar-w: 256px; /* matches Nextra's x:w-64 */
   --toc-w: 256px; /* matches Nextra's x:w-64 */
   --content-max-w: 90rem; /* matches Nextra's --nextra-content-width (1440px) */
-  --navbar-h: 4rem; /* the title row — matches Nextra's --nextra-navbar-height */
-  --specpos-h: 1.85rem; /* whole-spec position strip under the title row */
-  /* Total sticky-header height. Everything below the header (scroll-padding,
-     sidebar / right-rail sticky tops, the breadcrumb, the mobile reading bar)
-     keys off this, so adding the position strip to the header band just works
-     as long as --header-h covers it. */
-  --header-h: calc(var(--navbar-h) + var(--specpos-h));
+  --header-h: 4rem; /* matches Nextra's --nextra-navbar-height: 64px */
 
   /* Body / spec typography — the IBM Plex families tc39.es ships:
        - Plex Serif (body) — loaded via @font-face above, so the reading
@@ -326,70 +320,11 @@ html:not(
   align-items: center;
   justify-content: flex-end;
   gap: 1rem;
-  min-height: var(--navbar-h);
+  min-height: var(--header-h);
   max-width: var(--content-max-w);
   margin-inline: auto;
   padding-inline: max(env(safe-area-inset-left), 1.5rem)
     max(env(safe-area-inset-right), 1.5rem);
-}
-/* Whole-spec position strip (idea F): a thin always-on band below the title
-   row, inside the sticky header band. A "done" fill + a dot mark how far
-   through the entire spec the current scroll position is; reading-progress.js
-   advances them as the chapter is read. Per-page data (data-before/-span/
-   -chlabel) is injected in _config.ts. */
-.spec-pos {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  height: var(--specpos-h);
-  max-width: var(--content-max-w);
-  margin-inline: auto;
-  padding-inline: max(env(safe-area-inset-left), 1.5rem)
-    max(env(safe-area-inset-right), 1.5rem);
-  border-top: 1px solid var(--rule);
-}
-.spec-pos .sp-track {
-  position: relative;
-  flex: 1;
-  height: 2px;
-  border-radius: 1px;
-  background: color-mix(in srgb, var(--muted) 25%, transparent);
-}
-.spec-pos .sp-done {
-  position: absolute;
-  inset: 0 auto 0 0;
-  height: 100%;
-  border-radius: 1px;
-  background: var(--accent);
-  opacity: 0.5;
-}
-/* Chapter-boundary ticks (injected in _config.ts) — the "timeline" of V3. */
-.spec-pos .sp-tick {
-  position: absolute;
-  top: 50%;
-  width: 1px;
-  height: 7px;
-  background: color-mix(in srgb, var(--muted) 40%, transparent);
-  transform: translate(-50%, -50%);
-}
-.spec-pos .sp-dot {
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid rgb(var(--bg-rgb));
-  box-shadow: 0 0 0 1px var(--accent);
-  transform: translate(-50%, -50%);
-}
-.spec-pos .sp-label {
-  flex: none;
-  font-size: 0.72rem;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
 /* Title cluster: bold main title + dotted-underline status badge link +
    VersionSwitcher chevron, all on one baseline. Mirrors the navbar logo of
@@ -1115,13 +1050,19 @@ html.dark aside.sidebar .sidebar-toc a.active {
 /* Footer row under the TOC list: thin top border, x:py-4 x:mx-4 inset,
    x:gap-2. Holds the "Question? Give us feedback" external link (and a
    stub scroll-to-top button later if we want it). */
+/* Pinned footer of the right rail (grid's last min-content row): the
+   whole-spec position strip (idea F) sits above the feedback link, so both
+   stay at the bottom of the rail while the TOC list scrolls between. */
+aside.toc .toc-foot {
+  display: flex;
+  flex-direction: column;
+}
 aside.toc .toc-feedback {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   margin: 0 1rem;
-  padding: 1rem 0;
-  border-top: 1px solid var(--rule);
+  padding: 0.85rem 0 1rem;
   color: var(--muted);
   font-size: 0.75rem; /* x:text-xs */
   font-weight: 500;
@@ -1131,11 +1072,61 @@ aside.toc .toc-feedback {
 aside.toc .toc-feedback:hover {
   color: var(--fg);
 }
+/* Whole-spec position strip (idea F): a thin V3 tick timeline + dot showing how
+   far through the entire spec the current position is. The top rule separates
+   the footer from the scrolling TOC list; reading-progress.js advances the
+   dot/fill/label, per-page data (data-before/-span) comes from _config.ts. */
+aside.toc .spec-pos {
+  margin: 0 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--rule);
+}
+aside.toc .spec-pos .sp-track {
+  display: block;
+  position: relative;
+  height: 2px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--muted) 25%, transparent);
+}
+aside.toc .spec-pos .sp-done {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--accent);
+  opacity: 0.5;
+}
+aside.toc .spec-pos .sp-tick {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 6px;
+  background: color-mix(in srgb, var(--muted) 35%, transparent);
+  transform: translate(-50%, -50%);
+}
+aside.toc .spec-pos .sp-dot {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid rgb(var(--bg-rgb));
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: translate(-50%, -50%);
+}
+aside.toc .spec-pos .sp-label {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
 /* On a page with no sections the TOC heading + list are removed (see the
-   .toc-empty flag set in _config.ts), so the feedback link is the only child —
-   drop its top rule, matching Nextra (which adds the rule only when there are
-   headings). */
-aside.toc.toc-empty .toc-feedback {
+   .toc-empty flag set in _config.ts); the footer is then the only child — drop
+   the strip's top rule since there's nothing above it. */
+aside.toc.toc-empty .spec-pos {
   border-top: none;
 }
 aside.toc .toc-feedback-arrow {

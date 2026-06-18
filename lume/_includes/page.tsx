@@ -170,35 +170,52 @@ export default function Page(
             <h2>On This Page</h2>
             <ol></ol>
             {
-              /* "Question? Give us feedback →" — Nextra's default link below
-                the on-this-page list. URL mirrors the format nextra-theme-docs
-                generates from docsRepositoryBase: /issues/new with a
-                pre-filled title + labels=feedback. */
+              /* Pinned rail footer: the whole-spec position strip (idea F) above
+                the feedback link, so both stay at the bottom of the sticky rail
+                while the list scrolls. The strip is a skeleton — _config.ts
+                injects the per-page position (data-before/-span + ticks) and
+                reading-progress.js advances it on scroll. aria-hidden: it's an
+                orientation aid duplicating what the chapter list already gives. */
             }
-            <a
-              class="toc-feedback"
-              href={`https://github.com/kt3k/ecma262/issues/new?title=${
-                encodeURIComponent(`Feedback for "${title ?? "ECMA-262"}"`)
-              }&labels=feedback`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Question? Give us feedback
-              {/* 45° external-link arrow, matches Nextra's TOC feedback icon. */}
-              <svg
-                class="toc-feedback-arrow"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
+            <div class="toc-foot">
+              <div id="spec-pos" class="spec-pos" aria-hidden="true">
+                <span class="sp-track">
+                  <i class="sp-done"></i>
+                  <i class="sp-dot"></i>
+                </span>
+                <span class="sp-label"></span>
+              </div>
+              {
+                /* "Question? Give us feedback →" — Nextra's default link below
+                  the on-this-page list. URL mirrors the format nextra-theme-docs
+                  generates from docsRepositoryBase: /issues/new with a
+                  pre-filled title + labels=feedback. */
+              }
+              <a
+                class="toc-feedback"
+                href={`https://github.com/kt3k/ecma262/issues/new?title=${
+                  encodeURIComponent(`Feedback for "${title ?? "ECMA-262"}"`)
+                }&labels=feedback`}
+                target="_blank"
+                rel="noreferrer"
               >
-                <path d="M7 17L17 7"></path>
-                <path d="M7 7h10v10"></path>
-              </svg>
-            </a>
+                Question? Give us feedback
+                {/* 45° external-link arrow, matches Nextra's TOC feedback icon. */}
+                <svg
+                  class="toc-feedback-arrow"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M7 17L17 7"></path>
+                  <path d="M7 7h10v10"></path>
+                </svg>
+              </a>
+            </div>
           </aside>
         </div>
         <Footer />
