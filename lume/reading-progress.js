@@ -36,6 +36,16 @@
     aside.appendChild(track);
   }
 
+  // Whole-spec position strip (idea F, skeleton from header.tsx, per-page data
+  // from _config.ts). The dot sits at `before + chapterFraction * span` of the
+  // entire spec; advance it as this chapter is read.
+  const sp = document.getElementById("spec-pos");
+  const spDone = sp && sp.querySelector(".sp-done");
+  const spDot = sp && sp.querySelector(".sp-dot");
+  const spLabel = sp && sp.querySelector(".sp-label");
+  const spBefore = sp ? parseFloat(sp.dataset.before) : NaN;
+  const spSpan = sp ? parseFloat(sp.dataset.span) : NaN;
+
   const frac = () => {
     const top = window.scrollY + main.getBoundingClientRect().top;
     const span = main.offsetHeight - window.innerHeight;
@@ -45,7 +55,17 @@
   };
 
   const update = () => {
-    document.documentElement.style.setProperty("--rp", frac().toFixed(4));
+    const f = frac();
+    document.documentElement.style.setProperty("--rp", f.toFixed(4));
+    if (sp && !isNaN(spBefore) && !isNaN(spSpan)) {
+      const p = Math.min(1, spBefore + f * spSpan);
+      const pc = (p * 100).toFixed(2) + "%";
+      if (spDone) spDone.style.width = pc;
+      if (spDot) spDot.style.left = pc;
+      if (spLabel) {
+        spLabel.textContent = "~" + Math.round(p * 100) + "% through";
+      }
+    }
     if (!count) return;
     let active = -1;
     for (let i = 0; i < tocLinks.length; i++) {

@@ -122,6 +122,20 @@ export default function Header(
           </svg>
         </button>
       </nav>
+      {
+        /* Whole-spec position strip (idea F). Skeleton only; _config.ts fills
+          in the per-page data (data-before / data-span / data-chlabel and the
+          initial dot/fill/label), and reading-progress.js advances the dot as
+          the chapter is read. aria-hidden — it's an orientation aid that
+          duplicates information already reachable from the chapter list. */
+      }
+      <div id="spec-pos" class="spec-pos" aria-hidden="true">
+        <span class="sp-track">
+          <i class="sp-done"></i>
+          <i class="sp-dot"></i>
+        </span>
+        <span class="sp-label"></span>
+      </div>
     </header>
   );
 }

@@ -3,6 +3,7 @@ import mdx from "lume/plugins/mdx.ts";
 import jsx from "lume/plugins/jsx.ts";
 import { writeXrefIndex } from "./scripts/xref-index.mjs";
 import { writeGlossary } from "./scripts/glossary.mjs";
+import chapters from "./_includes/chapters.ts";
 import {
   currentEditionId,
   hasGlossary,
@@ -115,6 +116,29 @@ site.process([".html"], (pages) => {
       ? `${Math.floor(m / 60)}h${m % 60 ? " " + (m % 60) + "m" : ""}`
       : `${m} min`;
 
+  // Whole-spec position (idea F): cumulative reading-weight per chapter in
+  // chapters order, so each page knows what fraction of the spec precedes it
+  // (the position strip's dot/fill). Weight = the same word count as above.
+  const order: string[] = chapters.map((c: { slug: string }) => c.slug);
+  const weights = order.map((s) => minutes[s] ?? 1);
+  const totalW = weights.reduce((a, b) => a + b, 0) || 1;
+  const beforeW: number[] = [];
+  let accW = 0;
+  for (const w of weights) {
+    beforeW.push(accW);
+    accW += w;
+  }
+  const posOf = (slug: string) => {
+    const i = order.indexOf(slug);
+    if (i < 0) return null;
+    return {
+      before: beforeW[i] / totalW,
+      span: weights[i] / totalW,
+      num: i + 1,
+      total: order.length,
+    };
+  };
+
   for (const page of pages) {
     const document = page.document;
     if (!document) continue;
@@ -143,6 +167,28 @@ site.process([".html"], (pages) => {
         tot.setAttribute("class", "sidebar-readtime");
         tot.textContent = `Full read · ~${fmtTime(totalMin)}`;
         list.parentElement?.insertBefore(tot, list);
+      }
+    }
+
+    // Whole-spec position strip (idea F): fill the skeleton header.tsx rendered
+    // with this page's position; reading-progress.js advances it on scroll.
+    const sp = document.querySelector("#spec-pos");
+    if (sp) {
+      const pos = posOf(slugOf(page.data.url as string));
+      if (pos) {
+        const pct = (pos.before * 100).toFixed(2);
+        sp.setAttribute("data-before", pos.before.toFixed(5));
+        sp.setAttribute("data-span", pos.span.toFixed(5));
+        sp.querySelector(".sp-done")?.setAttribute("style", `width:${pct}%`);
+        sp.querySelector(".sp-dot")?.setAttribute("style", `left:${pct}%`);
+        const label = sp.querySelector(".sp-label");
+        // Position by reading volume — not a chapter index, which would
+        // conflict with the spec's own clause numbering (intro/annexes shift it).
+        if (label) {
+          label.textContent = `~${Math.round(pos.before * 100)}% through`;
+        }
+      } else {
+        sp.remove();
       }
     }
 

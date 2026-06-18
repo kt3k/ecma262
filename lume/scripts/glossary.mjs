@@ -221,6 +221,13 @@ export function writeGlossary(siteDir, basePath, editionLabel = "ECMA-262") {
     `<title>Glossary — ${esc(editionLabel)}</title>`,
   );
 
+  // The glossary isn't a chapter, so drop the whole-spec position strip the
+  // cloned chapter shell carries (it would read as the intro's position).
+  html = html.replace(
+    /<div id="spec-pos"[\s\S]*?<\/div>\s*<\/header>/,
+    "</header>",
+  );
+
   // Glossary-only client: flattens the A–Z bar's top when it sticks (see
   // glossary.js + the .gl-az.stuck CSS). Injected here so it loads only on
   // this page rather than across the whole site.
