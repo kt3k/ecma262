@@ -351,21 +351,31 @@ html:not(
 .spec-pos .sp-track {
   position: relative;
   flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--muted) 22%, transparent);
+  height: 2px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--muted) 25%, transparent);
 }
 .spec-pos .sp-done {
   position: absolute;
   inset: 0 auto 0 0;
   height: 100%;
-  border-radius: 2px;
+  border-radius: 1px;
   background: var(--accent);
   opacity: 0.5;
+}
+/* Chapter-boundary ticks (injected in _config.ts) — the "timeline" of V3. */
+.spec-pos .sp-tick {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 7px;
+  background: color-mix(in srgb, var(--muted) 40%, transparent);
+  transform: translate(-50%, -50%);
 }
 .spec-pos .sp-dot {
   position: absolute;
   top: 50%;
+  z-index: 1;
   width: 10px;
   height: 10px;
   border-radius: 50%;

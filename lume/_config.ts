@@ -138,6 +138,9 @@ site.process([".html"], (pages) => {
       total: order.length,
     };
   };
+  // Internal chapter-boundary positions (0% and 100% are the track ends), the
+  // ticks of the V3 timeline — constant across pages.
+  const tickPos = beforeW.slice(1).map((w) => (w / totalW * 100).toFixed(2));
 
   for (const page of pages) {
     const document = page.document;
@@ -181,6 +184,18 @@ site.process([".html"], (pages) => {
         sp.setAttribute("data-span", pos.span.toFixed(5));
         sp.querySelector(".sp-done")?.setAttribute("style", `width:${pct}%`);
         sp.querySelector(".sp-dot")?.setAttribute("style", `left:${pct}%`);
+        // Chapter-boundary ticks (V3 timeline), inserted before the dot so the
+        // dot stays on top.
+        const track = sp.querySelector(".sp-track");
+        const dotEl = sp.querySelector(".sp-dot");
+        if (track && dotEl) {
+          for (const x of tickPos) {
+            const tick = document.createElement("i");
+            tick.setAttribute("class", "sp-tick");
+            tick.setAttribute("style", `left:${x}%`);
+            track.insertBefore(tick, dotEl);
+          }
+        }
         const label = sp.querySelector(".sp-label");
         // Position by reading volume — not a chapter index, which would
         // conflict with the spec's own clause numbering (intro/annexes shift it).
