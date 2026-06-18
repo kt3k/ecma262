@@ -34,10 +34,11 @@ what shipped, what was declined, and what's still open.
 - **F — Whole-spec position strip.** A thin V3 tick timeline (a tick per chapter
   boundary + a "playhead" dot) with a "~61% through" label, showing how far
   through the entire spec the scroll position is. Position is by cumulative
-  chapter word-count; advanced on scroll by `reading-progress.js`. Lives in the
-  right-rail TOC's pinned footer (above the feedback link), so it stays at the
-  bottom of the sticky rail while the TOC list scrolls. Desktop only (the rail
-  is hidden ≤1100px). Skeleton in `page.tsx`, per-page data + ticks injected in
+  chapter word-count; advanced on scroll by `reading-progress.js`. Pinned at the
+  top of the right-rail TOC, above "On This Page", so it sits in the same place
+  on every page. Hovering a chapter segment highlights its span and shows the
+  chapter name in a clamped popover. Desktop only (the rail is hidden ≤1100px).
+  Skeleton in `page.tsx`; per-page data, ticks and chapter segments injected in
   `lume/_config.ts`.
 
 ## Declined (would add noise)
