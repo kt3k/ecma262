@@ -31,6 +31,12 @@ what shipped, what was declined, and what's still open.
   build time, ~200 wpm) on the sidebar links, plus a "Full read · ~21h 29m"
   total above the chapter list — to help plan an end-to-end read-through.
   Computed in `lume/_config.ts`'s `site.process` pass.
+- **F — Whole-spec position strip.** A thin always-on band under the title row
+  (inside the sticky header) with a "done" fill + dot and a "~61% through"
+  label, showing how far through the entire spec the scroll position is.
+  Position is by cumulative chapter word-count; advanced on scroll by
+  `reading-progress.js`. The header height var was split (`--navbar-h` +
+  `--specpos-h` = `--header-h`) so every sticky offset clears the strip.
 
 ## Declined (would add noise)
 
@@ -93,11 +99,8 @@ links — and are chosen to stay non-intrusive.
   _within_ a chapter; this tracks the _whole_ spec. Mark a chapter read once it
   has been scrolled to the end, show a check / faint heatmap in the sidebar and
   an overall "N% read". Local-only, so nothing is imposed on the reader.
-- **F — Whole-spec position indicator.** Distinct from Idea 4 (the tree-depth
-  breadcrumb): a thin overall progress marker showing how far through the entire
-  spec the current position is, for a sense of "early vs late".
 
-Front-runners: **A + B** (the core read-through pair). (C shipped; D and E
+Front-runners: **A + B** (the core read-through pair). (C and F shipped; D and E
 declined — see above.)
 
 ### Editioning note (applies to A and B)
