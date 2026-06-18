@@ -1155,13 +1155,15 @@ aside.toc .spec-pos .sp-dot {
 }
 aside.toc .spec-pos .sp-pop {
   position: absolute;
-  /* Below the timeline, not above: the strip sits right under the header, so a
-     popover above would slip behind the (higher-stacked, blurred) header. */
+  /* Fixed box the full width of the timeline, always in the same spot — in the
+     cramped rail a segment-anchored, variable-width popover jumped around. Below
+     the timeline (not above), since the strip sits right under the header and a
+     popover above would slip behind the higher-stacked, blurred header. */
   top: calc(100% + 6px);
+  left: 0;
+  right: 0;
   z-index: 36;
-  transform: translateX(-50%);
-  max-width: 210px;
-  padding: 0.3rem 0.5rem;
+  padding: 0.35rem 0.5rem;
   border: 1px solid var(--rule);
   border-radius: 6px;
   background: var(--chrome-bg);
@@ -1169,6 +1171,7 @@ aside.toc .spec-pos .sp-pop {
   color: var(--fg);
   font-size: 0.7rem;
   line-height: 1.3;
+  text-align: center;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
