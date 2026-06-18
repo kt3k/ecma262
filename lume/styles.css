@@ -286,11 +286,13 @@ html:not(
      .site-header-blur child so the underlying layer can blur content that
      scrolls below. Matches Nextra's
      <header class="nextra-navbar x:sticky x:top-0 x:z-30 x:w-full x:bg-transparent">.
-     z-index 30 = Nextra's x:z-30; sits above the mobile nav panel
-     (z-20) so the navbar stays visible while the menu is open. */
+     z-index above the mobile nav panel (z-20) so the navbar stays visible
+     while the menu is open, and above the breadcrumb (z-35) so the header's
+     version-switcher dropdown opens over it rather than slipping behind it
+     (the dropdown's own z-index can't escape this header stacking context). */
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 40;
 }
 .site-header-blur {
   /* Translucent frosted-glass background, matches Nextra's
