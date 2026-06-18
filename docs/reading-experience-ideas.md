@@ -62,6 +62,12 @@ cluttered or misleading reading surface.
   (Character Key Shortcuts) — risky for speech-input users. Existing means
   (Space/PageDown to scroll, prev/next links, `/` to find) already cover the
   need.
+- **E — "Up next" chapter preview (end-to-end track).** Built and reverted. The
+  chapter-end prev/next already names the next chapter, so a separate "Up next"
+  card duplicated that. A variant that instead hung the next chapter's
+  subsection list under the existing next link (no duplicated title) was mocked
+  in three forms, but the extra section list still read as clutter in the
+  pagination row. Not worth it.
 
 ## Completed groundwork
 
@@ -87,15 +93,12 @@ links — and are chosen to stay non-intrusive.
   _within_ a chapter; this tracks the _whole_ spec. Mark a chapter read once it
   has been scrolled to the end, show a check / faint heatmap in the sidebar and
   an overall "N% read". Local-only, so nothing is imposed on the reader.
-- **E — "Up next" chapter preview.** Extend the chapter-end prev/next with a
-  short teaser of the next chapter (its opening sentences or subsection list) to
-  pull the reader forward. Only at chapter boundaries, never in the prose.
 - **F — Whole-spec position indicator.** Distinct from Idea 4 (the tree-depth
   breadcrumb): a thin overall progress marker showing how far through the entire
   spec the current position is, for a sense of "early vs late".
 
-Front-runners: **A + B** (the core read-through pair); E guards against
-drop-off. (C shipped, D declined — see above.)
+Front-runners: **A + B** (the core read-through pair). (C shipped; D and E
+declined — see above.)
 
 ### Editioning note (applies to A and B)
 
