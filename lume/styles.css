@@ -1130,7 +1130,7 @@ aside.toc .spec-pos .sp-seg {
   top: 0;
   height: 100%;
   z-index: 2;
-  cursor: default;
+  cursor: pointer;
 }
 aside.toc .spec-pos .sp-seg:hover::before {
   content: "";

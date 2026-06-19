@@ -141,12 +141,16 @@ site.process([".html"], (pages) => {
   // Internal chapter-boundary positions (0% and 100% are the track ends), the
   // ticks of the V3 timeline — constant across pages.
   const tickPos = beforeW.slice(1).map((w) => (w / totalW * 100).toFixed(2));
-  // One hover segment per chapter (its span of the track + its name), for the
-  // hover highlight + name popover. Constant across pages.
+  // One hover segment per chapter (its span of the track + its name + a link to
+  // the chapter), for the hover highlight, name popover, and click-to-jump.
+  // Constant across pages.
+  const segHref = (slug: string) =>
+    slug === "index" ? `${basePath}/` : `${basePath}/${slug}/`;
   const segs = order.map((slug, i) => ({
     left: (beforeW[i] / totalW * 100).toFixed(3),
     width: (weights[i] / totalW * 100).toFixed(3),
     name: chapters[i]?.title ?? slug,
+    href: segHref(slug),
   }));
 
   for (const page of pages) {
@@ -205,8 +209,12 @@ site.process([".html"], (pages) => {
           // Per-chapter hover segments (transparent; CSS highlights on hover,
           // reading-progress.js shows the name popover).
           for (const s of segs) {
-            const seg = document.createElement("span");
+            const seg = document.createElement("a");
             seg.setAttribute("class", "sp-seg");
+            seg.setAttribute("href", s.href);
+            // mouse-only affordance: the strip is aria-hidden, so keep these
+            // out of the tab order — the sidebar/TOC are the real chapter nav.
+            seg.setAttribute("tabindex", "-1");
             seg.setAttribute("style", `left:${s.left}%;width:${s.width}%`);
             seg.setAttribute("data-name", s.name);
             track.insertBefore(seg, dotEl);
