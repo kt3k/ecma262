@@ -16,8 +16,10 @@ reading-experience track (see `reading-experience-ideas.md`).
   pages; asset/comparison dirs skipped) and a `robots.txt` with a Sitemap
   directive. Caveat: at `/ecma262/`, robots.txt isn't the domain-root robots, so
   the sitemap is meant for direct submission (Search Console).
+- **N3 — Back to top.** A subtle "↑ Top" pill (`back-to-top.js`) that fades in
+  at the content column's bottom-right after scrolling down a screenful;
+  clicking scrolls to the top (smooth, or instant under prefers-reduced-motion).
+  Aligned to main's right edge so it clears the right-rail TOC. Style in
+  `lume/styles.css`.
 
-## Candidates
-
-- **N3 — Back to top.** An unobtrusive "back to top" control on long chapters
-  (the spec has very long pages), shown after scrolling down a screenful.
+_All three navigation candidates are shipped._
