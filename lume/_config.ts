@@ -74,6 +74,9 @@ site.copy("breadcrumb.js");
 // page (scripts/glossary.mjs injects the tag), so it ships as an asset but
 // isn't referenced elsewhere.
 site.copy("glossary.js");
+// Heading anchor links: copy-to-clipboard enhancement for the "#" permalinks
+// injected into clause headings (the links work without it). See page.tsx.
+site.copy("heading-anchors.js");
 // Spec figures (emu-figure images), copied in per-edition by
 // scripts/build-pages.ts from the spec's img/ dir. Gitignored; absent until
 // `deno task pages` runs (then served under <base>/img/).
@@ -234,6 +237,28 @@ site.process([".html"], (pages) => {
     const tocOl = document.querySelector("aside.toc > ol");
     const main = document.querySelector("main");
     if (!tocOl || !main) continue;
+
+    // Heading anchor links (N1): a "#" permalink in every clause heading,
+    // linking to that clause's id. Revealed on hover (CSS); heading-anchors.js
+    // also copies the shareable URL on click.
+    for (const clause of main.querySelectorAll("emu-clause[id]")) {
+      let h: Element | null = null;
+      for (const ch of clause.children) {
+        if (/^h[1-6]$/i.test(ch.tagName)) {
+          h = ch;
+          break;
+        }
+      }
+      if (!h || h.querySelector(".heading-anchor")) continue;
+      const a = document.createElement("a");
+      a.setAttribute("class", "heading-anchor");
+      a.setAttribute("href", "#" + clause.id);
+      a.setAttribute("aria-label", "Permalink to this section");
+      // The "#" glyph is a CSS ::before so the anchor stays textless — keeping
+      // it out of heading.textContent, which the TOC, breadcrumb, xref index
+      // and glossary all read.
+      h.appendChild(a);
+    }
 
     // Sidebar inline TOC: clone the top-level entries into a nested <ol>
     // under the current chapter's <li>. Mirrors Nextra's <File> rendering

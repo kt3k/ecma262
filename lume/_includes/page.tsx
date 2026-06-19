@@ -128,6 +128,11 @@ export default function Page(
             header for deeply nested sections (hidden ≤2 levels). */
         }
         <script defer src={`${basePath}/breadcrumb.js`}></script>
+        {
+          /* Heading anchor links: copy the permalink to the clipboard on click
+            (the "#" links work as plain anchors without it). */
+        }
+        <script defer src={`${basePath}/heading-anchors.js`}></script>
       </head>
       <body>
         {

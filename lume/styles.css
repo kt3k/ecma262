@@ -3119,6 +3119,59 @@ aside.toc h2 .rp-count {
   margin-right: 0.35em;
 }
 
+/* Heading anchor links (N1): a "#" permalink injected into each clause heading
+   (_config.ts), revealed on hover/focus. heading-anchors.js also copies the
+   URL on click and flashes a "Copied" confirmation via .copied. */
+.heading-anchor {
+  position: relative;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.12s, color 0.12s;
+}
+/* The glyph is a pseudo-element so the <a> carries no text — see _config.ts. */
+.heading-anchor::before {
+  content: "#";
+}
+h1:hover > .heading-anchor,
+h2:hover > .heading-anchor,
+h3:hover > .heading-anchor,
+h4:hover > .heading-anchor,
+h5:hover > .heading-anchor,
+h6:hover > .heading-anchor,
+.heading-anchor:focus {
+  opacity: 0.5;
+}
+.heading-anchor:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+/* "Copied" confirmation bubble */
+.heading-anchor.copied {
+  opacity: 1;
+  color: var(--accent);
+}
+.heading-anchor.copied::after {
+  content: "Copied";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  transform: translateX(-50%);
+  padding: 0.15em 0.45em;
+  border-radius: 5px;
+  background: var(--chrome-bg);
+  border: 1px solid var(--rule);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  color: var(--fg);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 /* Glossary page (scripts/glossary.mjs writes _site/glossary/index.html, which
    reuses the spec page shell and tags <main> with .glossary). A–Z jump bar +
    one definition list per initial. */
