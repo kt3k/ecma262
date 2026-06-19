@@ -133,6 +133,8 @@ export default function Page(
             (the "#" links work as plain anchors without it). */
         }
         <script defer src={`${basePath}/heading-anchors.js`}></script>
+        {/* "Back to top" pill on long chapters. */}
+        <script defer src={`${basePath}/back-to-top.js`}></script>
       </head>
       <body>
         {

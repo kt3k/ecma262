@@ -77,6 +77,9 @@ site.copy("glossary.js");
 // Heading anchor links: copy-to-clipboard enhancement for the "#" permalinks
 // injected into clause headings (the links work without it). See page.tsx.
 site.copy("heading-anchors.js");
+// "Back to top" pill — fades in after scrolling down a long chapter. See
+// page.tsx.
+site.copy("back-to-top.js");
 // Spec figures (emu-figure images), copied in per-edition by
 // scripts/build-pages.ts from the spec's img/ dir. Gitignored; absent until
 // `deno task pages` runs (then served under <base>/img/).

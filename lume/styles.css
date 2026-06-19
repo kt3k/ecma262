@@ -3135,6 +3135,52 @@ aside.toc h2 .rp-count {
 .heading-anchor::before {
   content: "#";
 }
+
+/* "Back to top" pill (N3, back-to-top.js): a subtle floating control at the
+   content column's bottom-right (the `right` offset is set by JS to clear the
+   rail), fading in once scrolled down a screenful. */
+#to-top {
+  position: fixed;
+  bottom: 1.25rem;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 40px;
+  padding: 0 0.95rem 0 0.75rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--chrome-bg) 92%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.15s, transform 0.15s, color 0.15s, border-color 0.15s;
+}
+#to-top svg {
+  flex: none;
+}
+#to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+#to-top:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  #to-top {
+    transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    transform: none;
+  }
+}
 h1:hover > .heading-anchor,
 h2:hover > .heading-anchor,
 h3:hover > .heading-anchor,
