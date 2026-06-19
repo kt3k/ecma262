@@ -2908,7 +2908,10 @@ html.dark
    term-badge accent are inlined here with an explicit dark override. */
 .xref-card {
   position: absolute;
-  z-index: 60;
+  /* Above the prose but below the breadcrumb (z-35) and header (z-40) so the
+     card tucks under them when a hovered link sits near the top of the
+     viewport, rather than covering the chrome. */
+  z-index: 25;
   max-width: 30rem;
   padding: 0.7rem 0.85rem 0.8rem;
   background: var(--chrome-bg, #fff);
