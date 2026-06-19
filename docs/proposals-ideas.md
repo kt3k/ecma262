@@ -36,6 +36,35 @@ proposal list and _pointing the pipeline at their specs_.
   name (the conventional GitHub Pages URL), or read the repo's homepage / Pages
   config. Not every proposal has a spec (early stages, slide-only proposals).
 
+## Survey: how many proposals have a real spec? (as of 2026-06)
+
+Fetched the published page at the conventional `https://tc39.es/<repo>/` for
+every active proposal in the `tc39/proposals` README (Stage 3 / 2.7 / 2, 41
+repos) and counted `<emu-clause>` / `<emu-alg>` to gauge substance.
+
+| Stage | substantial | thin | no spec\* | total |
+| ----- | ----------- | ---- | --------- | ----- |
+| 3     | 6           | 3    | 1         | 10    |
+| 2.7   | 5           | 1    | 0         | 6     |
+| 2     | 22          | 1    | 2         | 25    |
+| All   | **33**      | 5    | 3         | 41    |
+
+- **substantial** = ≥5 `emu-clause` or ≥5 `emu-alg`. Many are spec-grade, e.g.
+  `proposal-structs` (83 clauses / 62 algs), `proposal-async-context` (77/27),
+  `proposal-decorators` (57/52), `proposal-defer-import-eval` (60/51),
+  `proposal-shadowrealm` (31/17).
+- **thin** = a handful of clauses (small proposals like `iterator-join`,
+  `math-clamp`) — still real, renderable ecmarkup.
+- **\*no spec** = non-200 at the conventional URL (`regexp-legacy-features`,
+  `function.sent`, `jobcallback-module`). This is the URL-derivation missing the
+  page (alternate Pages path / Pages disabled), _not_ proven absence — treat as
+  "needs a per-repo lookup", not "no spec".
+
+**Takeaway**: ~**38 / 41** active Stage 2–3 proposals publish a renderable
+ecmarkup `spec.html` (33 of them substantial), so Approach B/C is well-founded.
+Deriving the spec URL from the repo name works for ~93%; the rest need the
+repo's actual Pages URL (read GitHub Pages config / repo homepage).
+
 ## Approaches
 
 ### A. Restyled proposals index (metadata only) — MVP
