@@ -142,4 +142,10 @@
     });
   }, { passive: true });
   addEventListener("resize", render);
+  // The bar's left/width track main's box, which changes (and animates) when
+  // the sidebar is collapsed/expanded — window "resize" doesn't fire for that,
+  // so observe main directly to keep the bar following.
+  if (typeof ResizeObserver === "function") {
+    new ResizeObserver(render).observe(main);
+  }
 })();

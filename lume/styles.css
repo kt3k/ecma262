@@ -830,8 +830,9 @@ body.sidebar-collapsed .layout-wrapper {
   grid-template-columns: var(--sidebar-w-narrow) minmax(0, 1fr) var(--toc-w);
 }
 /* Hide the scrollable chapter list — only the footer's icon-only buttons
-   remain visible while collapsed. */
-body.sidebar-collapsed aside.sidebar .sidebar-list {
+   remain visible while collapsed. The "Full read · ~Nh" total goes with it. */
+body.sidebar-collapsed aside.sidebar .sidebar-list,
+body.sidebar-collapsed aside.sidebar .sidebar-readtime {
   display: none;
 }
 /* Footer reflow: stack the two buttons vertically so they read as a column
