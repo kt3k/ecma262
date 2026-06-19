@@ -7,6 +7,10 @@
 // inserted into the spec prose. Index URL comes from this script tag's
 // data-index attribute (set in page.tsx).
 (function () {
+  // The glossary page already spells out every term's definition inline, so a
+  // hover card there is redundant — skip wiring it up entirely.
+  if (document.querySelector("main.glossary")) return;
+
   const script = document.querySelector("script[data-xref-index]");
   const indexUrl = script?.dataset.xrefIndex;
   if (!indexUrl) return;
