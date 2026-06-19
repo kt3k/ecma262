@@ -69,11 +69,19 @@
     // The crumb text is padded in to line up with the prose.
     const r = main.getBoundingClientRect();
     const padL = parseFloat(getComputedStyle(main).paddingLeft) || 0;
-    bar.style.left = r.left + "px";
+    // Inset the bar's left edge 2rem from the content-column edge (it sat too
+    // close to the sidebar); shrink the width to keep the right edge at main,
+    // and trim the text padding by the same amount so the crumbs still line up
+    // with the prose.
+    const off = 2 * (parseFloat(
+      getComputedStyle(document.documentElement)
+        .fontSize,
+    ) || 16);
+    bar.style.left = r.left + off + "px";
     bar.style.right = "auto";
-    bar.style.width = r.width + "px";
+    bar.style.width = r.width - off + "px";
     bar.style.top = headerH() + "px";
-    bar.style.paddingLeft = padL + "px";
+    bar.style.paddingLeft = Math.max(0, padL - off) + "px";
     bar.textContent = "";
     // Each crumb keeps its full text (no uniform flex-shrink that would chop
     // every level to "22 Te…"); items[i].sep is the separator *before* crumb i
