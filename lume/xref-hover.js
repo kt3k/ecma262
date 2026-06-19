@@ -138,8 +138,12 @@
     if (!a || a === card || card.contains(a)) return;
     // Only the spec prose gets cards. The right-rail TOC, breadcrumb and
     // sidebar links also point at "#sec-…" fragments, but a card there is just
-    // noise — those lists already show the section title.
-    if (!a.closest("#content")) return;
+    // noise — those lists already show the section title. Heading "#"
+    // permalinks (also in #content) are excluded too: they point at their own
+    // section, so a card is redundant.
+    if (!a.closest("#content") || a.classList.contains("heading-anchor")) {
+      return;
+    }
     const frag = fragOf(a);
     if (!frag) return;
     const y = e.clientY; // pointer line, for wrapped-link placement
