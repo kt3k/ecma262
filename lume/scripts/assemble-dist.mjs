@@ -254,4 +254,48 @@ ${editions.map((e) => `    <a href="../${e.id}/">${markOf(e)}</a>`).join("\n")}
   </div>`,
 );
 
+// sitemap.xml + robots.txt (N2). Walk the assembled dist/ for every directory
+// that holds an index.html and emit its public URL. The site is deployed at
+// kt3k.github.io/ecma262/, so dist/ maps to /ecma262/.
+//
+// Caveat: robots.txt here is served at /ecma262/robots.txt, not the domain
+// root (kt3k.github.io/robots.txt belongs to the user site, not this repo), so
+// crawlers won't pick it up automatically — the sitemap is meant to be
+// submitted directly (e.g. Search Console). We still emit a conventional
+// robots.txt with the Sitemap directive.
+const ORIGIN = "https://kt3k.github.io";
+const DEPLOY_BASE = "/ecma262";
+// Asset / comparison dirs with no canonical pages to index.
+const SITEMAP_SKIP = new Set(["og", "fonts", "img", "pagefind", "nextra-poc"]);
+const xmlEsc = (s) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const sitemapUrls = [];
+const collectUrls = (absDir, rel) => {
+  const entries = fs.readdirSync(absDir, { withFileTypes: true });
+  if (entries.some((e) => e.isFile() && e.name === "index.html")) {
+    sitemapUrls.push(`${ORIGIN}${DEPLOY_BASE}${rel ? "/" + rel : ""}/`);
+  }
+  for (const e of entries) {
+    if (e.isDirectory() && !SITEMAP_SKIP.has(e.name)) {
+      collectUrls(path.join(absDir, e.name), rel ? `${rel}/${e.name}` : e.name);
+    }
+  }
+};
+collectUrls(distDir, "");
+sitemapUrls.sort();
+fs.writeFileSync(
+  path.join(distDir, "sitemap.xml"),
+  `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    sitemapUrls.map((u) => `  <url><loc>${xmlEsc(u)}</loc></url>`).join("\n") +
+    `\n</urlset>\n`,
+);
+fs.writeFileSync(
+  path.join(distDir, "robots.txt"),
+  `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}${DEPLOY_BASE}/sitemap.xml\n`,
+);
+console.log(
+  `[assemble-dist] sitemap.xml: ${sitemapUrls.length} urls + robots.txt`,
+);
+
 console.log(`[assemble-dist] assembled dist/ from ${editions.length} sites`);
