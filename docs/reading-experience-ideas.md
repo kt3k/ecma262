@@ -77,6 +77,16 @@ cluttered or misleading reading surface.
   subsection list under the existing next link (no duplicated title) was mocked
   in three forms, but the extra section list still read as clutter in the
   pagination row. Not worth it.
+- **A — Resume reading (end-to-end track).** A `localStorage` "continue from §…"
+  pointer. Dropped: per-reader browser state is low-value for a reference spec
+  that people jump around rather than read linearly in one browser, and it needs
+  fragile machinery (per-edition keys, an engagement gate so peeks don't clobber
+  the bookmark, a "last substantial read" CTA) for a payoff that only helps a
+  narrow return-visitor case.
+- **B — Whole-spec reading map / read-completion (end-to-end track).** Marking
+  chapters read + an overall "N% read". Dropped with A for the same reason — the
+  state is local-only and speculative, and the position timeline (F) already
+  gives a lightweight sense of where you are.
 
 ## Completed groundwork
 
@@ -85,42 +95,9 @@ cluttered or misleading reading surface.
   resolve to a card. The remainder are genuinely external (WHATWG/Unicode)
   references.
 
-## Open — aids for reading the spec end-to-end
+## End-to-end reading track — closed
 
-A separate track from the per-section/per-term aids above: helping a reader get
-_through_ the whole specification. Candidates under consideration (not yet
-committed). All ride on the site's existing footing — static generation,
-`localStorage`, the single-source per-edition build, and the existing prev/next
-links — and are chosen to stay non-intrusive.
-
-- **A — Resume reading.** Remember the last section read and the in-chapter
-  scroll position in `localStorage`; offer a "continue from §22.2.6" entry on
-  the landing page / header. Removes the main friction of a multi-session
-  read-through ("where was I"). State is per edition (see the editioning note
-  below). Essentially zero added on-page chrome.
-- **B — Whole-spec reading map / read-completion.** Idea 5 tracks progress
-  _within_ a chapter; this tracks the _whole_ spec. Mark a chapter read once it
-  has been scrolled to the end, show a check / faint heatmap in the sidebar and
-  an overall "N% read". Local-only, so nothing is imposed on the reader.
-
-Front-runners: **A + B** (the core read-through pair). (C and F shipped; D and E
-declined — see above.)
-
-### Editioning note (applies to A and B)
-
-Per-reader state must be keyed by edition, and a single global "last position"
-record is _not_ enough. A reader part-way through the draft who briefly opens
-another edition would have their draft position clobbered — peeking must not
-destroy the main reading place. So:
-
-- **Per-edition records.** Namespace the `localStorage` keys by edition id
-  (`ecma262:resume:<editionId>`, `ecma262:read:<editionId>`). Opening edition B
-  only ever writes B's key; edition A's resume point stays intact.
-- **Update only on meaningful reading.** Write/move a resume point only after
-  real engagement (scrolled past a threshold, or dwelled beyond a few seconds),
-  not on a quick open. This keeps a brief peek from disturbing the bookmark even
-  within the same edition.
-- **Global "continue" CTA picks the last _substantial_ read.** The landing /
-  about entry surfaces the edition with the most recent meaningful reading (not
-  merely the last edition touched), optionally listing other in-progress
-  editions. So "read the draft → peek ES2015 → return" still resumes the draft.
+The "reading the spec end-to-end" track is resolved: **C** (reading-time
+estimates) and **F** (whole-spec position timeline) shipped; **D** (keyboard
+nav), **E** ("Up next"), **A** (resume reading) and **B** (reading map) were
+declined — see above. No open candidates remain.
