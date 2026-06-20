@@ -13,6 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { execFileSync } from "node:child_process";
+import { buildProposals } from "./build-proposals.mjs";
 
 // This script lives in lume/scripts/; the repo root is two levels up.
 const root = path.resolve(import.meta.dirname, "../..");
@@ -253,6 +254,11 @@ writeArticle(
 ${editions.map((e) => `    <a href="../${e.id}/">${markOf(e)}</a>`).join("\n")}
   </div>`,
 );
+
+// Restyled TC39 proposal pages under dist/proposals/ (reads vendored snapshots
+// in proposals/ and the just-built dist/draft/ for xref rewriting).
+const nProps = buildProposals(distDir, root);
+console.log(`[assemble-dist] proposals: ${nProps} rendered -> dist/proposals/`);
 
 // sitemap.xml + robots.txt (N2). Walk the assembled dist/ for every directory
 // that holds an index.html and emit its public URL. The site is deployed at

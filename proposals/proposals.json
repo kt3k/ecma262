@@ -1,0 +1,11 @@
+[
+  { "name": "import-text", "stage": "3", "repo": "tc39/proposal-import-text", "spec": "https://tc39.es/proposal-import-text/" },
+  { "name": "source-phase-imports", "stage": "3", "repo": "tc39/proposal-source-phase-imports", "spec": "https://tc39.es/proposal-source-phase-imports/" },
+  { "name": "defer-import-eval", "stage": "3", "repo": "tc39/proposal-defer-import-eval", "spec": "https://tc39.es/proposal-defer-import-eval/" },
+  { "name": "error-stack-accessor", "stage": "3", "repo": "tc39/proposal-error-stack-accessor", "spec": "https://tc39.es/proposal-error-stack-accessor/" },
+  { "name": "regexp-buffer-boundaries", "stage": "3", "repo": "tc39/proposal-regexp-buffer-boundaries", "spec": "https://tc39.es/proposal-regexp-buffer-boundaries/" },
+  { "name": "dynamic-code-brand-checks", "stage": "3", "repo": "tc39/proposal-dynamic-code-brand-checks", "spec": "https://tc39.es/proposal-dynamic-code-brand-checks/" },
+  { "name": "nonextensible-applies-to-private", "stage": "3", "repo": "tc39/proposal-nonextensible-applies-to-private", "spec": "https://tc39.es/proposal-nonextensible-applies-to-private/" },
+  { "name": "iterator-chunking", "stage": "3", "repo": "tc39/proposal-iterator-chunking", "spec": "https://tc39.es/proposal-iterator-chunking/" },
+  { "name": "iterator-join", "stage": "3", "repo": "tc39/proposal-iterator-join", "spec": "https://tc39.es/proposal-iterator-join/" }
+]

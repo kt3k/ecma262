@@ -3181,6 +3181,43 @@ aside.toc h2 .rp-count {
     transform: none;
   }
 }
+
+/* TC39 proposal pages (scripts/build-proposals.mjs). */
+.prop-stage {
+  margin-left: 0.6rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  vertical-align: 0.12em;
+}
+.ecma-spec .prop-title {
+  font-size: 1.9rem;
+  line-height: 1.15;
+  margin: 0.2rem 0 1.1rem;
+}
+.prop-index {
+  list-style: none;
+  margin: 0 0 1.6rem;
+  padding: 0;
+}
+.prop-index li {
+  margin: 0.5rem 0;
+}
+.prop-index > li > a:first-child {
+  font-weight: 600;
+}
+.prop-index-src {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+.prop-index-src:hover {
+  color: var(--accent);
+}
 h1:hover > .heading-anchor,
 h2:hover > .heading-anchor,
 h3:hover > .heading-anchor,

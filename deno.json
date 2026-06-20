@@ -6,6 +6,7 @@
     "exclude": [
       "dist",
       "ecma262",
+      "proposals",
       "nextra-poc",
       "lume/_site",
       "lume/lib",
