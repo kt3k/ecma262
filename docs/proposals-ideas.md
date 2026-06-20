@@ -1,8 +1,30 @@
 # Rendering active TC39 proposals (ideas)
 
 Exploration: can we collect the active TC39 proposals and present them in the
-same restyled reading experience this site gives the spec editions? This is an
-ideas / approaches doc — nothing implemented yet.
+same restyled reading experience this site gives the spec editions?
+
+## Status
+
+**Shipped (Tier 2 — Approach B/C for Stage 3).** The 9 active Stage 3 proposals
+with a renderable spec are vendored and rendered under `/proposals/`:
+
+- `proposals/proposals.json` + vendored `proposals/<name>/spec.html` snapshots
+  (`tools/fetch-proposals.mjs` refreshes them).
+- `lume/scripts/build-proposals.mjs` (run from `assemble-dist.mjs` after the
+  editions build) restyles each spec, **rewrites main-spec cross-references into
+  this site's draft edition** (all 46 in import-text resolved; falls back to the
+  official URL otherwise), injects heading anchors, builds the TOC, and emits
+  `dist/proposals/<name>/` + an index. Pages borrow the draft edition's
+  assets/scripts, so xref hover cards, breadcrumb, reading progress, heading
+  anchors and back-to-top all work; a non-normative note is shown.
+
+**Follow-ups**: a `/proposals/` entry in the site nav (about / landing); Tier 3
+(Stage 2.7 / 2, scheduled refresh); a theme-toggle on proposal pages (currently
+dark mode is honored via early-paint but there's no toggle button); mobile
+sidebar (no hamburger on proposal pages yet).
+
+The rest of this doc is the original survey + approaches that informed the
+above.
 
 ## Why this fits
 
