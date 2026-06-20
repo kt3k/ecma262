@@ -66,8 +66,9 @@ function parseSpec(raw, fragMap) {
       `${pre}<a class="heading-anchor" href="#${id}" aria-label="Permalink to this section"></a>${close}`,
   );
 
-  // Build the right-rail TOC from clause openers.
-  const toc = [];
+  // Section outline from clause openers (used for both the left sidebar and the
+  // right-rail TOC).
+  const sections = [];
   const clauseRe =
     /<emu-clause\b[^>]*\bid="([^"]+)"[^>]*?(?:\bnumber="([^"]*)")?[^>]*>\s*<h1\b[^>]*>([\s\S]*?)<\/h1>/g;
   let c;
@@ -75,17 +76,22 @@ function parseSpec(raw, fragMap) {
     const id = c[1], num = c[2] || "";
     let t = c[3].replace(/<span class="secnum">[\s\S]*?<\/span>/, "");
     t = strip(t.replace(/<a class="heading-anchor"[\s\S]*?<\/a>/, ""));
-    toc.push({ id, num, t, depth: num ? num.split(".").length : 1 });
+    sections.push({ id, num, t, depth: num ? num.split(".").length : 1 });
   }
-  const minD = Math.min(...toc.map((x) => x.depth), 1);
-  const tocHtml = toc.map((x) =>
-    `<li data-level="${Math.min(4, x.depth - minD + 1)}"><a href="#${
-      esc(x.id)
-    }">${x.num ? esc(x.num) + " " : ""}${esc(x.t)}</a></li>`
-  ).join("");
+  const minD = Math.min(...sections.map((x) => x.depth), 1);
+  for (const s of sections) s.level = Math.min(4, s.depth - minD + 1);
 
-  return { title, main: body, toc: tocHtml };
+  return { title, main: body, sections };
 }
+
+// Render a section outline as <li data-level> items (shared by the sidebar and
+// the right-rail TOC; both link to the in-page anchors).
+const sectionItems = (sections) =>
+  sections.map((s) =>
+    `<li data-level="${s.level}"><a href="#${esc(s.id)}">${
+      s.num ? esc(s.num) + " " : ""
+    }${esc(s.t)}</a></li>`
+  ).join("");
 
 function shell(
   { title, headTitle, stage, spec, repo, sidebar, mainHtml, toc },
@@ -122,10 +128,8 @@ ${
 </nav>
 </header>
 <div class="layout-wrapper">
-<aside id="sidebar" class="sidebar" aria-label="Proposals">
-<ol class="sidebar-list">${sidebar}
-<li class="group-start"><a href="${A}/">← ECMA-262 draft</a></li>
-</ol>
+<aside id="sidebar" class="sidebar" aria-label="Contents">
+<ol class="sidebar-list">${sidebar}</ol>
 </aside>
 <main id="content" data-pagefind-body="true">
 <div class="ecma-spec">
@@ -155,13 +159,20 @@ export function buildProposals(distDir, rootDir) {
   const list = JSON.parse(fs.readFileSync(listFile, "utf8"));
   const fragMap = draftFragMap(distDir);
 
-  // Parse every proposal that has a vendored spec.
+  // Parse every proposal that has a vendored spec. The deploy slug mirrors the
+  // official URL / repo name (proposal-<name>), so a page lives at
+  // /ecma262/proposal-<name>/ alongside the editions.
   const parsed = [];
   for (const p of list) {
     const f = path.join(pdir, p.name, "spec.html");
     if (!fs.existsSync(f)) continue;
     const info = parseSpec(fs.readFileSync(f, "utf8"), fragMap);
-    parsed.push({ ...p, ...info, repoUrl: `https://github.com/${p.repo}` });
+    parsed.push({
+      ...p,
+      ...info,
+      slug: p.repo.split("/").pop(),
+      repoUrl: `https://github.com/${p.repo}`,
+    });
   }
 
   const note = (p) =>
@@ -175,27 +186,26 @@ export function buildProposals(distDir, rootDir) {
     }</a>. ` +
     `Cross-references link into this site's draft edition.</p>`;
 
-  const sidebarFor = (cur) =>
-    parsed.map((p) =>
-      `<li class="${
-        p.name === cur ? "current" : ""
-      }"><a href="/ecma262/proposals/${p.name}/">${esc(p.title)}</a></li>`
-    ).join("\n");
+  // Footer nav for a proposal's sidebar — links out, but never lists the other
+  // proposals (the left nav is this proposal's own sections only).
+  const navFooter =
+    `<li class="group-start"><a href="/ecma262/proposals/">← All proposals</a></li>` +
+    `<li><a href="${A}/">← ECMA-262 draft</a></li>`;
 
-  // Per-proposal pages.
+  // Per-proposal pages: left sidebar = this proposal's section outline.
   for (const p of parsed) {
     const html = shell({
       headTitle: `${p.title} — TC39 proposal · ECMA-262 Restyled`,
       stage: p.stage,
       spec: p.spec,
       repo: p.repoUrl,
-      sidebar: sidebarFor(p.name),
+      sidebar: sectionItems(p.sections) + navFooter,
       mainHtml: `<h1 class="prop-title">${esc(p.title)}</h1>\n${
         note(p)
       }\n${p.main}`,
-      toc: p.toc,
+      toc: sectionItems(p.sections),
     });
-    const dir = path.join(distDir, "proposals", p.name);
+    const dir = path.join(distDir, p.slug);
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, "index.html"), html);
   }
@@ -213,18 +223,24 @@ export function buildProposals(distDir, rootDir) {
     stages.map((st) =>
       `<h2 class="gl-letter">Stage ${esc(st)}</h2><ul class="prop-index">` +
       byStage[st].map((p) =>
-        `<li><a href="/ecma262/proposals/${p.name}/">${esc(p.title)}</a> ` +
+        `<li><a href="/ecma262/${p.slug}/">${esc(p.title)}</a> ` +
         `<a class="prop-index-src" href="${
           esc(p.spec)
         }" target="_blank" rel="noreferrer">spec ↗</a></li>`
       ).join("") + `</ul>`
     ).join("");
+  // The index is the hub, so its sidebar *does* list the proposals.
+  const indexSidebar =
+    parsed.map((p) =>
+      `<li><a href="/ecma262/${p.slug}/">${esc(p.title)}</a></li>`
+    ).join("") +
+    `<li class="group-start"><a href="${A}/">← ECMA-262 draft</a></li>`;
   const indexHtml = shell({
     headTitle: "TC39 Proposals · ECMA-262 Restyled",
     stage: "",
     spec: "",
     repo: "https://github.com/tc39/proposals",
-    sidebar: sidebarFor(""),
+    sidebar: indexSidebar,
     mainHtml: indexMain,
     toc: "",
   });

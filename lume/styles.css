@@ -3218,6 +3218,18 @@ aside.toc h2 .rp-count {
 .prop-index-src:hover {
   color: var(--accent);
 }
+/* Proposal pages: the left sidebar lists the proposal's own sections, indented
+   by depth (the editions' chapter list is flat, so this only affects the
+   data-level items the proposal sidebar emits). */
+aside.sidebar .sidebar-list li[data-level="2"] > a {
+  padding-inline-start: 1.4rem;
+}
+aside.sidebar .sidebar-list li[data-level="3"] > a {
+  padding-inline-start: 2.2rem;
+}
+aside.sidebar .sidebar-list li[data-level="4"] > a {
+  padding-inline-start: 3rem;
+}
 h1:hover > .heading-anchor,
 h2:hover > .heading-anchor,
 h3:hover > .heading-anchor,
