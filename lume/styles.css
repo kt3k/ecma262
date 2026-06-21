@@ -965,6 +965,12 @@ aside.toc {
   grid-template-rows: min-content min-content 1fr min-content;
   font-size: 0.875rem; /* x:text-sm */
 }
+/* Proposal pages have no position strip, so their TOC is heading / list / repo
+   link — three rows. Without this the scrolling list would land in a
+   min-content row and overflow instead of scrolling. */
+aside.toc.toc-proposal {
+  grid-template-rows: min-content 1fr min-content;
+}
 /* "On This Page" heading — plain semibold label, no uppercase / muted /
    spacing, matching Nextra's <p class="x:pt-6 x:px-4 x:font-semibold">. */
 aside.toc h2 {

@@ -154,7 +154,7 @@ ${
 ${mainHtml}
 </div>
 </main>
-<aside class="toc" aria-label="On this page">
+<aside class="toc toc-proposal" aria-label="On this page">
 <h2>On This Page</h2>
 <ol>${toc}</ol>
 ${
