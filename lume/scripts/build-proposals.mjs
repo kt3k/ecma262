@@ -17,11 +17,14 @@ const esc = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
-// fragment -> draft slug, from the built draft edition (for xref rewriting).
-function draftFragMap(distDir) {
-  const map = Object.create(null);
+// Scan the built draft edition for: fragment -> slug (xref rewriting) and
+// slug -> { num, title } of that page's chapter (its top clause), used to map a
+// proposal's clauses back to the host ECMA-262 chapter they belong to.
+function scanDraft(distDir) {
+  const fragMap = Object.create(null);
+  const chapBySlug = Object.create(null);
   const draft = path.join(distDir, "draft");
-  if (!fs.existsSync(draft)) return map;
+  if (!fs.existsSync(draft)) return { fragMap, chapBySlug };
   for (const e of fs.readdirSync(draft, { withFileTypes: true })) {
     if (!e.isDirectory() || ["img", "fonts", "pagefind"].includes(e.name)) {
       continue;
@@ -30,10 +33,21 @@ function draftFragMap(distDir) {
     if (!fs.existsSync(f)) continue;
     const html = fs.readFileSync(f, "utf8");
     for (const m of html.matchAll(/\sid="([^"]+)"/g)) {
-      if (!(m[1] in map)) map[m[1]] = e.name;
+      if (!(m[1] in fragMap)) fragMap[m[1]] = e.name;
+    }
+    const m = html.match(
+      /<emu-(?:clause|annex|intro)\b[^>]*>\s*(?:<div class="attributes-tag">[\s\S]*?<\/div>\s*)?<h1>([\s\S]*?)<\/h1>/,
+    );
+    if (m) {
+      const sm = m[1].match(/<span class="secnum">([\s\S]*?)<\/span>/);
+      const num = sm ? strip(sm[1]) : "";
+      const title = strip(
+        m[1].replace(/<span class="secnum">[\s\S]*?<\/span>/, ""),
+      );
+      if (num) chapBySlug[e.name] = { num, title };
     }
   }
-  return map;
+  return { fragMap, chapBySlug };
 }
 
 // Parse one proposal spec snapshot into { title, main, toc }.
@@ -73,7 +87,11 @@ function parseSpec(raw, fragMap) {
     /<emu-clause\b[^>]*\bid="([^"]+)"[^>]*?(?:\bnumber="([^"]*)")?[^>]*>\s*<h1\b[^>]*>([\s\S]*?)<\/h1>/g;
   let c;
   while ((c = clauseRe.exec(body)) !== null) {
-    const id = c[1], num = c[2] || "";
+    const id = c[1];
+    // The section number is what's shown in the heading (.secnum), which is
+    // reliable regardless of the clause's attribute order.
+    const sm = c[3].match(/<span class="secnum">([\s\S]*?)<\/span>/);
+    const num = sm ? strip(sm[1]) : (c[2] || "");
     let t = c[3].replace(/<span class="secnum">[\s\S]*?<\/span>/, "");
     t = strip(t.replace(/<a class="heading-anchor"[\s\S]*?<\/a>/, ""));
     sections.push({ id, num, t, depth: num ? num.split(".").length : 1 });
@@ -157,7 +175,41 @@ export function buildProposals(distDir, rootDir) {
   const listFile = path.join(pdir, "proposals.json");
   if (!fs.existsSync(listFile)) return 0;
   const list = JSON.parse(fs.readFileSync(listFile, "utf8"));
-  const fragMap = draftFragMap(distDir);
+  const { fragMap, chapBySlug } = scanDraft(distDir);
+
+  // The host ECMA-262 chapters a proposal touches: map each clause id back to
+  // its draft page's chapter (so the left nav is a subset of the edition's
+  // chapter list, with correct host numbers even when the proposal renumbers
+  // locally). Anchor = the first proposal clause in that chapter. Falls back to
+  // the proposal's own top-level clauses for pure additions (new ids).
+  const chapterNav = (sections) => {
+    const seen = new Map();
+    for (const s of sections) {
+      const slug = fragMap[s.id];
+      const ch = slug && chapBySlug[slug];
+      if (ch && !seen.has(ch.num)) {
+        seen.set(ch.num, { num: ch.num, title: ch.title, anchor: s.id });
+      }
+    }
+    let items = [...seen.values()];
+    if (items.length) {
+      items.sort((a, b) =>
+        (parseFloat(a.num) || 1e9) - (parseFloat(b.num) || 1e9)
+      );
+    } else {
+      // pure addition — list the proposal's own top-level clauses
+      items = sections.filter((s) => s.level === 1).map((s) => ({
+        num: s.num,
+        title: s.t,
+        anchor: s.id,
+      }));
+    }
+    return items.map((c) =>
+      `<li><a href="#${esc(c.anchor)}">${c.num ? esc(c.num) + " " : ""}${
+        esc(c.title)
+      }</a></li>`
+    ).join("");
+  };
 
   // Parse every proposal that has a vendored spec. The deploy slug mirrors the
   // official URL / repo name (proposal-<name>), so a page lives at
@@ -199,7 +251,7 @@ export function buildProposals(distDir, rootDir) {
       stage: p.stage,
       spec: p.spec,
       repo: p.repoUrl,
-      sidebar: sectionItems(p.sections) + navFooter,
+      sidebar: chapterNav(p.sections) + navFooter,
       mainHtml: `<h1 class="prop-title">${esc(p.title)}</h1>\n${
         note(p)
       }\n${p.main}`,
