@@ -160,6 +160,16 @@ function shell(
 <div class="layout-wrapper">
 <aside id="sidebar" class="sidebar" aria-label="Contents">
 <ol class="sidebar-list">${sidebar}</ol>
+<div class="sidebar-footer">
+<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">
+<svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+<svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+<span class="theme-toggle-label"><span class="label-light">Light</span><span class="label-dark">Dark</span></span>
+</button>
+<button id="sidebar-collapse" class="sidebar-collapse-btn" type="button" aria-controls="sidebar" aria-expanded="true" title="Collapse sidebar">
+<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path class="collapse-arrow" d="M11.823 8.177L9.427 10.573A.25.25 0 019 10.396V5.604a.25.25 0 01.427-.177l2.396 2.396a.25.25 0 010 .354z"></path><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0114.25 16H1.75A1.75 1.75 0 010 14.25V1.75zM1.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25H5.5v-13H1.75zM7 1.5v13h7.25a.25.25 0 00.25-.25V1.75a.25.25 0 00-.25-.25H7z"></path></svg>
+</button>
+</div>
 </aside>
 <main id="content" data-pagefind-body="true">
 <div class="ecma-spec">
@@ -197,6 +207,28 @@ ${
   t.addEventListener("click",function(e){e.stopPropagation();set(m.classList.contains("ecma-vs-hidden"));});
   document.addEventListener("mousedown",function(e){if(!root.contains(e.target))set(false);});
   document.addEventListener("keydown",function(e){if(e.key==="Escape")set(false);});
+})();
+(function(){
+  document.querySelectorAll(".theme-toggle").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var d=document.documentElement.classList.toggle("dark");
+      try{localStorage.setItem("theme",d?"dark":"light");}catch(_){}
+    });
+  });
+  var cb=document.getElementById("sidebar-collapse");
+  if(cb){
+    function setC(c){
+      document.body.classList.toggle("sidebar-collapsed",c);
+      cb.setAttribute("aria-expanded",c?"false":"true");
+      cb.setAttribute("title",c?"Expand sidebar":"Collapse sidebar");
+    }
+    try{if(localStorage.getItem("sidebar")==="collapsed")setC(true);}catch(_){}
+    cb.addEventListener("click",function(){
+      var c=!document.body.classList.contains("sidebar-collapsed");
+      setC(c);
+      try{localStorage.setItem("sidebar",c?"collapsed":"open");}catch(_){}
+    });
+  }
 })();
 </script>
 </body>
