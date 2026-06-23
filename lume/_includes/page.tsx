@@ -83,7 +83,7 @@ export default function Page(
         <script
           dangerouslySetInnerHTML={{
             __html:
-              `(function(){var p=localStorage.getItem("theme");var d=p==="dark"||(p===null&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.classList.add("dark");})();`,
+              `(function(){var p;try{p=localStorage.getItem("theme");}catch(_){}if(p!=="light"&&p!=="dark")p="system";var r=document.documentElement;r.dataset.theme=p;if(p==="dark"||(p==="system"&&matchMedia("(prefers-color-scheme:dark)").matches))r.classList.add("dark");})();`,
           }}
         />
         {
@@ -232,16 +232,43 @@ export default function Page(
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              // Two .theme-toggle buttons live in the DOM: one in the
-              // sidebar footer (sidebar.tsx) and one in the Switchers row
-              // above the site footer (footer.tsx, Nextra parity). Wire
-              // both to the same click handler.
-              document.querySelectorAll(".theme-toggle").forEach(function(btn){
-                btn.addEventListener("click",function(){
-                  var d=document.documentElement.classList.toggle("dark");
-                  localStorage.setItem("theme",d?"dark":"light");
+              // Theme switch: the trigger opens a Light / Dark / System menu
+              // (Nextra's ThemeSwitch select) rather than toggling directly.
+              // The chosen mode is stored under localStorage "theme" ("light"/
+              // "dark"; "system" clears it) and reflected on html[data-theme],
+              // which the early-paint script reads to avoid a flash. "System"
+              // tracks prefers-color-scheme live.
+              (function(){
+                var mq=matchMedia("(prefers-color-scheme:dark)");
+                var r=document.documentElement;
+                function cur(){var p=localStorage.getItem("theme");return p==="light"||p==="dark"?p:"system";}
+                function apply(mode){
+                  r.dataset.theme=mode;
+                  r.classList.toggle("dark",mode==="dark"||(mode==="system"&&mq.matches));
+                  document.querySelectorAll(".theme-option").forEach(function(o){
+                    o.setAttribute("aria-checked",o.dataset.theme===mode?"true":"false");
+                  });
+                }
+                apply(cur());
+                // Follow the OS setting while in System mode.
+                mq.addEventListener("change",function(){if(cur()==="system")apply("system");});
+                document.querySelectorAll(".theme-switch").forEach(function(root){
+                  var trigger=root.querySelector(".theme-switch-trigger");
+                  var menu=root.querySelector(".theme-menu");
+                  if(!trigger||!menu)return;
+                  function open(o){menu.classList.toggle("theme-menu-hidden",!o);trigger.setAttribute("aria-expanded",o?"true":"false");}
+                  trigger.addEventListener("click",function(e){e.stopPropagation();open(menu.classList.contains("theme-menu-hidden"));});
+                  menu.querySelectorAll(".theme-option").forEach(function(o){
+                    o.addEventListener("click",function(){
+                      var m=o.dataset.theme;
+                      if(m==="system")localStorage.removeItem("theme");else localStorage.setItem("theme",m);
+                      apply(m);open(false);
+                    });
+                  });
+                  document.addEventListener("mousedown",function(e){if(!root.contains(e.target))open(false);});
+                  document.addEventListener("keydown",function(e){if(e.key==="Escape")open(false);});
                 });
-              });
+              })();
               var menuBtn=document.getElementById("menu-toggle");
               function setMenu(open){
                 document.body.classList.toggle("menu-open",open);

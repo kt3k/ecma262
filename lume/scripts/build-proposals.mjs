@@ -17,6 +17,30 @@ const esc = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
+// Sun / moon / monitor icons shared by the theme trigger and its menu options.
+// Without `only` all three render (trigger; CSS shows whichever matches
+// html[data-theme]); with `only` it returns the single icon for that menu row.
+function themeIcons(only) {
+  const want = (m) => only === undefined || only === m;
+  const out = [];
+  if (want("light")) {
+    out.push(
+      '<svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>',
+    );
+  }
+  if (want("dark")) {
+    out.push(
+      '<svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
+    );
+  }
+  if (want("system")) {
+    out.push(
+      '<svg class="icon-system" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="1.5"></rect><path d="M8 21h8M12 17v4"></path></svg>',
+    );
+  }
+  return out.join("");
+}
+
 // Scan the built draft edition for: fragment -> slug (xref rewriting) and
 // slug -> { num, title } of that page's chapter (its top clause), used to map a
 // proposal's clauses back to the host ECMA-262 chapter they belong to.
@@ -130,7 +154,7 @@ function shell(
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(headTitle)}</title>
-<script>(function(){var p=localStorage.getItem("theme");var d=p==="dark"||(p===null&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.classList.add("dark");})();</script>
+<script>(function(){var p;try{p=localStorage.getItem("theme");}catch(_){}if(p!=="light"&&p!=="dark")p="system";var r=document.documentElement;r.dataset.theme=p;if(p==="dark"||(p==="system"&&matchMedia("(prefers-color-scheme:dark)").matches))r.classList.add("dark");})();</script>
 <link rel="stylesheet" href="${A}/hljs-github.css">
 <link rel="stylesheet" href="${A}/styles.css">
 <link rel="icon" href="${A}/favicon.svg">
@@ -161,11 +185,24 @@ function shell(
 <aside id="sidebar" class="sidebar" aria-label="Contents">
 <ol class="sidebar-list">${sidebar}</ol>
 <div class="sidebar-footer">
-<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">
-<svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
-<svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-<span class="theme-toggle-label"><span class="label-light">Light</span><span class="label-dark">Dark</span></span>
+<div class="theme-switch" id="theme-switch">
+<button id="theme-toggle" class="theme-toggle theme-switch-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Select theme">
+${themeIcons()}
+<span class="theme-toggle-label"><span class="label-light">Light</span><span class="label-dark">Dark</span><span class="label-system">System</span></span>
+<svg class="theme-switch-caret" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
 </button>
+<ul class="theme-menu theme-menu-hidden" role="menu">
+<li role="none"><button class="theme-option" type="button" role="menuitemradio" aria-checked="false" data-theme="light">${
+    themeIcons("light")
+  }<span>Light</span></button></li>
+<li role="none"><button class="theme-option" type="button" role="menuitemradio" aria-checked="false" data-theme="dark">${
+    themeIcons("dark")
+  }<span>Dark</span></button></li>
+<li role="none"><button class="theme-option" type="button" role="menuitemradio" aria-checked="false" data-theme="system">${
+    themeIcons("system")
+  }<span>System</span></button></li>
+</ul>
+</div>
 <button id="sidebar-collapse" class="sidebar-collapse-btn" type="button" aria-controls="sidebar" aria-expanded="true" title="Collapse sidebar">
 <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path class="collapse-arrow" d="M11.823 8.177L9.427 10.573A.25.25 0 019 10.396V5.604a.25.25 0 01.427-.177l2.396 2.396a.25.25 0 010 .354z"></path><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0114.25 16H1.75A1.75 1.75 0 010 14.25V1.75zM1.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25H5.5v-13H1.75zM7 1.5v13h7.25a.25.25 0 00.25-.25V1.75a.25.25 0 00-.25-.25H7z"></path></svg>
 </button>
@@ -209,12 +246,36 @@ ${
   document.addEventListener("keydown",function(e){if(e.key==="Escape")set(false);});
 })();
 (function(){
-  document.querySelectorAll(".theme-toggle").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      var d=document.documentElement.classList.toggle("dark");
-      try{localStorage.setItem("theme",d?"dark":"light");}catch(_){}
+  var mq=matchMedia("(prefers-color-scheme:dark)");
+  var r=document.documentElement;
+  function cur(){var p;try{p=localStorage.getItem("theme");}catch(_){}return p==="light"||p==="dark"?p:"system";}
+  function apply(mode){
+    r.dataset.theme=mode;
+    r.classList.toggle("dark",mode==="dark"||(mode==="system"&&mq.matches));
+    document.querySelectorAll(".theme-option").forEach(function(o){
+      o.setAttribute("aria-checked",o.dataset.theme===mode?"true":"false");
     });
+  }
+  apply(cur());
+  mq.addEventListener("change",function(){if(cur()==="system")apply("system");});
+  document.querySelectorAll(".theme-switch").forEach(function(root){
+    var trigger=root.querySelector(".theme-switch-trigger");
+    var menu=root.querySelector(".theme-menu");
+    if(!trigger||!menu)return;
+    function open(o){menu.classList.toggle("theme-menu-hidden",!o);trigger.setAttribute("aria-expanded",o?"true":"false");}
+    trigger.addEventListener("click",function(e){e.stopPropagation();open(menu.classList.contains("theme-menu-hidden"));});
+    menu.querySelectorAll(".theme-option").forEach(function(o){
+      o.addEventListener("click",function(){
+        var m=o.dataset.theme;
+        try{m==="system"?localStorage.removeItem("theme"):localStorage.setItem("theme",m);}catch(_){}
+        apply(m);open(false);
+      });
+    });
+    document.addEventListener("mousedown",function(e){if(!root.contains(e.target))open(false);});
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")open(false);});
   });
+})();
+(function(){
   var cb=document.getElementById("sidebar-collapse");
   if(cb){
     function setC(c){

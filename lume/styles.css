@@ -425,23 +425,86 @@ body.is-mac .site-header .search-kbd .search-kbd-other {
 .theme-toggle:hover {
   background: rgba(127, 127, 127, 0.15);
 }
-/* Show current-mode label/icon (Nextra convention: button reads "Light"
-   while the page is light, "Dark" while it's dark). */
-.theme-toggle .icon-moon,
-.theme-toggle .label-dark {
-  display: none;
-}
+/* The trigger reflects the *selected* mode (Light / Dark / System), not the
+   resolved colour — Nextra's ThemeSwitch shows the chosen option. Which
+   icon+label is visible is driven by html[data-theme], set by the early-paint
+   + menu scripts. */
 .theme-toggle .icon-sun,
-.theme-toggle .label-light {
-  display: inline-flex;
-}
-html.dark .theme-toggle .icon-moon,
-html.dark .theme-toggle .label-dark {
-  display: inline-flex;
-}
-html.dark .theme-toggle .icon-sun,
-html.dark .theme-toggle .label-light {
+.theme-toggle .icon-moon,
+.theme-toggle .icon-system,
+.theme-toggle .label-light,
+.theme-toggle .label-dark,
+.theme-toggle .label-system {
   display: none;
+}
+html[data-theme="light"] .theme-toggle .icon-sun,
+html[data-theme="light"] .theme-toggle .label-light,
+html[data-theme="dark"] .theme-toggle .icon-moon,
+html[data-theme="dark"] .theme-toggle .label-dark,
+html[data-theme="system"] .theme-toggle .icon-system,
+html[data-theme="system"] .theme-toggle .label-system,
+html:not([data-theme]) .theme-toggle .icon-system,
+html:not([data-theme]) .theme-toggle .label-system {
+  display: inline-flex;
+}
+/* Theme menu (popover) — replaces the former direct toggle. The trigger keeps
+   the .theme-toggle chrome; the menu opens upward from the sidebar-footer with
+   Light / Dark / System options, mirroring Nextra's theme <Select>. */
+.theme-switch {
+  position: relative;
+  display: inline-flex;
+}
+.theme-switch .theme-toggle {
+  width: 100%;
+  justify-content: flex-start;
+}
+.theme-switch-caret {
+  margin-left: auto;
+  opacity: 0.55;
+}
+.theme-menu {
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  left: 0;
+  margin: 0;
+  padding: 0.3rem;
+  z-index: 50;
+  min-width: max-content;
+  list-style: none;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+}
+.theme-menu-hidden {
+  display: none;
+}
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.theme-option svg {
+  flex: none;
+  opacity: 0.8;
+}
+.theme-option:hover {
+  background: var(--chrome-bg);
+  color: var(--accent);
+}
+.theme-option[aria-checked="true"] {
+  color: var(--accent);
+  font-weight: 600;
 }
 /* Custom search input (search.js owns the <input>). Nextra navbar input:
    x:rounded-lg (8px) x:px-3 x:py-2 (12px / 8px) x:text-sm (14px). Right
@@ -798,9 +861,8 @@ aside.sidebar .sidebar-footer {
   align-items: center;
   gap: 0.4rem;
 }
-aside.sidebar .sidebar-footer .theme-toggle {
+aside.sidebar .sidebar-footer .theme-switch {
   flex: 1 1 auto;
-  justify-content: flex-start;
 }
 /* Collapse button: borderless icon-only square with hover bg-fill,
    matching Nextra's footer toggle Button (x:rounded-md x:p-2
@@ -870,7 +932,11 @@ body.sidebar-collapsed aside.sidebar .theme-toggle:hover,
 body.sidebar-collapsed .sidebar-collapse-btn:hover {
   background: rgba(127, 127, 127, 0.15);
 }
-body.sidebar-collapsed aside.sidebar .theme-toggle .theme-toggle-label {
+body.sidebar-collapsed aside.sidebar .theme-switch {
+  flex: 0 0 auto;
+}
+body.sidebar-collapsed aside.sidebar .theme-toggle .theme-toggle-label,
+body.sidebar-collapsed aside.sidebar .theme-switch-caret {
   display: none;
 }
 /* Flip just the arrow path of the collapse-button SVG (not the whole icon —

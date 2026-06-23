@@ -1,5 +1,70 @@
 import chapters from "./chapters.ts";
 
+// Sun / moon / monitor icons shared by the theme trigger and its menu options.
+// On the trigger (no `only`) all three render with their icon-* class so CSS
+// can show whichever matches html[data-theme]; in a menu option `only` picks
+// the single icon for that row.
+function ThemeIcons({ only }: { only?: "light" | "dark" | "system" }) {
+  const want = (m: "light" | "dark" | "system") =>
+    only === undefined ||
+    only === m;
+  return (
+    <>
+      {want("light") && (
+        <svg
+          class="icon-sun"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41">
+          </path>
+        </svg>
+      )}
+      {want("dark") && (
+        <svg
+          class="icon-moon"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      )}
+      {want("system") && (
+        <svg
+          class="icon-system"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <rect x="2" y="4" width="20" height="13" rx="1.5"></rect>
+          <path d="M8 21h8M12 17v4"></path>
+        </svg>
+      )}
+    </>
+  );
+}
+
 // Left sidebar: flat chapter list at top, sticky theme toggle at bottom.
 // The list scrolls; the footer area doesn't — same affordance Nextra's
 // `<div class="nextra-sidebar-footer">` provides.
@@ -75,51 +140,60 @@ export default function Sidebar(
       </ol>
       <div class="sidebar-footer">
         {
-          /* Theme toggle. Click handler + early-paint .dark class flip are wired
-            in page.tsx so the button can sit anywhere in the layout (here, in
-            the non-scrolling sidebar footer, matches Nextra's placement). */
+          /* Theme switch. The trigger keeps the .theme-toggle chrome but now
+            opens a Light / Dark / System menu (Nextra's ThemeSwitch select)
+            instead of toggling directly — see page.tsx for the early-paint
+            data-theme flip and the menu wiring. */
         }
-        <button
-          id="theme-toggle"
-          class="theme-toggle"
-          type="button"
-          aria-label="Toggle dark mode"
-        >
-          <svg
-            class="icon-sun"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
+        <div class="theme-switch" id="theme-switch">
+          <button
+            id="theme-toggle"
+            class="theme-toggle theme-switch-trigger"
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-label="Select theme"
           >
-            <circle cx="12" cy="12" r="4"></circle>
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41">
-            </path>
-          </svg>
-          <svg
-            class="icon-moon"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-          <span class="theme-toggle-label">
-            <span class="label-light">Light</span>
-            <span class="label-dark">Dark</span>
-          </span>
-        </button>
+            <ThemeIcons />
+            <span class="theme-toggle-label">
+              <span class="label-light">Light</span>
+              <span class="label-dark">Dark</span>
+              <span class="label-system">System</span>
+            </span>
+            <svg
+              class="theme-switch-caret"
+              viewBox="0 0 24 24"
+              width="12"
+              height="12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 9l6 6 6-6"></path>
+            </svg>
+          </button>
+          <ul class="theme-menu theme-menu-hidden" role="menu">
+            {(["light", "dark", "system"] as const).map((mode) => (
+              <li role="none">
+                <button
+                  class="theme-option"
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked="false"
+                  data-theme={mode}
+                >
+                  <ThemeIcons only={mode} />
+                  <span>
+                    {mode[0].toUpperCase() + mode.slice(1)}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
         {
           /* Sidebar collapse / expand toggle — same button for both states,
             matching Nextra's .nextra-sidebar-footer button. The arrow part
