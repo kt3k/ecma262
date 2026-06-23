@@ -136,13 +136,9 @@ function shell(
 <span class="site-title-group"><a class="site-title" href="/ecma262/proposals/"><b>TC39 Proposals</b></a>${
     stage ? `<span class="prop-stage">Stage ${esc(stage)}</span>` : ""
   }</span>
-${
-    spec
-      ? `<a class="qual-link" href="${
-        esc(spec)
-      }" target="_blank" rel="noreferrer">official spec ↗</a>`
-      : ""
-  }
+<button id="menu-toggle" class="menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false">
+<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><g><path d="M4 6h16"></path></g><path d="M4 12h16"></path><g><path d="M4 18h16"></path></g></svg>
+</button>
 </nav>
 </header>
 <div class="layout-wrapper">
@@ -166,6 +162,17 @@ ${
   }
 </aside>
 </div>
+<script>
+(function(){
+  var b=document.getElementById("menu-toggle");
+  if(!b)return;
+  function set(o){document.body.classList.toggle("menu-open",o);document.documentElement.classList.toggle("menu-open",o);b.setAttribute("aria-expanded",o?"true":"false");}
+  b.addEventListener("click",function(){set(!document.body.classList.contains("menu-open"));});
+  matchMedia("(max-width: 767px)").addEventListener("change",function(e){if(!e.matches)set(false);});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")set(false);});
+  document.querySelectorAll("#sidebar a").forEach(function(a){a.addEventListener("click",function(){set(false);});});
+})();
+</script>
 </body>
 </html>`;
 }
