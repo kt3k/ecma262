@@ -271,9 +271,11 @@ export function buildProposals(distDir, rootDir) {
     parsed.map((p) =>
       `<li role="none"><a role="menuitem" href="/ecma262/${p.slug}/"${
         p.slug === cur ? ' aria-current="page"' : ""
-      } class="ecma-vs-item${p.slug === cur ? " ecma-vs-current" : ""}">${
+      } class="ecma-vs-item${p.slug === cur ? " ecma-vs-current" : ""}"><span>${
         esc(p.title)
-      }</a></li>`
+      }</span><span class="prop-stage" title="Stage ${esc(p.stage)}">${
+        esc(p.stage)
+      }</span></a></li>`
     ).join("") +
     `</ul></span>`;
 

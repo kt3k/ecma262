@@ -3207,7 +3207,8 @@ aside.toc h2 .rp-count {
 
 /* TC39 proposal pages (scripts/build-proposals.mjs). */
 .prop-stage {
-  margin-left: 0.6rem;
+  /* No left margin — the title-group flex gap already spaces it from the
+     title; an extra margin made the title↔badge gap too wide. */
   padding: 0.1rem 0.5rem;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent) 16%, transparent);
@@ -3215,6 +3216,16 @@ aside.toc h2 .rp-count {
   font-size: 0.7rem;
   font-weight: 600;
   vertical-align: 0.12em;
+}
+/* In the proposal selector dropdown, each item shows its stage badge pushed to
+   the right edge. */
+#proposal-switcher-menu .ecma-vs-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+#proposal-switcher-menu .prop-stage {
+  margin-left: auto;
 }
 .ecma-spec .prop-title {
   font-size: 1.9rem;
