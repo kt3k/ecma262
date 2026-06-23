@@ -24,7 +24,28 @@ for (const p of list) {
     const html = await res.text();
     fs.mkdirSync(path.join(dir, p.name), { recursive: true });
     fs.writeFileSync(path.join(dir, p.name, "spec.html"), html);
-    console.log(`✓ ${p.name}: ${(html.length / 1024 | 0)} KB`);
+
+    // Vendor the relative images the spec references (figures live in img/),
+    // resolved against the spec URL — build-proposals copies them next to the
+    // page so the relative <img src> still resolves.
+    const imgs = new Set(
+      [...html.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/g)].map((m) => m[1])
+        .filter((s) => !/^(https?:)?\/\//.test(s) && !s.startsWith("data:")),
+    );
+    let imgN = 0;
+    for (const rel of imgs) {
+      const r2 = await fetch(new URL(rel, p.spec).href);
+      if (!r2.ok) continue;
+      const dest = path.join(dir, p.name, rel);
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.writeFileSync(dest, new Uint8Array(await r2.arrayBuffer()));
+      imgN++;
+    }
+    console.log(
+      `✓ ${p.name}: ${(html.length / 1024 | 0)} KB${
+        imgN ? ` + ${imgN} img` : ""
+      }`,
+    );
     ok++;
   } catch (e) {
     console.error(`✗ ${p.name}: ${e.message}`);

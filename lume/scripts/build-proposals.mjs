@@ -314,6 +314,12 @@ export function buildProposals(distDir, rootDir) {
     const dir = path.join(distDir, p.slug);
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, "index.html"), html);
+    // Copy the proposal's vendored figures so the relative <img src="img/…">
+    // resolves under /ecma262/<slug>/.
+    const imgDir = path.join(pdir, p.name, "img");
+    if (fs.existsSync(imgDir)) {
+      fs.cpSync(imgDir, path.join(dir, "img"), { recursive: true });
+    }
   }
 
   // Index page.
