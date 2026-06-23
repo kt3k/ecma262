@@ -664,6 +664,10 @@ aside.sidebar .sidebar-list {
   overflow-y: auto;
   min-height: 0;
   display: grid;
+  /* Pack rows at the top — without this the grid stretches its rows to fill the
+     tall rail when there are only a few items (e.g. a proposal's short chapter
+     list), leaving huge gaps between them. */
+  align-content: start;
   gap: 0.25rem;
   mask-image:
     linear-gradient(to bottom, transparent, #000 20px, transparent 100%),
