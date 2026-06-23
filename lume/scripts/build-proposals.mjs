@@ -112,7 +112,17 @@ const sectionItems = (sections) =>
   ).join("");
 
 function shell(
-  { title, headTitle, stage, spec, repo, sidebar, mainHtml, toc },
+  {
+    headTitle,
+    titleText,
+    titleHref,
+    stageNum,
+    switcher,
+    repo,
+    sidebar,
+    mainHtml,
+    toc,
+  },
 ) {
   return `<!doctype html>
 <html lang="en">
@@ -133,9 +143,15 @@ function shell(
 <body>
 <header class="site-header"><div class="site-header-blur" aria-hidden="true"></div>
 <nav class="site-header-inner">
-<span class="site-title-group"><a class="site-title" href="/ecma262/proposals/"><b>TC39 Proposals</b></a>${
-    stage ? `<span class="prop-stage">Stage ${esc(stage)}</span>` : ""
-  }</span>
+<span class="site-title-group"><a class="site-title" href="${titleHref}"><b>${
+    esc(titleText)
+  }</b></a>${
+    stageNum
+      ? `<span class="prop-stage" title="Stage ${esc(stageNum)}">${
+        esc(stageNum)
+      }</span>`
+      : ""
+  }${switcher || ""}</span>
 <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false">
 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><g><path d="M4 6h16"></path></g><path d="M4 12h16"></path><g><path d="M4 18h16"></path></g></svg>
 </button>
@@ -171,6 +187,16 @@ ${
   matchMedia("(max-width: 767px)").addEventListener("change",function(e){if(!e.matches)set(false);});
   document.addEventListener("keydown",function(e){if(e.key==="Escape")set(false);});
   document.querySelectorAll("#sidebar a").forEach(function(a){a.addEventListener("click",function(){set(false);});});
+})();
+(function(){
+  var root=document.getElementById("proposal-switcher");
+  var t=document.getElementById("proposal-switcher-trigger");
+  var m=document.getElementById("proposal-switcher-menu");
+  if(!root||!t||!m)return;
+  function set(o){m.classList.toggle("ecma-vs-hidden",!o);t.setAttribute("aria-expanded",o?"true":"false");}
+  t.addEventListener("click",function(e){e.stopPropagation();set(m.classList.contains("ecma-vs-hidden"));});
+  document.addEventListener("mousedown",function(e){if(!root.contains(e.target))set(false);});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")set(false);});
 })();
 </script>
 </body>
@@ -234,6 +260,23 @@ export function buildProposals(distDir, rootDir) {
     });
   }
 
+  // Proposal selector dropdown (same DOM shape as the editions' version
+  // switcher, so the .ecma-vs-* CSS applies; opened by the inline handler).
+  const selectorIcon =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9l4 -4l4 4"></path><path d="M16 15l-4 4l-4 -4"></path></svg>';
+  const switcher = (cur) =>
+    `<span class="ecma-vs" id="proposal-switcher">` +
+    `<button id="proposal-switcher-trigger" type="button" class="ecma-vs-trigger" aria-label="Switch proposal" aria-haspopup="menu" aria-expanded="false">${selectorIcon}</button>` +
+    `<ul id="proposal-switcher-menu" class="ecma-vs-menu ecma-vs-hidden" role="menu">` +
+    parsed.map((p) =>
+      `<li role="none"><a role="menuitem" href="/ecma262/${p.slug}/"${
+        p.slug === cur ? ' aria-current="page"' : ""
+      } class="ecma-vs-item${p.slug === cur ? " ecma-vs-current" : ""}">${
+        esc(p.title)
+      }</a></li>`
+    ).join("") +
+    `</ul></span>`;
+
   const note = (p) =>
     `<p class="es2-source-note"><strong>Unofficial restyling of a TC39 proposal.</strong> ` +
     `This is a snapshot of the <em>${esc(p.title)}</em> proposal (Stage&nbsp;${
@@ -255,8 +298,10 @@ export function buildProposals(distDir, rootDir) {
   for (const p of parsed) {
     const html = shell({
       headTitle: `${p.title} — TC39 proposal · ECMA-262 Restyled`,
-      stage: p.stage,
-      spec: p.spec,
+      titleText: p.title,
+      titleHref: `/ecma262/${p.slug}/`,
+      stageNum: p.stage,
+      switcher: switcher(p.slug),
       repo: p.repoUrl,
       sidebar: chapterNav(p.sections) + navFooter,
       mainHtml: `<h1 class="prop-title">${esc(p.title)}</h1>\n${
@@ -296,8 +341,10 @@ export function buildProposals(distDir, rootDir) {
     `<li class="group-start"><a href="${A}/">← ECMA-262 draft</a></li>`;
   const indexHtml = shell({
     headTitle: "TC39 Proposals · ECMA-262 Restyled",
-    stage: "",
-    spec: "",
+    titleText: "TC39 Proposals",
+    titleHref: "/ecma262/proposals/",
+    stageNum: "",
+    switcher: switcher(""),
     repo: "https://github.com/tc39/proposals",
     sidebar: indexSidebar,
     mainHtml: indexMain,
