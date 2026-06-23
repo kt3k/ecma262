@@ -2515,6 +2515,21 @@ main[data-pagefind-body] :is(b, strong) {
 .ecma-vs-hidden {
   display: none;
 }
+/* On mobile the trigger sits mid-header, so an absolute max-content menu runs
+   off the right edge. Pin it as a fixed sheet just under the header, spanning
+   the viewport width, with its own scroll for the full edition list. */
+@media (max-width: 767px) {
+  .ecma-vs-menu {
+    position: fixed;
+    top: calc(var(--header-h) + 0.25rem);
+    left: 0.75rem;
+    right: 0.75rem;
+    margin: 0;
+    min-width: 0;
+    max-height: calc(100dvh - var(--header-h) - 1rem);
+    overflow-y: auto;
+  }
+}
 .ecma-vs-item {
   display: block;
   padding: 0.35rem 0.6rem;
@@ -3015,7 +3030,9 @@ html.dark .xref-card .xc-kind {
   transform-origin: 0 50%;
   transform: scaleX(var(--rp, 0));
   background: linear-gradient(90deg, var(--accent), #fbbf24);
-  z-index: 40;
+  /* Below the header (z-40) so the header's version-switcher dropdown opens
+     over the bar, not under it. Still above the prose. */
+  z-index: 25;
   pointer-events: none;
   transition: transform 0.08s linear;
 }
